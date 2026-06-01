@@ -1,0 +1,531 @@
+"""
+odoo_to_csv.py — Extractor de datos Odoo → CSV para Power BI
+Healthy Food Marcalman Ecuador S.A.
+
+Genera 4 archivos CSV en la carpeta dashboard-data:
+  - despachos.csv      → Órdenes de venta + estado de entrega
+  - despachos_lineas.csv → Líneas de productos por orden de venta
+  - compras_lineas.csv → Líneas de productos por orden de compra
+  - produccion.csv     → Órdenes de fabricación + órdenes de trabajo
+
+Power BI apunta a esta carpeta y se refresca automáticamente.
+El script sobreescribe los archivos anteriores en cada ejecución.
+
+Programar con el Programador de tareas de Windows cada 30 minutos.
+"""
+
+import os
+import csv
+import logging
+import xmlrpc.client
+from datetime import datetime, timedelta
+
+UTC_OFFSET = -5  # America/Guayaquil (Ecuador, sin horario de verano)
+
+def utc_a_local(fecha_str, formato="%Y-%m-%d %H:%M"):
+    """Convierte string UTC de Odoo a hora local Ecuador (UTC-5)."""
+    if not fecha_str or fecha_str is False:
+        return ""
+    try:
+        dt = datetime.strptime(str(fecha_str)[:19], "%Y-%m-%d %H:%M:%S")
+        dt_local = dt + timedelta(hours=UTC_OFFSET)
+        return dt_local.strftime(formato)
+    except Exception:
+        return str(fecha_str)[:16]
+
+# ── Configuración ──────────────────────────────────────────────────────────────
+
+ODOO_URL  = os.environ.get("ODOO_URL",  "https://healthyfoodv18-test-11-05-26-32038247.dev.odoo.com")
+ODOO_DB   = os.environ.get("ODOO_DB",   "healthyfoodv18-test-11-05-26-32038247")
+ODOO_USER = os.environ.get("ODOO_USER", "sistemasdegestion@healthyfood.com.ec")
+ODOO_PASS = os.environ.get("ODOO_PASS", "Quantum#10$")
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+OUT_DIR  = os.environ.get("OUTPUT_DIR", os.path.join(BASE_DIR, "dashboard-data"))
+
+# ── Logging ────────────────────────────────────────────────────────────────────
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.FileHandler(os.path.join(BASE_DIR, "odoo_to_csv.log"), encoding="utf-8"),
+        logging.StreamHandler()
+    ]
+)
+log = logging.getLogger(__name__)
+
+# ── Conexión Odoo ──────────────────────────────────────────────────────────────
+
+def conectar():
+    common = xmlrpc.client.ServerProxy(f"{ODOO_URL}/xmlrpc/2/common", allow_none=True)
+    uid = common.authenticate(ODOO_DB, ODOO_USER, ODOO_PASS, {})
+    if not uid:
+        raise ConnectionError("Autenticación fallida en Odoo")
+    models = xmlrpc.client.ServerProxy(f"{ODOO_URL}/xmlrpc/2/object", allow_none=True)
+    return uid, models
+
+def odoo_get(models, uid, model, domain, fields, limit=5000):
+    return models.execute_kw(
+        ODOO_DB, uid, ODOO_PASS,
+        model, "search_read", [domain],
+        {"fields": fields, "limit": limit}
+    )
+
+def val(v, fallback=""):
+    """Convierte False/None de Odoo a cadena vacía. Many2one → nombre."""
+    if v is False or v is None:
+        return fallback
+    if isinstance(v, list):
+        return v[1] if len(v) > 1 else v[0]
+    return v
+
+def limpiar_html(texto):
+    """Elimina etiquetas HTML simples de campos note/términos."""
+    import re
+    if not texto:
+        return ""
+    return re.sub(r"<[^>]+>", " ", str(texto)).strip()
+
+def ahora():
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+# ── Escritura CSV ──────────────────────────────────────────────────────────────
+
+def escribir_csv(nombre, filas, encabezados):
+    ruta = os.path.join(OUT_DIR, nombre)
+    with open(ruta, "w", newline="", encoding="utf-8-sig") as f:
+        writer = csv.DictWriter(f, fieldnames=encabezados)
+        writer.writeheader()
+        writer.writerows(filas)
+    log.info(f"  ✓ {nombre} — {len(filas)} filas")
+
+# ── DESPACHOS: cabecera de órdenes de venta ────────────────────────────────────
+
+ESTADO_VENTA = {
+    "draft": "Borrador", "sent": "Enviada", "sale": "Confirmada",
+    "done": "Bloqueada", "cancel": "Cancelada",
+}
+ESTADO_ENTREGA = {
+    "draft": "Borrador", "waiting": "Esperando", "confirmed": "Confirmada",
+    "assigned": "Lista para despachar", "done": "Despachada", "cancel": "Cancelada",
+}
+
+def extraer_despachos(models, uid):
+    log.info("Extrayendo despachos (sale.order)...")
+
+    ventas = odoo_get(models, uid, "sale.order",
+        [["state", "in", ["sale", "done"]]],
+        ["id", "name", "partner_id", "date_order", "commitment_date",
+         "amount_total", "state", "picking_ids", "user_id", "note"]
+    )
+
+    # Pickings de salida
+    picking_ids = [pid for v in ventas for pid in (v.get("picking_ids") or [])]
+    pickings_raw = odoo_get(models, uid, "stock.picking",
+        [["id", "in", picking_ids], ["picking_type_code", "=", "outgoing"]],
+        ["id", "state", "scheduled_date", "date_done", "sale_id"]
+    ) if picking_ids else []
+
+    pick_por_venta = {}
+    for p in pickings_raw:
+        if p.get("sale_id"):
+            pick_por_venta.setdefault(p["sale_id"][0], []).append(p)
+
+    filas = []
+    for v in ventas:
+        picks = pick_por_venta.get(v["id"], [])
+        estados = [p["state"] for p in picks]
+
+        if not estados:
+            estado_entrega = "Sin entrega"
+        elif all(s == "done" for s in estados):
+            estado_entrega = "Despachada"
+        elif any(s == "done" for s in estados):
+            estado_entrega = "Parcialmente despachada"
+        elif any(s == "assigned" for s in estados):
+            estado_entrega = "Lista para despachar"
+        else:
+            estado_entrega = "Pendiente"
+
+        fechas_done = [p["date_done"] for p in picks if p.get("date_done") and p["date_done"] is not False]
+        fecha_despacho_real = max(fechas_done) if fechas_done else ""
+
+        commitment = val(v.get("commitment_date"))
+        if commitment and fecha_despacho_real:
+            comprometido = datetime.strptime(str(commitment)[:19], "%Y-%m-%d %H:%M:%S")
+            real         = datetime.strptime(str(fecha_despacho_real)[:19], "%Y-%m-%d %H:%M:%S")
+            cumplimiento = "A tiempo" if real <= comprometido else "Tarde"
+        elif commitment and estado_entrega != "Despachada":
+            comprometido = datetime.strptime(str(commitment)[:19], "%Y-%m-%d %H:%M:%S")
+            cumplimiento = "Pendiente" if datetime.now() <= comprometido else "Vencida"
+        else:
+            cumplimiento = ""
+
+        filas.append({
+            "orden_venta":         val(v["name"]),
+            "cliente":             val(v["partner_id"]),
+            "vendedor":            val(v.get("user_id")),
+            "fecha_orden":         utc_a_local(val(v["date_order"]), "%Y-%m-%d %H:%M"),
+            "fecha_compromiso":    utc_a_local(commitment, "%Y-%m-%d %H:%M"),
+            "estado_venta":        ESTADO_VENTA.get(v["state"], v["state"]),
+            "estado_entrega":      estado_entrega,
+            "fecha_despacho_real": utc_a_local(fecha_despacho_real, "%Y-%m-%d %H:%M"),
+            "cumplimiento":        cumplimiento,
+            "monto_total":         round(float(v.get("amount_total") or 0), 2),
+            "num_entregas":        len(picks),
+            "terminos_condiciones":limpiar_html(val(v.get("note"))),
+            "actualizado":         ahora(),
+        })
+
+    encabezados = ["orden_venta","cliente","vendedor","fecha_orden","fecha_compromiso",
+                   "estado_venta","estado_entrega","fecha_despacho_real","cumplimiento",
+                   "monto_total","num_entregas","terminos_condiciones","actualizado"]
+    escribir_csv("despachos.csv", filas, encabezados)
+
+# ── DESPACHOS: líneas de productos por orden de venta ─────────────────────────
+
+def extraer_despachos_lineas(models, uid):
+    log.info("Extrayendo líneas de despachos (sale.order.line)...")
+
+    lineas = odoo_get(models, uid, "sale.order.line",
+        [["order_id.state", "in", ["sale", "done"]]],
+        ["id", "order_id", "product_id", "product_template_id",
+         "product_uom_qty", "product_uom", "price_unit", "price_subtotal"]
+    )
+
+    filas = []
+    for l in lineas:
+        filas.append({
+            "orden_venta":    val(l.get("order_id")),
+            "producto":       val(l.get("product_id")),
+            "producto_template": val(l.get("product_template_id")),
+            "cantidad":       round(float(l.get("product_uom_qty") or 0), 3),
+            "unidad_medida":  val(l.get("product_uom")),
+            "precio_unitario":round(float(l.get("price_unit") or 0), 4),
+            "subtotal":       round(float(l.get("price_subtotal") or 0), 2),
+            "actualizado":    ahora(),
+        })
+
+    encabezados = ["orden_venta","producto","producto_template","cantidad",
+                   "unidad_medida","precio_unitario","subtotal","actualizado"]
+    escribir_csv("despachos_lineas.csv", filas, encabezados)
+
+# ── COMPRAS: líneas de productos por orden de compra ──────────────────────────
+
+ESTADO_COMPRA = {
+    "draft": "Borrador", "sent": "Enviada", "to approve": "Por aprobar",
+    "purchase": "Orden de compra", "done": "Bloqueada", "cancel": "Cancelada",
+}
+
+def extraer_compras_lineas(models, uid):
+    log.info("Extrayendo líneas de compras (purchase.order + purchase.order.line)...")
+
+    # Cabecera de compras
+    compras = odoo_get(models, uid, "purchase.order",
+        [["state", "in", ["purchase", "done", "sent"]]],
+        ["id", "name", "partner_id", "date_order", "date_planned",
+         "amount_total", "state", "user_id", "picking_ids"]
+    )
+
+    # Estado de recepción por compra
+    picking_ids = [pid for c in compras for pid in (c.get("picking_ids") or [])]
+    pickings_raw = odoo_get(models, uid, "stock.picking",
+        [["id", "in", picking_ids], ["picking_type_code", "=", "incoming"]],
+        ["id", "state", "purchase_id"]
+    ) if picking_ids else []
+
+    pick_por_compra = {}
+    for p in pickings_raw:
+        if p.get("purchase_id"):
+            pick_por_compra.setdefault(p["purchase_id"][0], []).append(p["state"])
+
+    # Índice de cabeceras por id
+    compras_idx = {c["id"]: c for c in compras}
+    compra_ids  = list(compras_idx.keys())
+
+    # Líneas de compra
+    lineas = odoo_get(models, uid, "purchase.order.line",
+        [["order_id", "in", compra_ids]],
+        ["id", "order_id", "product_id", "product_qty",
+         "product_uom", "price_unit", "price_subtotal", "date_planned"]
+    )
+
+    filas = []
+    for l in lineas:
+        cid = l["order_id"][0] if l.get("order_id") else None
+        cab = compras_idx.get(cid, {})
+
+        estados_pick = pick_por_compra.get(cid, [])
+        if not estados_pick:
+            estado_recepcion = "Sin recepción"
+        elif all(s == "done" for s in estados_pick):
+            estado_recepcion = "Recibida completa"
+        elif any(s == "done" for s in estados_pick):
+            estado_recepcion = "Recibida parcial"
+        else:
+            estado_recepcion = "Pendiente recepción"
+
+        date_planned = val(l.get("date_planned")) or val(cab.get("date_planned"))
+        vencida = ""
+        if date_planned and estado_recepcion not in ("Recibida completa",):
+            dp = datetime.strptime(str(date_planned)[:19], "%Y-%m-%d %H:%M:%S")
+            vencida = "Sí" if datetime.now() > dp else "No"
+
+        filas.append({
+            "orden_compra":      val(l.get("order_id")),
+            "proveedor":         val(cab.get("partner_id")),
+            "responsable":       val(cab.get("user_id")),
+            "estado_compra":     ESTADO_COMPRA.get(cab.get("state",""), cab.get("state","")),
+            "estado_recepcion":  estado_recepcion,
+            "producto":          val(l.get("product_id")),
+            "cantidad":          round(float(l.get("product_qty") or 0), 3),
+            "unidad_medida":     val(l.get("product_uom")),
+            "precio_unitario":   round(float(l.get("price_unit") or 0), 4),
+            "subtotal":          round(float(l.get("price_subtotal") or 0), 2),
+            "fecha_orden":       utc_a_local(val(cab.get("date_order")), "%Y-%m-%d %H:%M"),
+            "fecha_planificada": utc_a_local(date_planned, "%Y-%m-%d %H:%M"),
+            "vencida":           vencida,
+            "monto_total_orden": round(float(cab.get("amount_total") or 0), 2),
+            "actualizado":       ahora(),
+        })
+
+    encabezados = ["orden_compra","proveedor","responsable","estado_compra","estado_recepcion",
+                   "producto","cantidad","unidad_medida","precio_unitario","subtotal",
+                   "fecha_orden","fecha_planificada","vencida","monto_total_orden","actualizado"]
+    escribir_csv("compras_lineas.csv", filas, encabezados)
+
+# ── PRODUCCIÓN: órdenes + órdenes de trabajo ──────────────────────────────────
+
+ESTADO_MO = {
+    "draft": "Borrador", "confirmed": "Confirmada", "progress": "En progreso",
+    "to_close": "Por cerrar", "done": "Terminada", "cancel": "Cancelada",
+}
+ESTADO_WO = {
+    "pending": "Pendiente", "ready": "Lista", "progress": "En progreso",
+    "done": "Terminada", "cancel": "Cancelada",
+}
+
+def extraer_produccion(models, uid):
+    log.info("Extrayendo producción (mrp.production + mrp.workorder)...")
+
+    ordenes = odoo_get(models, uid, "mrp.production",
+        [["state", "not in", ["cancel", "draft"]]],
+        ["id", "name", "product_id", "product_qty", "qty_produced",
+         "product_uom_id", "lot_producing_id",
+         "state", "date_start", "date_finished", "production_date",
+         "bom_id", "workorder_ids"]
+    )
+
+    # Órdenes de trabajo de todas las producciones
+    wo_ids = [wid for o in ordenes for wid in (o.get("workorder_ids") or [])]
+    workorders = odoo_get(models, uid, "mrp.workorder",
+        [["id", "in", wo_ids]],
+        ["id", "name", "production_id", "state", "workcenter_id",
+         "duration_expected", "duration", "date_start", "date_finished"]
+    ) if wo_ids else []
+
+    wo_por_produccion = {}
+    for wo in workorders:
+        if wo.get("production_id"):
+            wo_por_produccion.setdefault(wo["production_id"][0], []).append(wo)
+
+    filas = []
+    for o in ordenes:
+        qty_plan = float(o.get("product_qty") or 0)
+        qty_real = float(o.get("qty_produced") or 0)
+        avance   = round((qty_real / qty_plan * 100), 1) if qty_plan else 0
+
+        prod_date = val(o.get("production_date"))
+        wos = wo_por_produccion.get(o["id"], [])
+
+        # Una fila por orden de trabajo (o una fila sola si no tiene)
+        if wos:
+            for wo in wos:
+                dur_esperada = round(float(wo.get("duration_expected") or 0), 1)
+                dur_real     = round(float(wo.get("duration") or 0), 1)
+                filas.append({
+                    "orden_produccion":   val(o["name"]),
+                    "producto":           val(o["product_id"]),
+                    "qty_planificada":    qty_plan,
+                    "qty_producida":      qty_real,
+                    "avance_pct":         avance,
+                    "unidad":             val(o.get("product_uom_id")),
+                    "lote":               val(o.get("lot_producing_id")),
+                    "estado_produccion":  ESTADO_MO.get(o["state"], o["state"]),
+                    "fecha_produccion":   str(prod_date)[:10] if prod_date else "",
+                    "fecha_inicio":       utc_a_local(val(o.get("date_start")), "%Y-%m-%d %H:%M"),
+                    "fecha_fin":          utc_a_local(val(o.get("date_finished")), "%Y-%m-%d %H:%M"),
+                    "tiene_bom":          "Sí" if o.get("bom_id") else "No",
+                    "orden_trabajo":      val(wo.get("name")),
+                    "centro_trabajo":     val(wo.get("workcenter_id")),
+                    "estado_ot":          ESTADO_WO.get(wo.get("state",""), wo.get("state","")),
+                    "duracion_esperada_min": dur_esperada,
+                    "duracion_real_min":     dur_real,
+                    "ot_fecha_inicio":    utc_a_local(val(wo.get("date_start")), "%Y-%m-%d %H:%M"),
+                    "ot_fecha_fin":       utc_a_local(val(wo.get("date_finished")), "%Y-%m-%d %H:%M"),
+                    "actualizado":        ahora(),
+                })
+        else:
+            filas.append({
+                "orden_produccion":   val(o["name"]),
+                "producto":           val(o["product_id"]),
+                "qty_planificada":    qty_plan,
+                "qty_producida":      qty_real,
+                "avance_pct":         avance,
+                "estado_produccion":  ESTADO_MO.get(o["state"], o["state"]),
+                "fecha_produccion":   str(prod_date)[:10] if prod_date else "",
+                "fecha_inicio":       utc_a_local(val(o.get("date_start")), "%Y-%m-%d %H:%M"),
+                "fecha_fin":          utc_a_local(val(o.get("date_finished")), "%Y-%m-%d %H:%M"),
+                "tiene_bom":          "Sí" if o.get("bom_id") else "No",
+                "orden_trabajo":      "",
+                "centro_trabajo":     "",
+                "estado_ot":          "",
+                "duracion_esperada_min": "",
+                "duracion_real_min":     "",
+                "ot_fecha_inicio":    "",
+                "ot_fecha_fin":       "",
+                "actualizado":        ahora(),
+            })
+
+    encabezados = ["orden_produccion","producto","unidad","lote","qty_planificada","qty_producida","avance_pct",
+                   "estado_produccion","fecha_produccion","fecha_inicio","fecha_fin","tiene_bom",
+                   "orden_trabajo","centro_trabajo","estado_ot",
+                   "duracion_esperada_min","duracion_real_min","ot_fecha_inicio","ot_fecha_fin","actualizado"]
+    escribir_csv("produccion.csv", filas, encabezados)
+
+# ── TALLER: empleados por orden de trabajo ─────────────────────────────────────
+
+def extraer_taller(models, uid):
+    log.info("Extrayendo taller (mrp.workorder + empleados + productividad)...")
+
+    hoy = datetime.now().strftime("%Y-%m-%d")
+
+    # Órdenes de trabajo activas (lista o en progreso) + las de hoy
+    workorders = odoo_get(models, uid, "mrp.workorder",
+        [["state", "in", ["ready", "progress", "done"]],
+         ["date_start", ">=", f"{hoy} 00:00:00"]],
+        ["id", "name", "production_id", "workcenter_id", "state",
+         "employee_ids", "qty_production", "qty_produced",
+         "duration_expected", "duration", "date_start", "date_finished"]
+    )
+
+    # Nombres de empleados (many2many → necesitamos leer hr.employee)
+    emp_ids = list({eid for wo in workorders for eid in (wo.get("employee_ids") or [])})
+    empleados_raw = odoo_get(models, uid, "hr.employee",
+        [["id", "in", emp_ids]],
+        ["id", "name", "job_id", "department_id"]
+    ) if emp_ids else []
+    emp_idx = {e["id"]: e for e in empleados_raw}
+
+    # Productividad del día (bloques de tiempo por empleado)
+    productividad = odoo_get(models, uid, "mrp.workcenter.productivity",
+        [["date_start", ">=", f"{hoy} 00:00:00"]],
+        ["id", "workorder_id", "employee_id", "workcenter_id",
+         "date_start", "date_end", "duration", "loss_id"]
+    )
+
+    # Índice productividad por workorder
+    prod_por_wo = {}
+    for p in productividad:
+        if p.get("workorder_id"):
+            prod_por_wo.setdefault(p["workorder_id"][0], []).append(p)
+
+    filas = []
+    for wo in workorders:
+        wo_id = wo["id"]
+        emp_ids_wo = wo.get("employee_ids") or []
+        prods_wo   = prod_por_wo.get(wo_id, [])
+
+        avance = 0.0
+        qty_plan = float(wo.get("qty_production") or 0)
+        qty_real = float(wo.get("qty_produced") or 0)
+        if qty_plan:
+            avance = round(qty_real / qty_plan * 100, 1)
+
+        # Si hay empleados asignados, una fila por empleado
+        if emp_ids_wo:
+            for eid in emp_ids_wo:
+                emp = emp_idx.get(eid, {})
+                # Minutos trabajados por este empleado en esta OT hoy
+                mins = sum(
+                    float(p.get("duration") or 0)
+                    for p in prods_wo
+                    if p.get("employee_id") and p["employee_id"][0] == eid
+                )
+                filas.append({
+                    "fecha":               hoy,
+                    "orden_trabajo":       f"{val(wo.get('production_id'))} - {val(wo.get('name'))}",
+                    "centro_trabajo":      val(wo.get("workcenter_id")),
+                    "estado_ot":           ESTADO_WO.get(wo.get("state",""), wo.get("state","")),
+                    "empleado":            emp.get("name",""),
+                    "puesto":              val(emp.get("job_id")),
+                    "departamento":        val(emp.get("department_id")),
+                    "qty_planificada":     qty_plan,
+                    "qty_producida":       qty_real,
+                    "avance_pct":          avance,
+                    "duracion_esperada_min": round(float(wo.get("duration_expected") or 0), 1),
+                    "duracion_real_min":     round(float(wo.get("duration") or 0), 1),
+                    "minutos_empleado_hoy":  round(mins, 1),
+                    "ot_fecha_inicio":     utc_a_local(val(wo.get("date_start")), "%Y-%m-%d %H:%M"),
+                    "ot_fecha_fin":        utc_a_local(val(wo.get("date_finished")), "%Y-%m-%d %H:%M"),
+                    "actualizado":         ahora(),
+                })
+        else:
+            # Sin empleado asignado aún
+            filas.append({
+                "fecha":               hoy,
+                "orden_trabajo":       f"{val(wo.get('production_id'))} - {val(wo.get('name'))}",
+                "centro_trabajo":      val(wo.get("workcenter_id")),
+                "estado_ot":           ESTADO_WO.get(wo.get("state",""), wo.get("state","")),
+                "empleado":            "Sin asignar",
+                "puesto":              "",
+                "departamento":        "",
+                "qty_planificada":     qty_plan,
+                "qty_producida":       qty_real,
+                "avance_pct":          avance,
+                "duracion_esperada_min": round(float(wo.get("duration_expected") or 0), 1),
+                "duracion_real_min":     round(float(wo.get("duration") or 0), 1),
+                "minutos_empleado_hoy":  0,
+                "ot_fecha_inicio":     utc_a_local(val(wo.get("date_start")), "%Y-%m-%d %H:%M"),
+                "ot_fecha_fin":        utc_a_local(val(wo.get("date_finished")), "%Y-%m-%d %H:%M"),
+                "actualizado":         ahora(),
+            })
+
+    encabezados = ["fecha","orden_trabajo","centro_trabajo","estado_ot",
+                   "empleado","puesto","departamento",
+                   "qty_planificada","qty_producida","avance_pct",
+                   "duracion_esperada_min","duracion_real_min","minutos_empleado_hoy",
+                   "ot_fecha_inicio","ot_fecha_fin","actualizado"]
+    escribir_csv("taller.csv", filas, encabezados)
+
+# ── Main ───────────────────────────────────────────────────────────────────────
+
+def main():
+    log.info("=" * 60)
+    log.info("Extractor Odoo → CSV  |  Healthy Food")
+    log.info(f"Inicio: {ahora()}")
+    log.info(f"Destino: {OUT_DIR}")
+    log.info("=" * 60)
+
+    os.makedirs(OUT_DIR, exist_ok=True)
+
+    try:
+        uid, models = conectar()
+        log.info(f"Conectado a Odoo (uid={uid})")
+    except Exception as e:
+        log.error(f"Error de conexión: {e}")
+        return
+
+    extraer_despachos(models, uid)
+    extraer_despachos_lineas(models, uid)
+    extraer_compras_lineas(models, uid)
+    extraer_produccion(models, uid)
+    extraer_taller(models, uid)
+
+    log.info("=" * 60)
+    log.info(f"✓ Extracción completa — {ahora()}")
+    log.info("=" * 60)
+
+if __name__ == "__main__":
+    main()

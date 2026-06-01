@@ -1,0 +1,38 @@
+name: Extraer datos Odoo → CSV
+
+on:
+  schedule:
+    - cron: '0,30 * * * *'   # cada 30 minutos
+  workflow_dispatch:           # también se puede lanzar manualmente
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependencias
+        run: pip install requests
+
+      - name: Ejecutar extractor
+        env:
+          ODOO_URL:  ${{ secrets.ODOO_URL }}
+          ODOO_DB:   ${{ secrets.ODOO_DB }}
+          ODOO_USER: ${{ secrets.ODOO_USER }}
+          ODOO_PASS: ${{ secrets.ODOO_PASS }}
+        run: python odoo_to_csv.py
+
+      - name: Commit y push de los CSV
+        run: |
+          git config user.name  "hf-dashboard-bot"
+          git config user.email "bot@healthyfood.com.ec"
+          git add dashboard-data/
+          git diff --staged --quiet || git commit -m "chore: actualizar datos $(date -u '+%Y-%m-%d %H:%M') UTC"
+          git push
