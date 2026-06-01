@@ -397,106 +397,122 @@ def extraer_produccion(models, uid):
 # ── TALLER: empleados por orden de trabajo ─────────────────────────────────────
 
 def extraer_taller(models, uid):
-    log.info("Extrayendo taller (mrp.workorder + empleados + productividad)...")
+    log.info("Extrayendo taller (mrp.workorder + productividad)...")
 
     hoy = datetime.now().strftime("%Y-%m-%d")
+    # UTC equivalente de inicio del día en Quito (UTC-5)
+    hoy_utc = (datetime.now().replace(hour=0, minute=0, second=0, microsecond=0) +
+               timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S")
 
-    # Órdenes de trabajo activas (lista o en progreso) + las de hoy
+    # OTs activas (ready/progress) sin filtrar por fecha
+    # + OTs terminadas hoy
     workorders = odoo_get(models, uid, "mrp.workorder",
         [["state", "in", ["ready", "progress", "done"]],
-         ["date_start", ">=", f"{hoy} 00:00:00"]],
+         ["production_id.state", "not in", ["cancel", "draft"]]],
         ["id", "name", "production_id", "workcenter_id", "state",
-         "employee_ids", "qty_production", "qty_produced",
+         "qty_production", "qty_produced",
          "duration_expected", "duration", "date_start", "date_finished"]
     )
 
-    # Nombres de empleados (many2many → necesitamos leer hr.employee)
-    emp_ids = list({eid for wo in workorders for eid in (wo.get("employee_ids") or [])})
+    wo_ids = [wo["id"] for wo in workorders]
+
+    # Toda la productividad de hoy (registros de tiempo con empleado)
+    productividad = odoo_get(models, uid, "mrp.workcenter.productivity",
+        [["workorder_id", "in", wo_ids],
+         ["date_start", ">=", hoy_utc]],
+        ["id", "workorder_id", "employee_id", "workcenter_id",
+         "date_start", "date_end", "duration", "loss_id"]
+    ) if wo_ids else []
+
+    # Índice: workorder_id → lista de registros de productividad
+    prod_por_wo = {}
+    for p in productividad:
+        if p.get("workorder_id"):
+            prod_por_wo.setdefault(p["workorder_id"][0], []).append(p)
+
+    # Empleados únicos referenciados
+    emp_ids = list({p["employee_id"][0] for p in productividad
+                    if p.get("employee_id") and p["employee_id"] is not False})
     empleados_raw = odoo_get(models, uid, "hr.employee",
         [["id", "in", emp_ids]],
         ["id", "name", "job_id", "department_id"]
     ) if emp_ids else []
     emp_idx = {e["id"]: e for e in empleados_raw}
 
-    # Productividad del día (bloques de tiempo por empleado)
-    productividad = odoo_get(models, uid, "mrp.workcenter.productivity",
-        [["date_start", ">=", f"{hoy} 00:00:00"]],
-        ["id", "workorder_id", "employee_id", "workcenter_id",
-         "date_start", "date_end", "duration", "loss_id"]
-    )
-
-    # Índice productividad por workorder
-    prod_por_wo = {}
-    for p in productividad:
-        if p.get("workorder_id"):
-            prod_por_wo.setdefault(p["workorder_id"][0], []).append(p)
-
     filas = []
     for wo in workorders:
-        wo_id = wo["id"]
-        emp_ids_wo = wo.get("employee_ids") or []
-        prods_wo   = prod_por_wo.get(wo_id, [])
+        wo_id    = wo["id"]
+        prods_wo = prod_por_wo.get(wo_id, [])
 
-        avance = 0.0
         qty_plan = float(wo.get("qty_production") or 0)
         qty_real = float(wo.get("qty_produced") or 0)
-        if qty_plan:
-            avance = round(qty_real / qty_plan * 100, 1)
+        avance   = round(qty_real / qty_plan * 100, 1) if qty_plan else 0
 
-        # Si hay empleados asignados, una fila por empleado
-        if emp_ids_wo:
-            for eid in emp_ids_wo:
-                emp = emp_idx.get(eid, {})
-                # Minutos trabajados por este empleado en esta OT hoy
-                mins = sum(
-                    float(p.get("duration") or 0)
-                    for p in prods_wo
-                    if p.get("employee_id") and p["employee_id"][0] == eid
-                )
-                filas.append({
-                    "fecha":               hoy,
-                    "orden_trabajo":       f"{val(wo.get('production_id'))} - {val(wo.get('name'))}",
-                    "centro_trabajo":      val(wo.get("workcenter_id")),
-                    "estado_ot":           ESTADO_WO.get(wo.get("state",""), wo.get("state","")),
-                    "empleado":            emp.get("name",""),
+        # Fechas reales de la OT
+        ot_inicio = utc_a_local(val(wo.get("date_start")), "%Y-%m-%d %H:%M")
+        ot_fin    = utc_a_local(val(wo.get("date_finished")), "%Y-%m-%d %H:%M")
+
+        base = {
+            "fecha":                 hoy,
+            "orden_trabajo":         f"{val(wo.get('production_id'))} - {val(wo.get('name'))}",
+            "centro_trabajo":        val(wo.get("workcenter_id")),
+            "estado_ot":             ESTADO_WO.get(wo.get("state",""), wo.get("state","")),
+            "qty_planificada":       qty_plan,
+            "qty_producida":         qty_real,
+            "avance_pct":            avance,
+            "duracion_esperada_min": round(float(wo.get("duration_expected") or 0), 1),
+            "duracion_real_min":     round(float(wo.get("duration") or 0), 1),
+            "ot_fecha_inicio":       ot_inicio,
+            "ot_fecha_fin":          ot_fin,
+            "actualizado":           ahora(),
+        }
+
+        # Agrupar registros de productividad por empleado
+        emp_registros = {}
+        for p in prods_wo:
+            if p.get("employee_id") and p["employee_id"] is not False:
+                eid = p["employee_id"][0]
+                emp_registros.setdefault(eid, []).append(p)
+
+        if emp_registros:
+            for eid, registros in emp_registros.items():
+                emp  = emp_idx.get(eid, {})
+                mins = round(sum(float(r.get("duration") or 0) for r in registros), 1)
+                # Primer inicio y último fin del empleado en esta OT hoy
+                inicios = [r["date_start"] for r in registros if r.get("date_start")]
+                fines   = [r["date_end"]   for r in registros if r.get("date_end") and r["date_end"] is not False]
+                emp_inicio = utc_a_local(min(inicios), "%Y-%m-%d %H:%M") if inicios else ""
+                emp_fin    = utc_a_local(max(fines),   "%Y-%m-%d %H:%M") if fines   else "En curso"
+
+                fila = dict(base)
+                fila.update({
+                    "empleado":            emp.get("name", ""),
                     "puesto":              val(emp.get("job_id")),
                     "departamento":        val(emp.get("department_id")),
-                    "qty_planificada":     qty_plan,
-                    "qty_producida":       qty_real,
-                    "avance_pct":          avance,
-                    "duracion_esperada_min": round(float(wo.get("duration_expected") or 0), 1),
-                    "duracion_real_min":     round(float(wo.get("duration") or 0), 1),
-                    "minutos_empleado_hoy":  round(mins, 1),
-                    "ot_fecha_inicio":     utc_a_local(val(wo.get("date_start")), "%Y-%m-%d %H:%M"),
-                    "ot_fecha_fin":        utc_a_local(val(wo.get("date_finished")), "%Y-%m-%d %H:%M"),
-                    "actualizado":         ahora(),
+                    "minutos_empleado_hoy":mins,
+                    "emp_fecha_inicio":    emp_inicio,
+                    "emp_fecha_fin":       emp_fin,
                 })
+                filas.append(fila)
         else:
-            # Sin empleado asignado aún
-            filas.append({
-                "fecha":               hoy,
-                "orden_trabajo":       f"{val(wo.get('production_id'))} - {val(wo.get('name'))}",
-                "centro_trabajo":      val(wo.get("workcenter_id")),
-                "estado_ot":           ESTADO_WO.get(wo.get("state",""), wo.get("state","")),
-                "empleado":            "Sin asignar",
+            # OT sin registros de empleado hoy
+            fila = dict(base)
+            fila.update({
+                "empleado":            "Sin registro hoy",
                 "puesto":              "",
                 "departamento":        "",
-                "qty_planificada":     qty_plan,
-                "qty_producida":       qty_real,
-                "avance_pct":          avance,
-                "duracion_esperada_min": round(float(wo.get("duration_expected") or 0), 1),
-                "duracion_real_min":     round(float(wo.get("duration") or 0), 1),
-                "minutos_empleado_hoy":  0,
-                "ot_fecha_inicio":     utc_a_local(val(wo.get("date_start")), "%Y-%m-%d %H:%M"),
-                "ot_fecha_fin":        utc_a_local(val(wo.get("date_finished")), "%Y-%m-%d %H:%M"),
-                "actualizado":         ahora(),
+                "minutos_empleado_hoy":0,
+                "emp_fecha_inicio":    "",
+                "emp_fecha_fin":       "",
             })
+            filas.append(fila)
 
     encabezados = ["fecha","orden_trabajo","centro_trabajo","estado_ot",
                    "empleado","puesto","departamento",
                    "qty_planificada","qty_producida","avance_pct",
                    "duracion_esperada_min","duracion_real_min","minutos_empleado_hoy",
-                   "ot_fecha_inicio","ot_fecha_fin","actualizado"]
+                   "ot_fecha_inicio","ot_fecha_fin","emp_fecha_inicio","emp_fecha_fin",
+                   "actualizado"]
     escribir_csv("taller.csv", filas, encabezados)
 
 # ── Main ───────────────────────────────────────────────────────────────────────
