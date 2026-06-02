@@ -38,7 +38,7 @@ def utc_a_local(fecha_str, formato="%Y-%m-%d %H:%M"):
 ODOO_URL  = os.environ.get("ODOO_URL",  "https://healthyfoodv18-test-11-05-26-32038247.dev.odoo.com")
 ODOO_DB   = os.environ.get("ODOO_DB",   "healthyfoodv18-test-11-05-26-32038247")
 ODOO_USER = os.environ.get("ODOO_USER", "sistemasdegestion@healthyfood.com.ec")
-ODOO_PASS = os.environ.get("ODOO_PASS", "Quantum#10$")
+ODOO_PASS = os.environ.get("ODOO_PASS", "a294bd85b33dd33118b0ee793bec7047eb72a420")
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 OUT_DIR  = os.environ.get("OUTPUT_DIR", os.path.join(BASE_DIR, "dashboard-data"))
