@@ -423,41 +423,77 @@ function renderRecepciones(compras) {
   return filas.length;
 }
 
+function barAvance(avance) {
+  const barColor = avance >= 100 ? '#6a8f2f' : avance > 50 ? '#8ab93f' : '#e07b2a';
+  return `<div style="background:#eee;border-radius:4px;height:8px;width:70px;display:inline-block;vertical-align:middle">
+    <div style="background:${barColor};width:${Math.min(avance,100)}%;height:8px;border-radius:4px"></div>
+  </div>
+  <span style="font-size:.7rem;color:#666;margin-left:4px">${avance}%</span>`;
+}
+
 function renderProduccion(produccion) {
   const hoy = hoyStr();
   const vistos = new Set();
-  const filas = produccion.filter(r => {
+
+  const filasHoy      = [];
+  const filasArrastre = [];
+
+  produccion.forEach(r => {
     const key = r.orden_produccion;
-    if (vistos.has(key)) return false;
+    if (vistos.has(key)) return;
     vistos.add(key);
-    const esHoy = (r.fecha_produccion || '').startsWith(hoy);
-    const activa = ['En progreso','Por cerrar'].includes(r.estado_produccion);
-    return esHoy || activa;
+    const esHoy   = (r.fecha_produccion || '').startsWith(hoy);
+    const activa  = ['En progreso','Por cerrar'].includes(r.estado_produccion);
+    if (esHoy)              filasHoy.push(r);
+    else if (activa)        filasArrastre.push(r);
   });
+
   const tbody = document.getElementById('tbody-produccion');
-  if (!filas.length) {
+  let html = '';
+
+  if (!filasHoy.length && !filasArrastre.length) {
     tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999">Sin órdenes de producción para hoy</td></tr>';
-    return filas.length;
+    return 0;
   }
-  tbody.innerHTML = filas.map(r => {
-    const avance = parseFloat(r.avance_pct) || 0;
-    const barColor = avance >= 100 ? '#6a8f2f' : avance > 50 ? '#8ab93f' : '#e07b2a';
-    const barHtml = `
-      <div style="background:#eee;border-radius:4px;height:8px;width:80px">
-        <div style="background:${barColor};width:${Math.min(avance,100)}%;height:8px;border-radius:4px"></div>
-      </div>
-      <span style="font-size:.7rem;color:#666">${avance}%</span>`;
-    return `
-    <tr>
-      <td><b>${r.orden_produccion || '—'}</b></td>
-      <td>${r.producto || '—'}</td>
-      <td>${r.qty_planificada || '—'}</td>
-      <td>${r.unidad || ''}</td>
-      <td>${barHtml}</td>
-      <td>${estadoBadge(r.estado_produccion)}</td>
-    </tr>`;
-  }).join('');
-  return filas.length;
+
+  // Filas de hoy
+  if (filasHoy.length) {
+    html += filasHoy.map(r => {
+      const avance = parseFloat(r.avance_pct) || 0;
+      return `<tr>
+        <td><b>${r.orden_produccion || '—'}</b></td>
+        <td>${r.producto || '—'}</td>
+        <td>${r.qty_planificada || '—'}</td>
+        <td>${r.unidad || ''}</td>
+        <td>${barAvance(avance)}</td>
+        <td>${estadoBadge(r.estado_produccion)}</td>
+      </tr>`;
+    }).join('');
+  } else {
+    html += '<tr><td colspan="6" style="text-align:center;color:#999;font-style:italic">Sin órdenes programadas para hoy</td></tr>';
+  }
+
+  // Separador + filas de arrastre
+  if (filasArrastre.length) {
+    html += `<tr><td colspan="6" style="background:#fff8e1;color:#856404;font-size:.75rem;font-weight:700;padding:5px 8px;">
+      ⚠️ En curso de días anteriores (${filasArrastre.length})
+    </td></tr>`;
+    html += filasArrastre.map(r => {
+      const avance = parseFloat(r.avance_pct) || 0;
+      return `<tr style="opacity:.8;background:#fffdf0">
+        <td><b>${r.orden_produccion || '—'}</b><br>
+            <span style="font-size:.68rem;color:#999">${r.fecha_produccion || ''}</span></td>
+        <td>${r.producto || '—'}</td>
+        <td>${r.qty_planificada || '—'}</td>
+        <td>${r.unidad || ''}</td>
+        <td>${barAvance(avance)}</td>
+        <td>${estadoBadge(r.estado_produccion)}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  tbody.innerHTML = html;
+  return filasHoy.length;
 }
 
 function renderDespachos(despachos, lineas) {
