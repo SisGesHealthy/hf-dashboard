@@ -295,9 +295,8 @@
 <footer>Actualización automática cada 30 minutos · Datos desde Odoo · Healthy Food © 2026</footer>
 
 <script>
-const GITHUB_TOKEN = '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';
-const REPO         = 'SisGesHealthy/hf-dashboard';
-const BRANCH       = 'main';
+const REPO   = 'SisGesHealthy/hf-dashboard';
+const BRANCH = 'main';
 
 function csvUrl(nombre) {
   return `https://raw.githubusercontent.com/${REPO}/${BRANCH}/dashboard-data/${nombre}`;
@@ -305,10 +304,7 @@ function csvUrl(nombre) {
 
 async function leerCSV(nombre) {
   const url = csvUrl(nombre);
-  const res = await fetch(url, {
-    headers: { Authorization: `token ${GITHUB_TOKEN}` },
-    cache: 'no-store'
-  });
+  const res = await fetch(url + '?t=' + Date.now(), { cache: 'no-store' });
   const texto = await res.text();
   return new Promise(resolve => {
     Papa.parse(texto, { header: true, skipEmptyLines: true,
