@@ -425,14 +425,13 @@ function renderRecepciones(compras) {
 
 function renderProduccion(produccion) {
   const hoy = hoyStr();
-  // Órdenes de hoy o en progreso
   const vistos = new Set();
   const filas = produccion.filter(r => {
     const key = r.orden_produccion;
     if (vistos.has(key)) return false;
     vistos.add(key);
-    const esHoy = (r.fecha_produccion || r.fecha_inicio || '').startsWith(hoy);
-    const activa = ['En progreso','Confirmada','Por cerrar'].includes(r.estado_produccion);
+    const esHoy = (r.fecha_produccion || '').startsWith(hoy);
+    const activa = ['En progreso','Por cerrar'].includes(r.estado_produccion);
     return esHoy || activa;
   });
   const tbody = document.getElementById('tbody-produccion');
