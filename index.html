@@ -140,6 +140,14 @@
     }
     .chart-wrap { padding: 10px 16px; height: 160px; }
 
+    /* ── COLAPSABLE ── */
+    .sep-arrastre {
+      cursor: pointer;
+      user-select: none;
+    }
+    .sep-arrastre:hover td { background: #fff0b0 !important; }
+    .toggle-icon { float: right; font-size: .8rem; margin-right: 4px; }
+
     /* ── FOOTER ── */
     footer {
       text-align: center;
@@ -405,7 +413,9 @@ function construirGrafico(recepciones, produccion, despachos) {
 // ── Tablas ─────────────────────────────────────────────────────────────────
 function renderRecepciones(compras) {
   const hoy = hoyStr();
-  const filas = compras.filter(r => (r.fecha_planificada || '').startsWith(hoy));
+  const filas = compras
+    .filter(r => (r.fecha_planificada || '').startsWith(hoy))
+    .sort((a, b) => (a.fecha_planificada || '').localeCompare(b.fecha_planificada || ''));
   const tbody = document.getElementById('tbody-recepciones');
   if (!filas.length) {
     tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999">Sin recepciones programadas para hoy</td></tr>';
@@ -473,14 +483,16 @@ function renderProduccion(produccion) {
     html += '<tr><td colspan="6" style="text-align:center;color:#999;font-style:italic">Sin órdenes programadas para hoy</td></tr>';
   }
 
-  // Separador + filas de arrastre
+  // Separador colapsable + filas de arrastre
   if (filasArrastre.length) {
-    html += `<tr><td colspan="6" style="background:#fff8e1;color:#856404;font-size:.75rem;font-weight:700;padding:5px 8px;">
-      ⚠️ En curso de días anteriores (${filasArrastre.length})
-    </td></tr>`;
+    html += `<tr class="sep-arrastre" onclick="toggleArrastre(this)">
+      <td colspan="6" style="background:#fff8e1;color:#856404;font-size:.75rem;font-weight:700;padding:5px 8px;">
+        ⚠️ En curso de días anteriores (${filasArrastre.length})
+        <span class="toggle-icon">▼</span>
+      </td></tr>`;
     html += filasArrastre.map(r => {
       const avance = parseFloat(r.avance_pct) || 0;
-      return `<tr style="opacity:.8;background:#fffdf0">
+      return `<tr class="arrastre-row" style="opacity:.8;background:#fffdf0">
         <td><b>${r.orden_produccion || '—'}</b><br>
             <span style="font-size:.68rem;color:#999">${r.fecha_produccion || ''}</span></td>
         <td>${r.producto || '—'}</td>
@@ -542,6 +554,16 @@ function renderDespachos(despachos, lineas) {
   });
   tbody.innerHTML = rows.join('');
   return filas.length;
+}
+
+// ── Colapsable arrastre ────────────────────────────────────────────────────
+function toggleArrastre(sepRow) {
+  const tbody = sepRow.closest('tbody');
+  const rows  = tbody.querySelectorAll('.arrastre-row');
+  const icon  = sepRow.querySelector('.toggle-icon');
+  const mostrar = rows.length && rows[0].style.display === 'none';
+  rows.forEach(r => r.style.display = mostrar ? '' : 'none');
+  if (icon) icon.textContent = mostrar ? '▼' : '▶';
 }
 
 // ── Carga principal ────────────────────────────────────────────────────────
