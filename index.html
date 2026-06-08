@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Operativo — Healthy Food</title>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --verde:      #6a8f2f;
+      --verde-claro:#8ab93f;
+      --verde-fondo:#f2f7eb;
+      --gris-fondo: #f5f5f5;
+      --blanco:     #ffffff;
+      --texto:      #2c2c2c;
+      --naranja:    #e07b2a;
+      --azul:       #2a7be0;
+      --rojo:       #d63b3b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--gris-fondo);
+      color: var(--texto);
+      font-size: 14px;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--verde);
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 10px 24px;
+      gap: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,.2);
+    }
+    header svg { width: 52px; height: 52px; flex-shrink: 0; }
+    .header-title { flex: 1; }
+    .header-title h1 { font-size: 1.4rem; font-weight: 700; letter-spacing: .5px; }
+    .header-title p  { font-size: .85rem; opacity: .85; }
+    #reloj { font-size: 1.1rem; font-weight: 600; text-align: right; white-space: nowrap; }
+    #reloj span { display: block; font-size: .75rem; font-weight: 400; opacity: .8; }
+
+    /* ── KPIs ── */
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      padding: 14px 24px 0;
+    }
+    .kpi {
+      background: var(--blanco);
+      border-radius: 10px;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+      border-left: 5px solid var(--verde);
+    }
+    .kpi.naranja { border-color: var(--naranja); }
+    .kpi.azul    { border-color: var(--azul); }
+    .kpi-icon { font-size: 2rem; }
+    .kpi-num  { font-size: 2.2rem; font-weight: 800; line-height: 1; color: var(--verde); }
+    .kpi.naranja .kpi-num { color: var(--naranja); }
+    .kpi.azul    .kpi-num { color: var(--azul); }
+    .kpi-label { font-size: .8rem; color: #666; margin-top: 2px; }
+
+    /* ── MAIN GRID ── */
+    .main {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 12px;
+      padding: 12px 24px 16px;
+    }
+
+    .card {
+      background: var(--blanco);
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .card-header {
+      padding: 10px 14px;
+      font-weight: 700;
+      font-size: .95rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: white;
+    }
+    .card-header.verde   { background: var(--verde); }
+    .card-header.naranja { background: var(--naranja); }
+    .card-header.azul    { background: var(--azul); }
+    .card-body { flex: 1; overflow: auto; }
+
+    /* ── TABLAS ── */
+    table { width: 100%; border-collapse: collapse; font-size: .8rem; }
+    thead th {
+      background: var(--verde-fondo);
+      color: var(--verde);
+      font-weight: 700;
+      padding: 6px 8px;
+      text-align: left;
+      position: sticky;
+      top: 0;
+      border-bottom: 2px solid var(--verde-claro);
+      white-space: nowrap;
+    }
+    .card-header.naranja ~ .card-body thead th { color: var(--naranja); background: #fdf3e8; border-color: var(--naranja); }
+    .card-header.azul    ~ .card-body thead th { color: var(--azul);    background: #e8f0fd; border-color: var(--azul); }
+    tbody tr:nth-child(even) { background: #fafafa; }
+    tbody tr:hover { background: #f0f7e6; }
+    td { padding: 5px 8px; border-bottom: 1px solid #eee; vertical-align: top; }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 20px;
+      font-size: .7rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .badge-ok      { background: #d4edda; color: #155724; }
+    .badge-warn    { background: #fff3cd; color: #856404; }
+    .badge-danger  { background: #f8d7da; color: #721c24; }
+    .badge-info    { background: #d1ecf1; color: #0c5460; }
+    .badge-pending { background: #e2e3e5; color: #383d41; }
+
+    /* ── GRÁFICO ── */
+    .chart-card {
+      grid-column: 1 / -1;
+    }
+    .chart-wrap { padding: 10px 16px; height: 160px; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 6px;
+      font-size: .72rem;
+      color: #999;
+    }
+
+    /* ── ÚLTIMA ACTUALIZACIÓN ── */
+    #ultima-act {
+      text-align: right;
+      padding: 4px 24px 0;
+      font-size: .72rem;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <!-- Logo SVG inline Healthy Food -->
+  <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50" cy="50" r="48" fill="white" opacity=".15"/>
+    <text x="50" y="46" text-anchor="middle" font-family="'Segoe UI',sans-serif"
+          font-weight="800" font-size="18" fill="white">Healthy</text>
+    <text x="50" y="66" text-anchor="middle" font-family="'Segoe UI',sans-serif"
+          font-weight="800" font-size="18" fill="white">Food</text>
+    <!-- rayos sol -->
+    <g stroke="white" stroke-width="2.5" stroke-linecap="round">
+      <line x1="50" y1="4"  x2="50" y2="12"/>
+      <line x1="50" y1="88" x2="50" y2="96"/>
+      <line x1="4"  y1="50" x2="12" y2="50"/>
+      <line x1="88" y1="50" x2="96" y2="50"/>
+      <line x1="15" y1="15" x2="21" y2="21"/>
+      <line x1="79" y1="79" x2="85" y2="85"/>
+      <line x1="85" y1="15" x2="79" y2="21"/>
+      <line x1="21" y1="79" x2="15" y2="85"/>
+    </g>
+  </svg>
+  <div class="header-title">
+    <h1>Dashboard Operativo</h1>
+    <p>Healthy Food Marcalman Ecuador S.A.</p>
+  </div>
+  <div id="reloj">
+    <span id="fecha-hoy"></span>
+    <span id="hora-ahora"></span>
+  </div>
+</header>
+
+<!-- KPIs -->
+<div class="kpis">
+  <div class="kpi azul">
+    <div class="kpi-icon">🚚</div>
+    <div>
+      <div class="kpi-num" id="kpi-recepciones">—</div>
+      <div class="kpi-label">Recepciones hoy</div>
+    </div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-icon">⚙️</div>
+    <div>
+      <div class="kpi-num" id="kpi-produccion">—</div>
+      <div class="kpi-label">Producción hoy</div>
+    </div>
+  </div>
+  <div class="kpi naranja">
+    <div class="kpi-icon">📦</div>
+    <div>
+      <div class="kpi-num" id="kpi-despachos">—</div>
+      <div class="kpi-label">Despachos hoy</div>
+    </div>
+  </div>
+</div>
+
+<div id="ultima-act">Cargando datos...</div>
+
+<!-- GRÁFICO -->
+<div class="main" style="grid-template-rows: auto; padding-bottom: 0;">
+  <div class="card chart-card">
+    <div class="card-header verde">📊 Actividad del día por hora</div>
+    <div class="chart-wrap">
+      <canvas id="grafico"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- TABLAS -->
+<div class="main">
+
+  <!-- RECEPCIONES -->
+  <div class="card">
+    <div class="card-header azul">🚚 Recepciones del día</div>
+    <div class="card-body">
+      <table>
+        <thead>
+          <tr>
+            <th>Orden</th>
+            <th>Hora</th>
+            <th>Proveedor</th>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-recepciones"><tr><td colspan="6">Cargando...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PRODUCCIÓN -->
+  <div class="card">
+    <div class="card-header verde">⚙️ Producción en planta</div>
+    <div class="card-body">
+      <table>
+        <thead>
+          <tr>
+            <th>Orden</th>
+            <th>Producto</th>
+            <th>Planif.</th>
+            <th>Ud.</th>
+            <th>Avance</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-produccion"><tr><td colspan="6">Cargando...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- DESPACHOS -->
+  <div class="card">
+    <div class="card-header naranja">📦 Despachos comprometidos</div>
+    <div class="card-body">
+      <table>
+        <thead>
+          <tr>
+            <th>Orden</th>
+            <th>Hora</th>
+            <th>Cliente</th>
+            <th>Producto</th>
+            <th>Cant.</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-despachos"><tr><td colspan="6">Cargando...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<footer>Actualización automática cada 30 minutos · Datos desde Odoo · Healthy Food © 2026</footer>
+
+<script>
+const GITHUB_TOKEN = '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';
+const REPO         = 'SisGesHealthy/hf-dashboard';
+const BRANCH       = 'main';
+
+function csvUrl(nombre) {
+  return `https://raw.githubusercontent.com/${REPO}/${BRANCH}/dashboard-data/${nombre}`;
+}
+
+async function leerCSV(nombre) {
+  const url = csvUrl(nombre);
+  const res = await fetch(url, {
+    headers: { Authorization: `token ${GITHUB_TOKEN}` },
+    cache: 'no-store'
+  });
+  const texto = await res.text();
+  return new Promise(resolve => {
+    Papa.parse(texto, { header: true, skipEmptyLines: true,
+      complete: r => resolve(r.data) });
+  });
+}
+
+// ── Reloj ──────────────────────────────────────────────────────────────────
+function actualizarReloj() {
+  const ahora = new Date();
+  const dias  = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio',
+                 'agosto','septiembre','octubre','noviembre','diciembre'];
+  document.getElementById('fecha-hoy').textContent =
+    `${dias[ahora.getDay()]}, ${ahora.getDate()} de ${meses[ahora.getMonth()]} de ${ahora.getFullYear()}`;
+  document.getElementById('hora-ahora').textContent =
+    ahora.toLocaleTimeString('es-EC', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+}
+setInterval(actualizarReloj, 1000);
+actualizarReloj();
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function hoyStr() {
+  const h = new Date();
+  return `${h.getFullYear()}-${String(h.getMonth()+1).padStart(2,'0')}-${String(h.getDate()).padStart(2,'0')}`;
+}
+
+function badge(texto, tipo) {
+  return `<span class="badge badge-${tipo}">${texto}</span>`;
+}
+
+function estadoBadge(estado) {
+  if (!estado) return '';
+  const e = estado.toLowerCase();
+  if (e.includes('despach') || e.includes('terminad') || e.includes('recibida completa'))
+    return badge(estado, 'ok');
+  if (e.includes('lista') || e.includes('en progreso') || e.includes('confirmada'))
+    return badge(estado, 'info');
+  if (e.includes('vencid') || e.includes('tarde') || e.includes('crítica'))
+    return badge(estado, 'danger');
+  if (e.includes('parcial') || e.includes('moderada'))
+    return badge(estado, 'warn');
+  return badge(estado, 'pending');
+}
+
+function horaDeStr(fechaStr) {
+  if (!fechaStr) return '—';
+  const partes = fechaStr.split(' ');
+  return partes[1] ? partes[1].substring(0,5) : '—';
+}
+
+// ── Gráfico ────────────────────────────────────────────────────────────────
+let graficoInst = null;
+
+function construirGrafico(recepciones, produccion, despachos) {
+  const hoy = hoyStr();
+  const horas = Array.from({length: 24}, (_, i) => `${String(i).padStart(2,'0')}:00`);
+
+  function contarPorHora(filas, campoFecha) {
+    const cnt = new Array(24).fill(0);
+    filas.forEach(f => {
+      const v = f[campoFecha] || '';
+      if (v.startsWith(hoy)) {
+        const h = parseInt(v.split(' ')[1]?.split(':')[0] || '0', 10);
+        if (h >= 0 && h < 24) cnt[h]++;
+      }
+    });
+    return cnt;
+  }
+
+  const datosRec  = contarPorHora(recepciones, 'fecha_planificada');
+  const datosProd = contarPorHora(produccion,  'fecha_inicio');
+  const datosDes  = contarPorHora(despachos,   'fecha_compromiso');
+
+  const ctx = document.getElementById('grafico').getContext('2d');
+  if (graficoInst) graficoInst.destroy();
+  graficoInst = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: horas,
+      datasets: [
+        { label: '🚚 Recepciones', data: datosRec,  backgroundColor: '#2a7be0aa' },
+        { label: '⚙️ Producción',  data: datosProd, backgroundColor: '#6a8f2faa' },
+        { label: '📦 Despachos',   data: datosDes,  backgroundColor: '#e07b2aaa' },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'top', labels: { font: { size: 11 } } } },
+      scales: {
+        x: { stacked: false, ticks: { font: { size: 10 } } },
+        y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 10 } } }
+      }
+    }
+  });
+}
+
+// ── Tablas ─────────────────────────────────────────────────────────────────
+function renderRecepciones(compras) {
+  const hoy = hoyStr();
+  const filas = compras.filter(r => (r.fecha_planificada || '').startsWith(hoy));
+  const tbody = document.getElementById('tbody-recepciones');
+  if (!filas.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999">Sin recepciones programadas para hoy</td></tr>';
+    return filas.length;
+  }
+  tbody.innerHTML = filas.map(r => `
+    <tr>
+      <td><b>${r.orden_compra || '—'}</b></td>
+      <td>${horaDeStr(r.fecha_planificada)}</td>
+      <td>${r.proveedor || '—'}</td>
+      <td>${r.producto || '—'}</td>
+      <td>${r.cantidad || '—'} ${r.unidad_medida || ''}</td>
+      <td>${estadoBadge(r.estado_recepcion)}</td>
+    </tr>`).join('');
+  return filas.length;
+}
+
+function renderProduccion(produccion) {
+  const hoy = hoyStr();
+  // Órdenes de hoy o en progreso
+  const vistos = new Set();
+  const filas = produccion.filter(r => {
+    const key = r.orden_produccion;
+    if (vistos.has(key)) return false;
+    vistos.add(key);
+    const esHoy = (r.fecha_produccion || r.fecha_inicio || '').startsWith(hoy);
+    const activa = ['En progreso','Confirmada','Por cerrar'].includes(r.estado_produccion);
+    return esHoy || activa;
+  });
+  const tbody = document.getElementById('tbody-produccion');
+  if (!filas.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999">Sin órdenes de producción para hoy</td></tr>';
+    return filas.length;
+  }
+  tbody.innerHTML = filas.map(r => {
+    const avance = parseFloat(r.avance_pct) || 0;
+    const barColor = avance >= 100 ? '#6a8f2f' : avance > 50 ? '#8ab93f' : '#e07b2a';
+    const barHtml = `
+      <div style="background:#eee;border-radius:4px;height:8px;width:80px">
+        <div style="background:${barColor};width:${Math.min(avance,100)}%;height:8px;border-radius:4px"></div>
+      </div>
+      <span style="font-size:.7rem;color:#666">${avance}%</span>`;
+    return `
+    <tr>
+      <td><b>${r.orden_produccion || '—'}</b></td>
+      <td>${r.producto || '—'}</td>
+      <td>${r.qty_planificada || '—'}</td>
+      <td>${r.unidad || ''}</td>
+      <td>${barHtml}</td>
+      <td>${estadoBadge(r.estado_produccion)}</td>
+    </tr>`;
+  }).join('');
+  return filas.length;
+}
+
+function renderDespachos(despachos, lineas) {
+  const hoy = hoyStr();
+  const filas = despachos.filter(r => (r.fecha_compromiso || '').startsWith(hoy));
+
+  // Índice de líneas por orden
+  const lineasIdx = {};
+  lineas.forEach(l => {
+    const k = l.orden_venta;
+    if (!lineasIdx[k]) lineasIdx[k] = [];
+    lineasIdx[k].push(l);
+  });
+
+  const tbody = document.getElementById('tbody-despachos');
+  if (!filas.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999">Sin despachos comprometidos para hoy</td></tr>';
+    return filas.length;
+  }
+
+  const rows = [];
+  filas.forEach(d => {
+    const lineasOV = lineasIdx[d.orden_venta] || [];
+    if (lineasOV.length) {
+      lineasOV.forEach((l, i) => {
+        rows.push(`
+          <tr>
+            ${i === 0 ? `<td rowspan="${lineasOV.length}"><b>${d.orden_venta}</b></td>
+                         <td rowspan="${lineasOV.length}">${horaDeStr(d.fecha_compromiso)}</td>
+                         <td rowspan="${lineasOV.length}">${d.cliente || '—'}</td>` : ''}
+            <td>${l.producto || '—'}</td>
+            <td>${l.cantidad || '—'} ${l.unidad_medida || ''}</td>
+            ${i === 0 ? `<td rowspan="${lineasOV.length}">${estadoBadge(d.estado_entrega)}</td>` : ''}
+          </tr>`);
+      });
+    } else {
+      rows.push(`
+        <tr>
+          <td><b>${d.orden_venta}</b></td>
+          <td>${horaDeStr(d.fecha_compromiso)}</td>
+          <td>${d.cliente || '—'}</td>
+          <td colspan="2">—</td>
+          <td>${estadoBadge(d.estado_entrega)}</td>
+        </tr>`);
+    }
+  });
+  tbody.innerHTML = rows.join('');
+  return filas.length;
+}
+
+// ── Carga principal ────────────────────────────────────────────────────────
+async function cargarDatos() {
+  try {
+    document.getElementById('ultima-act').textContent = 'Actualizando datos...';
+    const [compras, produccion, despachos, lineas] = await Promise.all([
+      leerCSV('compras_lineas.csv'),
+      leerCSV('produccion.csv'),
+      leerCSV('despachos.csv'),
+      leerCSV('despachos_lineas.csv'),
+    ]);
+
+    const nRec  = renderRecepciones(compras);
+    const nProd = renderProduccion(produccion);
+    const nDes  = renderDespachos(despachos, lineas);
+
+    document.getElementById('kpi-recepciones').textContent = nRec;
+    document.getElementById('kpi-produccion').textContent  = nProd;
+    document.getElementById('kpi-despachos').textContent   = nDes;
+
+    construirGrafico(compras, produccion, despachos);
+
+    const ahora = new Date().toLocaleTimeString('es-EC',
+      {hour:'2-digit', minute:'2-digit'});
+    document.getElementById('ultima-act').textContent =
+      `Última actualización de datos: ${ahora} · próxima en ~30 min`;
+
+  } catch(e) {
+    document.getElementById('ultima-act').textContent = 'Error al cargar datos: ' + e.message;
+    console.error(e);
+  }
+}
+
+// Cargar al inicio y cada 30 minutos
+cargarDatos();
+setInterval(cargarDatos, 30 * 60 * 1000);
+</script>
+</body>
+</html>
