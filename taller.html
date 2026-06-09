@@ -338,8 +338,10 @@ function renderAreas(filas, prodIdx) {
 // ── LEYENDA ÓRDENES ACTIVAS ───────────────────────────────────────────────
 function renderLeyenda(filas, prodIdx) {
   const vistas = {};
+  // Solo órdenes EN PROGRESO en el taller
   filas.forEach(f => {
     if (!f.orden_trabajo) return;
+    if (!(f.estado_ot || '').toLowerCase().includes('progreso')) return;
     const otCod = f.orden_trabajo.split(' - ')[0].trim();
     if (!vistas[otCod]) vistas[otCod] = prodIdx[otCod] || '';
   });
@@ -483,19 +485,19 @@ async function cargarDatos() {
   }
 }
 
-// Cargar y programar en :05 y :35
+// Cargar al inicio y refrescar en :05 y :35 de cada hora
 cargarDatos();
-function programarSiguiente() {
+function programarSiguienteActualizacion() {
   const ahora = new Date();
-  const min = ahora.getMinutes(), seg = ahora.getSeconds();
+  const min = ahora.getMinutes(), seg = ahora.getSeconds(), ms = ahora.getMilliseconds();
   let t;
   if (min < 5)       t = 5;
   else if (min < 35) t = 35;
   else               t = 65;
-  setTimeout(() => { cargarDatos(); programarSiguiente(); },
-    ((t - min) * 60 - seg) * 1000 - ahora.getMilliseconds());
+  setTimeout(() => { cargarDatos(); programarSiguienteActualizacion(); },
+    ((t - min) * 60 - seg) * 1000 - ms);
 }
-programarSiguiente();
+programarSiguienteActualizacion();
 </script>
 </body>
 </html>
