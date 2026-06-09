@@ -114,41 +114,49 @@
 
     /* cabecera horas */
     .gantt-tabla thead th {
-      font-size: .62rem; color: #888; font-weight: 600;
-      padding: 2px 0; text-align: center;
-      border-bottom: 1px solid #e0e0e0;
+      font-size: .68rem; color: #888; font-weight: 600;
+      padding: 3px 0; text-align: center;
+      border-bottom: 2px solid #e0e0e0;
       white-space: nowrap;
     }
     .gantt-tabla thead th.col-nombre {
-      text-align: left; padding-left: 6px; width: 150px; color: var(--verde);
+      text-align: left; padding-left: 8px; width: 160px; color: var(--verde);
     }
 
     /* filas empleado */
-    .gantt-tabla tbody tr { height: 26px; }
-    .gantt-tabla tbody tr:nth-child(even) { background: #fafafa; }
+    .gantt-tabla tbody tr { height: 34px; }
+    .gantt-tabla tbody tr:nth-child(even) { background: #f5f5f5; }
     .col-nombre-cell {
-      font-size: .72rem; font-weight: 600;
-      padding: 0 6px; white-space: nowrap;
+      font-size: .78rem; font-weight: 600;
+      padding: 0 8px; white-space: nowrap;
       overflow: hidden; text-overflow: ellipsis;
-      max-width: 150px; color: var(--texto);
+      max-width: 160px; color: var(--texto);
+      border-right: 2px solid #e0e0e0;
     }
     .gantt-timeline {
-      position: relative; height: 22px;
+      position: relative; height: 30px;
     }
     .gantt-bar {
       position: absolute;
-      height: 16px; top: 3px;
-      border-radius: 4px;
+      height: 22px; top: 4px;
+      border-radius: 5px;
       display: flex; align-items: center;
-      padding: 0 5px; overflow: hidden;
-      font-size: .6rem; font-weight: 700;
+      padding: 0 7px; overflow: hidden;
+      font-size: .65rem; font-weight: 700;
       color: white; white-space: nowrap;
-      box-shadow: 0 1px 3px rgba(0,0,0,.2);
+      box-shadow: 0 1px 4px rgba(0,0,0,.25);
+      gap: 5px;
     }
+    .gantt-bar .bar-ot  { opacity: 1; }
+    .gantt-bar .bar-op  { opacity: .85; font-weight: 400; font-size: .6rem; }
     .gantt-hora-actual {
       position: absolute; top: 0; bottom: 0;
-      width: 2px; background: red; opacity: .7;
+      width: 2px; background: #e53935; opacity: .8;
       z-index: 10;
+    }
+    .gantt-hora-actual::after {
+      content: '▼'; position: absolute; top: -10px;
+      left: -5px; font-size: .65rem; color: #e53935;
     }
 
     /* ── FOOTER ── */
@@ -243,45 +251,46 @@ function getColorArea(area) {
   return colorArea[area];
 }
 
-// ── TARJETAS DE ÁREAS ─────────────────────────────────────────────────────
+// ── TARJETAS DE ÁREAS (solo áreas con empleado activo AHORA) ──────────────
 function renderAreas(filas) {
-  // Agrupar por centro_trabajo, solo activos hoy (con empleado real)
   const areas = {};
+
   filas.forEach(f => {
+    if (!f.empleado || f.empleado === 'Sin registro hoy') return;
+    // "Activo ahora" = emp_fecha_inicio tiene valor y emp_fecha_fin está vacío
+    const enCurso = f.emp_fecha_inicio && f.emp_fecha_inicio.trim() !== ''
+                 && (!f.emp_fecha_fin || f.emp_fecha_fin.trim() === '');
+    if (!enCurso) return;
+
     const area = f.centro_trabajo || 'Sin área';
-    if (!areas[area]) areas[area] = { empleados: new Set(), ots: new Set(), minutos: 0 };
-    if (f.empleado && f.empleado !== 'Sin registro hoy') {
-      areas[area].empleados.add(f.empleado);
-      if (f.orden_trabajo) areas[area].ots.add(f.orden_trabajo.split(' - ')[0].trim());
-      areas[area].minutos += parseFloat(f.minutos_empleado_hoy) || 0;
+    if (!areas[area]) areas[area] = { empleados: new Set(), ots: new Set() };
+    areas[area].empleados.add(f.empleado);
+    if (f.orden_trabajo) {
+      const partes = f.orden_trabajo.split(' - ');
+      const ot  = partes[0].trim();
+      const op  = partes[1] ? partes[1].trim() : '';
+      areas[area].ots.add(op ? `${ot} · ${op}` : ot);
     }
   });
 
-  // También incluir áreas sin personal hoy
-  filas.forEach(f => {
-    const area = f.centro_trabajo || 'Sin área';
-    if (!areas[area]) areas[area] = { empleados: new Set(), ots: new Set(), minutos: 0 };
-  });
-
   const grid = document.getElementById('areas-grid');
+  if (!Object.keys(areas).length) {
+    grid.innerHTML = '<div style="color:#999;font-style:italic;padding:8px">Sin áreas activas en este momento</div>';
+    return;
+  }
+
   grid.innerHTML = Object.entries(areas)
     .sort((a, b) => b[1].empleados.size - a[1].empleados.size)
     .map(([nombre, data]) => {
-      const vacia  = data.empleados.size === 0;
-      const cls    = vacia ? 'vacia' : (data.minutos > 480 ? 'alerta' : '');
-      const emps   = [...data.empleados].map(e =>
+      const emps = [...data.empleados].map(e =>
         `<span class="empleado-chip">${e.split(' ').slice(0,2).join(' ')}</span>`
       ).join('');
-      const ots = [...data.ots].slice(0,2).join(', ');
+      const ots = [...data.ots].slice(0,2).join('<br>');
       return `
-        <div class="area-card ${cls}">
-          <div class="area-nombre">
-            <div class="area-dot"></div>
-            ${nombre}
-          </div>
-          ${vacia
-            ? `<div class="area-vacia-txt">Sin personal activo</div>`
-            : `${emps}<div class="area-ot">${ots}</div>`}
+        <div class="area-card">
+          <div class="area-nombre"><div class="area-dot"></div>${nombre}</div>
+          ${emps}
+          <div class="area-ot">${ots}</div>
         </div>`;
     }).join('');
 }
@@ -351,10 +360,15 @@ function renderGantt(filas) {
         ? pct(b.emp_fecha_fin)
         : pctAhoraReal;
       if (ini === null || fin === null || fin <= ini) return '';
-      const left  = ini.toFixed(2);
-      const width = Math.max(0.5, fin - ini).toFixed(2);
-      const ot    = (b.orden_trabajo || '').split(' - ')[0].trim();
-      return `<div class="gantt-bar ${colorCls}" style="left:${left}%;width:${width}%">${ot}</div>`;
+      const left   = ini.toFixed(2);
+      const width  = Math.max(0.5, fin - ini).toFixed(2);
+      const partes = (b.orden_trabajo || '').split(' - ');
+      const ot     = partes[0].trim();
+      const op     = partes[1] ? partes[1].trim() : '';
+      const label  = op
+        ? `<span class="bar-ot">${ot}</span><span class="bar-op">· ${op}</span>`
+        : `<span class="bar-ot">${ot}</span>`;
+      return `<div class="gantt-bar ${colorCls}" style="left:${left}%;width:${width}%" title="${ot} · ${op}">${label}</div>`;
     }).join('');
 
     tbody += `<tr>
