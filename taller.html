@@ -137,6 +137,8 @@
       font-size: .8rem; font-weight: 700; color: var(--verde);
       margin-bottom: 4px; flex-shrink: 0;
     }
+    #gantt-header-wrap { flex-shrink: 0; overflow: hidden; }
+    #gantt-header-wrap table { width: 100%; border-collapse: collapse; table-layout: fixed; }
     .gantt-scroll { flex: 1; overflow: hidden; position: relative; }
     #scroll-gantt { display: block; }
     #scroll-gantt:hover { animation-play-state: paused; }
@@ -242,6 +244,9 @@
 <!-- GANTT -->
 <div class="gantt-wrap">
   <div class="gantt-titulo">⏱ Actividad de empleados hoy</div>
+  <!-- Cabecera fija (horas) -->
+  <div id="gantt-header-wrap"></div>
+  <!-- Cuerpo con scroll -->
   <div class="gantt-scroll">
     <div id="scroll-gantt">
       <table class="gantt-tabla" id="gantt-tabla">
@@ -422,36 +427,50 @@ function renderGantt(filas, prodIdx) {
     ((ahora.getHours() - HORA_INI) * 60 + ahora.getMinutes()) / (TOTAL_H * 60) * 100
   ));
 
-  // Construir tabla
-  const colNombreW = 150;
-  let thead = `<thead><tr>
-    <th class="col-nombre">Empleado</th>
-    ${horas.map(h => `<th>${String(h).padStart(2,'0')}:00</th>`).join('')}
-  </tr></thead>`;
+  // colgroup compartido para alinear header y body
+  const colgroup = `<colgroup>
+    <col style="width:160px">
+    <col>
+  </colgroup>`;
 
+  // ── Cabecera fija (fuera del scroll) ──
+  const theadHtml = `<table class="gantt-tabla" style="table-layout:fixed">
+    ${colgroup}
+    <thead><tr>
+      <th class="col-nombre">Empleado</th>
+      <th style="padding:0;position:relative">
+        <div style="position:relative;height:20px">
+          ${horas.map(h => {
+            const pctH = ((h - HORA_INI) / TOTAL_H * 100).toFixed(2);
+            return `<span style="position:absolute;left:${pctH}%;font-size:.65rem;color:#888;transform:translateX(-50%)">${String(h).padStart(2,'0')}:00</span>`;
+          }).join('')}
+        </div>
+      </th>
+    </tr></thead>
+  </table>`;
+  document.getElementById('gantt-header-wrap').innerHTML = theadHtml;
+
+  // ── Cuerpo (en el scroller) ──
   let tbody = '<tbody>';
   Object.entries(porEmpleado).forEach(([emp, bloques]) => {
     const colorCls = getColorArea(bloques[0].orden_trabajo?.split(' - ')[0].trim() || '');
     const bars = bloques.map(b => {
       const ini = pct(b.emp_fecha_inicio);
-      const fin = b.emp_fecha_fin && b.emp_fecha_fin.trim()
-        ? pct(b.emp_fecha_fin)
-        : pctAhoraReal;
+      const fin = b.emp_fecha_fin && b.emp_fecha_fin.trim() && !b.emp_fecha_fin.toLowerCase().includes('curso')
+        ? pct(b.emp_fecha_fin) : pctAhoraReal;
       if (ini === null || fin === null || fin <= ini) return '';
-      const left   = ini.toFixed(2);
-      const width  = Math.max(0.5, fin - ini).toFixed(2);
-      const partes = (b.orden_trabajo || '').split(' - ');
-      const ot     = partes[0].trim();
-      const op     = partes[1] ? partes[1].trim() : ot;
-      // Solo mostrar operación — el color identifica la orden
+      const left  = ini.toFixed(2);
+      const width = Math.max(0.5, fin - ini).toFixed(2);
+      const op    = (b.orden_trabajo || '').split(' - ')[1]?.trim() || b.orden_trabajo || '';
+      const ot    = (b.orden_trabajo || '').split(' - ')[0].trim();
       return `<div class="gantt-bar ${colorCls}" style="left:${left}%;width:${width}%" title="${ot} · ${op}">
-        <span class="bar-op" style="opacity:1;font-size:.63rem">${op}</span>
+        <span style="font-size:.63rem">${op}</span>
       </div>`;
     }).join('');
 
     tbody += `<tr>
       <td class="col-nombre-cell" title="${emp}">${emp.split(' ').slice(0,2).join(' ')}</td>
-      <td colspan="${horas.length}" style="padding:0;position:relative">
+      <td style="padding:0;position:relative">
         <div class="gantt-timeline">
           <div class="gantt-hora-actual" style="left:${pctAhoraReal.toFixed(2)}%"></div>
           ${bars}
@@ -461,7 +480,8 @@ function renderGantt(filas, prodIdx) {
   });
   tbody += '</tbody>';
 
-  document.getElementById('gantt-tabla').innerHTML = thead + tbody;
+  document.getElementById('gantt-tabla').outerHTML =
+    `<table class="gantt-tabla" id="gantt-tabla" style="table-layout:fixed">${colgroup}${tbody}</table>`;
 }
 
 // ── Carga principal ────────────────────────────────────────────────────────
@@ -513,17 +533,6 @@ function ajustarScrollGantt() {
   if (!scroller.dataset.doubled) {
     const tbl   = scroller.querySelector('table');
     const clone = tbl.cloneNode(true);
-    const cloneThead = clone.querySelector('thead');
-    if (cloneThead) {
-      // Ocultar visualmente pero mantener anchos de columna
-      cloneThead.querySelectorAll('th').forEach(th => {
-        th.style.padding  = '0';
-        th.style.fontSize = '0';
-        th.style.height   = '0';
-        th.style.border   = 'none';
-        th.style.lineHeight = '0';
-      });
-    }
     scroller.appendChild(clone);
     scroller.dataset.doubled = '1';
   }
