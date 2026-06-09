@@ -169,9 +169,9 @@
       overflow: hidden;
       position: relative;
     }
-    #card-produccion table { font-size: .68rem; }
-    #card-produccion td    { padding: 2px 5px; }
-    #card-produccion thead th { padding: 3px 5px; font-size: .68rem; }
+    #card-produccion table { font-size: .62rem; }
+    #card-produccion td    { padding: 1px 4px; }
+    #card-produccion thead th { padding: 2px 4px; font-size: .62rem; }
 
     /* auto-scroll animado */
     #scroll-produccion {
@@ -466,18 +466,34 @@ function renderRecepciones(compras) {
   const tbody = document.getElementById('tbody-recepciones');
   if (!filas.length) {
     tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999">Sin recepciones programadas para hoy</td></tr>';
-    return filas.length;
+    return 0;
   }
-  tbody.innerHTML = filas.map(r => `
-    <tr>
-      <td><b>${r.orden_compra || '—'}</b></td>
-      <td>${horaDeStr(r.fecha_planificada)}</td>
-      <td>${r.proveedor || '—'}</td>
-      <td>${r.producto || '—'}</td>
-      <td>${r.cantidad || '—'} ${r.unidad_medida || ''}</td>
-      <td>${estadoBadge(r.estado_recepcion)}</td>
-    </tr>`).join('');
-  return filas.length;
+
+  // Agrupar líneas por orden_compra
+  const ordenes = {};
+  const ordenKeys = [];
+  filas.forEach(r => {
+    const k = r.orden_compra;
+    if (!ordenes[k]) { ordenes[k] = []; ordenKeys.push(k); }
+    ordenes[k].push(r);
+  });
+
+  const rows = [];
+  ordenKeys.forEach(k => {
+    const lineas = ordenes[k];
+    lineas.forEach((r, i) => {
+      rows.push(`<tr>
+        ${i === 0 ? `<td rowspan="${lineas.length}"><b>${r.orden_compra}</b></td>
+                     <td rowspan="${lineas.length}">${horaDeStr(r.fecha_planificada)}</td>
+                     <td rowspan="${lineas.length}">${r.proveedor || '—'}</td>` : ''}
+        <td>${r.producto || '—'}</td>
+        <td>${r.cantidad || '—'} ${r.unidad_medida || ''}</td>
+        ${i === 0 ? `<td rowspan="${lineas.length}">${estadoBadge(r.estado_recepcion)}</td>` : ''}
+      </tr>`);
+    });
+  });
+  tbody.innerHTML = rows.join('');
+  return ordenKeys.length;
 }
 
 function barAvance(avance) {
