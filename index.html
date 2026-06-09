@@ -181,9 +181,9 @@
       100% { transform: translateY(var(--scroll-dist, -50%)); }
     }
 
-    /* ── FILA RECIBIDA COMPLETA ── */
-    tr.fila-completa td { background: #d4edda !important; }
-    tr.fila-completa:hover td { background: #c3e6cb !important; }
+    /* ── FILA COMPLETADA (recepciones y despachos) ── */
+    tr.fila-completa td { background: #89d4a0 !important; }
+    tr.fila-completa:hover td { background: #74c98f !important; }
 
     /* ── SEPARADOR PRODUCCIÓN ── */
     .sep-arrastre td {
@@ -614,10 +614,14 @@ function renderDespachos(despachos, lineas) {
   const rows = [];
   filas.forEach(d => {
     const lineasOV = lineasIdx[d.orden_venta] || [];
+    const despachada = (d.estado_entrega || '').toLowerCase().includes('despach') ||
+                       (d.estado_entrega || '').toLowerCase().includes('hecho') ||
+                       (d.estado_entrega || '').toLowerCase().includes('done');
+    const clsFila = despachada ? 'fila-completa' : '';
     if (lineasOV.length) {
       lineasOV.forEach((l, i) => {
         rows.push(`
-          <tr>
+          <tr class="${clsFila}">
             ${i === 0 ? `<td rowspan="${lineasOV.length}"><b>${d.orden_venta}</b></td>
                          <td rowspan="${lineasOV.length}">${horaDeStr(d.fecha_compromiso)}</td>
                          <td rowspan="${lineasOV.length}">${d.cliente || '—'}</td>` : ''}
@@ -628,7 +632,7 @@ function renderDespachos(despachos, lineas) {
       });
     } else {
       rows.push(`
-        <tr>
+        <tr class="${clsFila}">
           <td><b>${d.orden_venta}</b></td>
           <td>${horaDeStr(d.fecha_compromiso)}</td>
           <td>${d.cliente || '—'}</td>
