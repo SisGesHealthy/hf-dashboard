@@ -164,20 +164,18 @@
     }
     .chart-wrap { padding: 5px 12px; flex: 1; min-height: 0; }
 
-    /* ── PRODUCCIÓN: tabla compacta + auto-scroll ── */
-    #card-produccion .card-body {
-      overflow: hidden;
-      position: relative;
-    }
+    /* ── PRODUCCIÓN: tabla compacta ── */
     #card-produccion table { font-size: .62rem; }
     #card-produccion td    { padding: 1px 4px; }
     #card-produccion thead th { padding: 2px 4px; font-size: .62rem; }
 
-    /* auto-scroll animado */
-    #scroll-produccion {
-      animation: scrollUp var(--scroll-dur, 18s) linear infinite;
+    /* ── AUTO-SCROLL (todas las tablas) ── */
+    .card-body {
+      overflow: hidden;
+      position: relative;
     }
-    #scroll-produccion:hover { animation-play-state: paused; }
+    .auto-scroller { display: block; }
+    .auto-scroller:hover { animation-play-state: paused; }
     @keyframes scrollUp {
       0%   { transform: translateY(0); }
       100% { transform: translateY(var(--scroll-dist, -50%)); }
@@ -284,22 +282,24 @@
 <div class="main">
 
   <!-- RECEPCIONES -->
-  <div class="card">
+  <div class="card" id="card-recepciones">
     <div class="card-header azul">🚚 Recepciones del día</div>
     <div class="card-body">
-      <table>
-        <thead>
-          <tr>
-            <th>Orden</th>
-            <th>Hora</th>
-            <th>Proveedor</th>
-            <th>Producto</th>
-            <th>Cantidad</th>
-            <th>Estado</th>
-          </tr>
-        </thead>
-        <tbody id="tbody-recepciones"><tr><td colspan="6">Cargando...</td></tr></tbody>
-      </table>
+      <div id="scroll-recepciones" class="auto-scroller">
+        <table>
+          <thead>
+            <tr>
+              <th>Orden</th>
+              <th>Hora</th>
+              <th>Proveedor</th>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-recepciones"><tr><td colspan="6">Cargando...</td></tr></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -326,22 +326,24 @@
   </div>
 
   <!-- DESPACHOS -->
-  <div class="card">
+  <div class="card" id="card-despachos">
     <div class="card-header naranja">📦 Despachos comprometidos</div>
     <div class="card-body">
-      <table>
-        <thead>
-          <tr>
-            <th>Orden</th>
-            <th>Hora</th>
-            <th>Cliente</th>
-            <th>Producto</th>
-            <th>Cant.</th>
-            <th>Estado</th>
-          </tr>
-        </thead>
-        <tbody id="tbody-despachos"><tr><td colspan="6">Cargando...</td></tr></tbody>
-      </table>
+      <div id="scroll-despachos" class="auto-scroller">
+        <table>
+          <thead>
+            <tr>
+              <th>Orden</th>
+              <th>Hora</th>
+              <th>Cliente</th>
+              <th>Producto</th>
+              <th>Cant.</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-despachos"><tr><td colspan="6">Cargando...</td></tr></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -619,35 +621,42 @@ function renderDespachos(despachos, lineas) {
   return filas.length;
 }
 
-// ── Auto-scroll producción ────────────────────────────────────────────────
-function ajustarScrollProduccion() {
-  const card   = document.getElementById('card-produccion');
-  const scroller = document.getElementById('scroll-produccion');
-  if (!card || !scroller) return;
+// ── Auto-scroll genérico ──────────────────────────────────────────────────
+function ajustarScroll(scrollerId) {
+  const scroller = document.getElementById(scrollerId);
+  if (!scroller) return;
+  const cardBody = scroller.closest('.card-body');
+  if (!cardBody) return;
 
-  const cardH    = card.querySelector('.card-body').clientHeight;
-  const tableH   = scroller.scrollHeight;
+  const cardH  = cardBody.clientHeight;
+  const tableH = scroller.querySelector('table')?.offsetHeight || 0;
 
   if (tableH <= cardH) {
-    // Cabe todo — sin animación
     scroller.style.animation = 'none';
     return;
   }
 
-  // Duplicar contenido para scroll continuo
+  // Duplicar contenido una sola vez para loop continuo
   if (!scroller.dataset.doubled) {
     const tabla = scroller.querySelector('table');
     const clone = tabla.cloneNode(true);
-    clone.querySelector('thead').style.display = 'none'; // ocultar cabecera del clon
+    const thead = clone.querySelector('thead');
+    if (thead) thead.style.display = 'none';
     scroller.appendChild(clone);
     scroller.dataset.doubled = '1';
   }
 
-  const dist = -(tableH) + 'px';
-  const dur  = Math.max(10, tableH / 30) + 's'; // ~30px/s
+  const dist = '-' + tableH + 'px';
+  const dur  = Math.max(12, tableH / 28) + 's'; // ~28px/s, mín 12s
   scroller.style.setProperty('--scroll-dist', dist);
-  scroller.style.setProperty('--scroll-dur', dur);
+  scroller.style.setProperty('--scroll-dur',  dur);
   scroller.style.animation = `scrollUp ${dur} linear infinite`;
+}
+
+function ajustarTodosLosScrolls() {
+  ajustarScroll('scroll-recepciones');
+  ajustarScroll('scroll-produccion');
+  ajustarScroll('scroll-despachos');
 }
 
 // ── Colapsable arrastre ────────────────────────────────────────────────────
@@ -674,15 +683,16 @@ async function cargarDatos() {
     const nRec  = renderRecepciones(compras);
     const nProd = renderProduccion(produccion);
     const nDes  = renderDespachos(despachos, lineas);
-    // reset scroll y recalcular
-    const sc = document.getElementById('scroll-produccion');
-    if (sc) {
+    // reset y recalcular scroll en todas las tablas
+    ['scroll-recepciones','scroll-produccion','scroll-despachos'].forEach(id => {
+      const sc = document.getElementById(id);
+      if (!sc) return;
       while (sc.children.length > 1) sc.removeChild(sc.lastChild);
       sc.dataset.doubled = '';
       sc.style.animation = 'none';
       sc.style.transform = 'translateY(0)';
-    }
-    setTimeout(ajustarScrollProduccion, 150);
+    });
+    setTimeout(ajustarTodosLosScrolls, 150);
 
     document.getElementById('kpi-recepciones').textContent = nRec;
     document.getElementById('kpi-produccion').textContent  = nProd;
