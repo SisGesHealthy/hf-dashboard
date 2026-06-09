@@ -2,7 +2,7 @@ name: Extraer datos Odoo → CSV
 
 on:
   schedule:
-    - cron: '*/30 * * * *'   # cada 30 minutos
+    - cron: '*/30 * * * *'
   workflow_dispatch:
 
 jobs:
@@ -10,11 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout rama main
+      - name: Checkout main
         uses: actions/checkout@v4
         with:
           ref: main
-          fetch-depth: 0        # necesario para acceder a todas las ramas
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Configurar Python
         uses: actions/setup-python@v5
@@ -32,27 +33,34 @@ jobs:
           ODOO_PASS: ${{ secrets.ODOO_PASS }}
         run: python odoo_to_csv.py
 
-      - name: Publicar CSV en rama data (sin disparar Pages)
+      - name: Publicar CSV en rama data
         run: |
           git config user.name  "hf-dashboard-bot"
           git config user.email "bot@healthyfood.com.ec"
 
-          # Guardar CSVs ANTES de cambiar de rama
-          cp -r dashboard-data /tmp/csv-backup
-
-          # Cambiar a rama data (o crearla huérfana si no existe)
-          if git ls-remote --exit-code origin data; then
-            git checkout -B data origin/data
-          else
+          # Crear rama data si no existe en el remoto
+          if ! git ls-remote --exit-code origin data > /dev/null 2>&1; then
+            echo "Creando rama data por primera vez..."
             git checkout --orphan data
             git rm -rf . > /dev/null 2>&1 || true
+            mkdir -p dashboard-data
+            git checkout main -- dashboard-data/
+            git add dashboard-data/
+            git commit -m "data: rama inicial"
+            git push origin data
+            git checkout main
           fi
 
-          # Restaurar CSVs en la rama data
-          mkdir -p dashboard-data
-          cp /tmp/csv-backup/* dashboard-data/
+          # Usar worktree para operar en data sin abandonar main
+          git fetch origin data
+          git worktree add /tmp/data-worktree data
 
-          # Commit y push
+          # Copiar CSVs al worktree
+          mkdir -p /tmp/data-worktree/dashboard-data
+          cp dashboard-data/* /tmp/data-worktree/dashboard-data/
+
+          # Commit y push desde el worktree
+          cd /tmp/data-worktree
           git add dashboard-data/
           git diff --staged --quiet || git commit -m "data: $(date -u '+%Y-%m-%d %H:%M') UTC"
           git push origin data
