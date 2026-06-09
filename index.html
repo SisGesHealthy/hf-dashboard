@@ -576,7 +576,7 @@ function renderProduccion(produccion) {
       </td></tr>`;
     html += filasArrastre.map(r => {
       const avance = parseFloat(r.avance_pct) || 0;
-      return `<tr class="arrastre-row" style="opacity:.8;background:#fffdf0">
+      return `<tr class="arrastre-row" style="background:#ffe0b2">
         <td><b>${r.orden_produccion || '—'}</b><br>
             <span style="font-size:.68rem;color:#999">${r.fecha_produccion || ''}</span></td>
         <td>${r.producto || '—'}</td>
