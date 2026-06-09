@@ -113,14 +113,18 @@
     .leyenda-chip {
       background: var(--blanco);
       border-radius: 6px;
-      border-left: 4px solid var(--verde);
-      padding: 4px 10px;
-      font-size: .7rem;
-      box-shadow: 0 1px 3px rgba(0,0,0,.08);
-      display: flex; align-items: center; gap: 6px;
+      border-left: 6px solid var(--verde);
+      padding: 5px 12px 5px 10px;
+      font-size: .72rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,.1);
+      display: flex; align-items: center; gap: 8px;
     }
-    .leyenda-cod  { font-weight: 700; color: var(--verde); white-space: nowrap; }
-    .leyenda-prod { color: #444; }
+    .leyenda-color-dot {
+      width: 14px; height: 14px; border-radius: 3px;
+      flex-shrink: 0;
+    }
+    .leyenda-cod  { font-weight: 700; color: #333; white-space: nowrap; }
+    .leyenda-prod { color: #555; }
 
     /* ── GANTT ── */
     .gantt-wrap {
@@ -346,21 +350,18 @@ function renderLeyenda(filas, prodIdx) {
     if (!vistas[otCod]) vistas[otCod] = prodIdx[otCod] || '';
   });
   const grid = document.getElementById('leyenda-grid');
+  const COLORES = {'color-0':'#6a8f2f','color-1':'#2a7be0','color-2':'#e07b2a',
+                   'color-3':'#8e24aa','color-4':'#00838f','color-5':'#c62828',
+                   'color-6':'#2e7d32','color-7':'#4527a0'};
   grid.innerHTML = Object.entries(vistas).map(([cod, prod]) => {
     const colorCls = getColorArea(cod);
-    return `<div class="leyenda-chip" style="border-left-color: var(--chip-color)" data-color="${colorCls}">
+    const hex = COLORES[colorCls] || '#6a8f2f';
+    return `<div class="leyenda-chip" style="border-left-color:${hex}">
+      <div class="leyenda-color-dot" style="background:${hex}"></div>
       <span class="leyenda-cod">${cod}</span>
-      ${prod ? `<span class="leyenda-prod">= ${prod}</span>` : ''}
+      ${prod ? `<span class="leyenda-prod">${prod}</span>` : ''}
     </div>`;
   }).join('');
-  // aplicar color de paleta
-  grid.querySelectorAll('.leyenda-chip').forEach(el => {
-    const cls = el.dataset.color;
-    const colors = {'color-0':'#6a8f2f','color-1':'#2a7be0','color-2':'#e07b2a',
-                    'color-3':'#8e24aa','color-4':'#00838f','color-5':'#c62828',
-                    'color-6':'#2e7d32','color-7':'#4527a0'};
-    el.style.borderLeftColor = colors[cls] || '#6a8f2f';
-  });
 }
 
 // ── GANTT ─────────────────────────────────────────────────────────────────
@@ -433,11 +434,11 @@ function renderGantt(filas, prodIdx) {
       const width  = Math.max(0.5, fin - ini).toFixed(2);
       const partes = (b.orden_trabajo || '').split(' - ');
       const ot     = partes[0].trim();
-      const op     = partes[1] ? partes[1].trim() : '';
-      const label  = op
-        ? `<span class="bar-ot">${ot}</span><span class="bar-op">· ${op}</span>`
-        : `<span class="bar-ot">${ot}</span>`;
-      return `<div class="gantt-bar ${colorCls}" style="left:${left}%;width:${width}%" title="${ot} · ${op}">${label}</div>`;
+      const op     = partes[1] ? partes[1].trim() : ot;
+      // Solo mostrar operación — el color identifica la orden
+      return `<div class="gantt-bar ${colorCls}" style="left:${left}%;width:${width}%" title="${ot} · ${op}">
+        <span class="bar-op" style="opacity:1;font-size:.63rem">${op}</span>
+      </div>`;
     }).join('');
 
     tbody += `<tr>
