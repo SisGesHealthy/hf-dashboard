@@ -164,6 +164,25 @@
     }
     .chart-wrap { padding: 5px 12px; flex: 1; min-height: 0; }
 
+    /* ── PRODUCCIÓN: tabla compacta + auto-scroll ── */
+    #card-produccion .card-body {
+      overflow: hidden;
+      position: relative;
+    }
+    #card-produccion table { font-size: .68rem; }
+    #card-produccion td    { padding: 2px 5px; }
+    #card-produccion thead th { padding: 3px 5px; font-size: .68rem; }
+
+    /* auto-scroll animado */
+    #scroll-produccion {
+      animation: scrollUp var(--scroll-dur, 18s) linear infinite;
+    }
+    #scroll-produccion:hover { animation-play-state: paused; }
+    @keyframes scrollUp {
+      0%   { transform: translateY(0); }
+      100% { transform: translateY(var(--scroll-dist, -50%)); }
+    }
+
     /* ── COLAPSABLE ── */
     .sep-arrastre {
       cursor: pointer;
@@ -285,22 +304,24 @@
   </div>
 
   <!-- PRODUCCIÓN -->
-  <div class="card">
+  <div class="card" id="card-produccion">
     <div class="card-header verde">⚙️ Producción en planta</div>
     <div class="card-body">
-      <table>
-        <thead>
-          <tr>
-            <th>Orden</th>
-            <th>Producto</th>
-            <th>Planif.</th>
-            <th>Ud.</th>
-            <th>Avance</th>
-            <th>Estado</th>
-          </tr>
-        </thead>
-        <tbody id="tbody-produccion"><tr><td colspan="6">Cargando...</td></tr></tbody>
-      </table>
+      <div id="scroll-produccion">
+        <table>
+          <thead>
+            <tr>
+              <th>Orden</th>
+              <th>Producto</th>
+              <th>Planif.</th>
+              <th>Ud.</th>
+              <th>Avance</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-produccion"><tr><td colspan="6">Cargando...</td></tr></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -582,6 +603,37 @@ function renderDespachos(despachos, lineas) {
   return filas.length;
 }
 
+// ── Auto-scroll producción ────────────────────────────────────────────────
+function ajustarScrollProduccion() {
+  const card   = document.getElementById('card-produccion');
+  const scroller = document.getElementById('scroll-produccion');
+  if (!card || !scroller) return;
+
+  const cardH    = card.querySelector('.card-body').clientHeight;
+  const tableH   = scroller.scrollHeight;
+
+  if (tableH <= cardH) {
+    // Cabe todo — sin animación
+    scroller.style.animation = 'none';
+    return;
+  }
+
+  // Duplicar contenido para scroll continuo
+  if (!scroller.dataset.doubled) {
+    const tabla = scroller.querySelector('table');
+    const clone = tabla.cloneNode(true);
+    clone.querySelector('thead').style.display = 'none'; // ocultar cabecera del clon
+    scroller.appendChild(clone);
+    scroller.dataset.doubled = '1';
+  }
+
+  const dist = -(tableH) + 'px';
+  const dur  = Math.max(10, tableH / 30) + 's'; // ~30px/s
+  scroller.style.setProperty('--scroll-dist', dist);
+  scroller.style.setProperty('--scroll-dur', dur);
+  scroller.style.animation = `scrollUp ${dur} linear infinite`;
+}
+
 // ── Colapsable arrastre ────────────────────────────────────────────────────
 function toggleArrastre(sepRow) {
   const tbody = sepRow.closest('tbody');
@@ -606,6 +658,15 @@ async function cargarDatos() {
     const nRec  = renderRecepciones(compras);
     const nProd = renderProduccion(produccion);
     const nDes  = renderDespachos(despachos, lineas);
+    // reset scroll y recalcular
+    const sc = document.getElementById('scroll-produccion');
+    if (sc) {
+      while (sc.children.length > 1) sc.removeChild(sc.lastChild);
+      sc.dataset.doubled = '';
+      sc.style.animation = 'none';
+      sc.style.transform = 'translateY(0)';
+    }
+    setTimeout(ajustarScrollProduccion, 150);
 
     document.getElementById('kpi-recepciones').textContent = nRec;
     document.getElementById('kpi-produccion').textContent  = nProd;
