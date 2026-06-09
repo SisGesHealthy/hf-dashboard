@@ -21,11 +21,15 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html, body { height: 100%; overflow: hidden; }
+
     body {
       font-family: 'Segoe UI', Arial, sans-serif;
       background: var(--gris-fondo);
       color: var(--texto);
-      font-size: 14px;
+      font-size: 13px;
+      display: flex;
+      flex-direction: column;
     }
 
     /* ── HEADER ── */
@@ -34,80 +38,85 @@
       color: white;
       display: flex;
       align-items: center;
-      padding: 10px 24px;
-      gap: 20px;
+      padding: 7px 18px;
+      gap: 14px;
       box-shadow: 0 2px 6px rgba(0,0,0,.2);
+      flex-shrink: 0;
     }
-    header svg { width: 52px; height: 52px; flex-shrink: 0; }
+    header svg { width: 42px; height: 42px; flex-shrink: 0; }
     .header-title { flex: 1; }
-    .header-title h1 { font-size: 1.4rem; font-weight: 700; letter-spacing: .5px; }
-    .header-title p  { font-size: .85rem; opacity: .85; }
-    #reloj { font-size: 1.1rem; font-weight: 600; text-align: right; white-space: nowrap; }
-    #reloj span { display: block; font-size: .75rem; font-weight: 400; opacity: .8; }
+    .header-title h1 { font-size: 1.15rem; font-weight: 700; letter-spacing: .5px; }
+    .header-title p  { font-size: .76rem; opacity: .85; }
+    #reloj { font-size: .95rem; font-weight: 600; text-align: right; white-space: nowrap; }
+    #reloj span { display: block; font-size: .68rem; font-weight: 400; opacity: .8; }
 
     /* ── KPIs ── */
     .kpis {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      padding: 14px 24px 0;
+      gap: 7px;
+      padding: 7px 18px 0;
+      flex-shrink: 0;
     }
     .kpi {
       background: var(--blanco);
-      border-radius: 10px;
-      padding: 14px 20px;
+      border-radius: 8px;
+      padding: 7px 14px;
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
       box-shadow: 0 1px 4px rgba(0,0,0,.08);
       border-left: 5px solid var(--verde);
     }
     .kpi.naranja { border-color: var(--naranja); }
     .kpi.azul    { border-color: var(--azul); }
-    .kpi-icon { font-size: 2rem; }
-    .kpi-num  { font-size: 2.2rem; font-weight: 800; line-height: 1; color: var(--verde); }
+    .kpi-icon { font-size: 1.5rem; }
+    .kpi-num  { font-size: 1.8rem; font-weight: 800; line-height: 1; color: var(--verde); }
     .kpi.naranja .kpi-num { color: var(--naranja); }
     .kpi.azul    .kpi-num { color: var(--azul); }
-    .kpi-label { font-size: .8rem; color: #666; margin-top: 2px; }
+    .kpi-label { font-size: .72rem; color: #666; margin-top: 2px; }
 
-    /* ── MAIN GRID ── */
+    /* ── MAIN GRID (tablas) ── */
     .main {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: auto auto;
-      gap: 12px;
-      padding: 12px 24px 16px;
+      grid-template-columns: 2fr 2.2fr 1.4fr;
+      gap: 7px;
+      padding: 6px 18px 6px;
+      flex: 1;
+      min-height: 0;
     }
 
     .card {
       background: var(--blanco);
-      border-radius: 10px;
+      border-radius: 8px;
       box-shadow: 0 1px 4px rgba(0,0,0,.08);
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      min-height: 0;
     }
     .card-header {
-      padding: 10px 14px;
+      padding: 6px 12px;
       font-weight: 700;
-      font-size: .95rem;
+      font-size: .85rem;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       color: white;
+      flex-shrink: 0;
     }
     .card-header.verde   { background: var(--verde); }
     .card-header.naranja { background: var(--naranja); }
     .card-header.azul    { background: var(--azul); }
-    .card-body { flex: 1; overflow: auto; }
+    .card-body { flex: 1; overflow: auto; min-height: 0; }
 
     /* ── TABLAS ── */
-    table { width: 100%; border-collapse: collapse; font-size: .8rem; }
+    table { width: 100%; border-collapse: collapse; font-size: .75rem; }
     thead th {
       background: var(--verde-fondo);
       color: var(--verde);
       font-weight: 700;
-      padding: 6px 8px;
+      padding: 4px 7px;
       text-align: left;
       position: sticky;
       top: 0;
@@ -118,13 +127,13 @@
     .card-header.azul    ~ .card-body thead th { color: var(--azul);    background: #e8f0fd; border-color: var(--azul); }
     tbody tr:nth-child(even) { background: #fafafa; }
     tbody tr:hover { background: #f0f7e6; }
-    td { padding: 5px 8px; border-bottom: 1px solid #eee; vertical-align: top; }
+    td { padding: 3px 7px; border-bottom: 1px solid #eee; vertical-align: top; }
 
     .badge {
       display: inline-block;
-      padding: 2px 7px;
+      padding: 1px 6px;
       border-radius: 20px;
-      font-size: .7rem;
+      font-size: .66rem;
       font-weight: 700;
       white-space: nowrap;
     }
@@ -135,10 +144,17 @@
     .badge-pending { background: #e2e3e5; color: #383d41; }
 
     /* ── GRÁFICO ── */
-    .chart-card {
-      grid-column: 1 / -1;
+    .seccion-grafico {
+      padding: 5px 18px 0;
+      flex-shrink: 0;
     }
-    .chart-wrap { padding: 10px 16px; height: 160px; }
+    .chart-card {
+      background: var(--blanco);
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+      overflow: hidden;
+    }
+    .chart-wrap { padding: 5px 12px 5px; height: 80px; }
 
     /* ── COLAPSABLE ── */
     .sep-arrastre {
@@ -151,17 +167,19 @@
     /* ── FOOTER ── */
     footer {
       text-align: center;
-      padding: 6px;
-      font-size: .72rem;
-      color: #999;
+      padding: 3px;
+      font-size: .62rem;
+      color: #bbb;
+      flex-shrink: 0;
     }
 
     /* ── ÚLTIMA ACTUALIZACIÓN ── */
     #ultima-act {
       text-align: right;
-      padding: 4px 24px 0;
-      font-size: .72rem;
+      padding: 2px 18px 0;
+      font-size: .68rem;
       color: #888;
+      flex-shrink: 0;
     }
   </style>
 </head>
@@ -226,8 +244,8 @@
 <div id="ultima-act">Cargando datos...</div>
 
 <!-- GRÁFICO -->
-<div class="main" style="grid-template-rows: auto; padding-bottom: 0;">
-  <div class="card chart-card">
+<div class="seccion-grafico">
+  <div class="chart-card">
     <div class="card-header verde">📊 Actividad del día por hora</div>
     <div class="chart-wrap">
       <canvas id="grafico"></canvas>
