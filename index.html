@@ -50,13 +50,22 @@
     #reloj { font-size: .95rem; font-weight: 600; text-align: right; white-space: nowrap; }
     #reloj span { display: block; font-size: .68rem; font-weight: 400; opacity: .8; }
 
-    /* ── KPIs ── */
-    .kpis {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
+    /* ── FILA SUPERIOR: KPIs + Gráfico ── */
+    .top-row {
+      display: flex;
       gap: 7px;
       padding: 7px 18px 0;
       flex-shrink: 0;
+      align-items: stretch;
+    }
+
+    /* ── KPIs ── */
+    .kpis {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      flex-shrink: 0;
+      width: 260px;
     }
     .kpi {
       background: var(--blanco);
@@ -144,17 +153,16 @@
     .badge-pending { background: #e2e3e5; color: #383d41; }
 
     /* ── GRÁFICO ── */
-    .seccion-grafico {
-      padding: 5px 18px 0;
-      flex-shrink: 0;
-    }
     .chart-card {
       background: var(--blanco);
       border-radius: 8px;
       box-shadow: 0 1px 4px rgba(0,0,0,.08);
       overflow: hidden;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
     }
-    .chart-wrap { padding: 5px 12px 5px; height: 80px; }
+    .chart-wrap { padding: 5px 12px; flex: 1; min-height: 0; }
 
     /* ── COLAPSABLE ── */
     .sep-arrastre {
@@ -216,35 +224,33 @@
   </div>
 </header>
 
-<!-- KPIs -->
-<div class="kpis">
-  <div class="kpi azul">
-    <div class="kpi-icon">🚚</div>
-    <div>
-      <div class="kpi-num" id="kpi-recepciones">—</div>
-      <div class="kpi-label">Recepciones hoy</div>
+<!-- FILA SUPERIOR: KPIs + Gráfico -->
+<div class="top-row">
+  <div class="kpis">
+    <div class="kpi azul">
+      <div class="kpi-icon">🚚</div>
+      <div>
+        <div class="kpi-num" id="kpi-recepciones">—</div>
+        <div class="kpi-label">Recepciones hoy</div>
+      </div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-icon">⚙️</div>
+      <div>
+        <div class="kpi-num" id="kpi-produccion">—</div>
+        <div class="kpi-label">Producción hoy</div>
+      </div>
+    </div>
+    <div class="kpi naranja">
+      <div class="kpi-icon">📦</div>
+      <div>
+        <div class="kpi-num" id="kpi-despachos">—</div>
+        <div class="kpi-label">Despachos hoy</div>
+      </div>
     </div>
   </div>
-  <div class="kpi">
-    <div class="kpi-icon">⚙️</div>
-    <div>
-      <div class="kpi-num" id="kpi-produccion">—</div>
-      <div class="kpi-label">Producción hoy</div>
-    </div>
-  </div>
-  <div class="kpi naranja">
-    <div class="kpi-icon">📦</div>
-    <div>
-      <div class="kpi-num" id="kpi-despachos">—</div>
-      <div class="kpi-label">Despachos hoy</div>
-    </div>
-  </div>
-</div>
 
-<div id="ultima-act">Cargando datos...</div>
-
-<!-- GRÁFICO -->
-<div class="seccion-grafico">
+  <!-- GRÁFICO -->
   <div class="chart-card">
     <div class="card-header verde">📊 Actividad del día por hora</div>
     <div class="chart-wrap">
@@ -252,6 +258,8 @@
     </div>
   </div>
 </div>
+
+<div id="ultima-act">Cargando datos...</div>
 
 <!-- TABLAS -->
 <div class="main">
