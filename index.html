@@ -671,7 +671,7 @@ function ajustarScroll(scrollerId) {
   }
 
   const dist = '-' + tableH + 'px';
-  const dur  = Math.max(12, tableH / 28) + 's'; // ~28px/s, mín 12s
+  const dur  = Math.max(14, tableH / 24) + 's'; // ~24px/s (15% más lento), mín 14s
   scroller.style.setProperty('--scroll-dist', dist);
   scroller.style.setProperty('--scroll-dur',  dur);
   scroller.style.animation = `scrollUp ${dur} linear infinite`;

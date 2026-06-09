@@ -137,7 +137,13 @@
       font-size: .8rem; font-weight: 700; color: var(--verde);
       margin-bottom: 4px; flex-shrink: 0;
     }
-    .gantt-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; }
+    .gantt-scroll { flex: 1; overflow: hidden; position: relative; }
+    #scroll-gantt { display: block; }
+    #scroll-gantt:hover { animation-play-state: paused; }
+    @keyframes scrollUpGantt {
+      0%   { transform: translateY(0); }
+      100% { transform: translateY(var(--gantt-dist, -50%)); }
+    }
     .gantt-tabla { width: 100%; border-collapse: collapse; }
 
     /* cabecera horas */
@@ -237,9 +243,11 @@
 <div class="gantt-wrap">
   <div class="gantt-titulo">⏱ Actividad de empleados hoy</div>
   <div class="gantt-scroll">
-    <table class="gantt-tabla" id="gantt-tabla">
-      <tbody><tr><td style="color:#999;padding:10px">Cargando Gantt...</td></tr></tbody>
-    </table>
+    <div id="scroll-gantt">
+      <table class="gantt-tabla" id="gantt-tabla">
+        <tbody><tr><td style="color:#999;padding:10px">Cargando Gantt...</td></tr></tbody>
+      </table>
+    </div>
   </div>
 </div>
 
@@ -475,7 +483,13 @@ async function cargarDatos() {
 
     renderAreas(filas, prodIdx);
     renderLeyenda(filas, prodIdx);
+
+    // reset gantt scroll antes de re-renderizar
+    const sg = document.getElementById('scroll-gantt');
+    if (sg) { while (sg.children.length > 1) sg.removeChild(sg.lastChild); sg.dataset.doubled = ''; sg.style.animation = 'none'; sg.style.transform = 'translateY(0)'; }
+
     renderGantt(filas, prodIdx);
+    setTimeout(ajustarScrollGantt, 150);
 
     const ahora = new Date().toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'});
     document.getElementById('ultima-act').textContent =
@@ -484,6 +498,28 @@ async function cargarDatos() {
     document.getElementById('ultima-act').textContent = 'Error: ' + e.message;
     console.error(e);
   }
+}
+
+// ── Auto-scroll Gantt ─────────────────────────────────────────────────────
+function ajustarScrollGantt() {
+  const scroller = document.getElementById('scroll-gantt');
+  if (!scroller) return;
+  const wrap   = scroller.closest('.gantt-scroll');
+  const wrapH  = wrap ? wrap.clientHeight : 0;
+  const tableH = scroller.querySelector('table')?.offsetHeight || 0;
+
+  if (tableH <= wrapH) { scroller.style.animation = 'none'; return; }
+
+  if (!scroller.dataset.doubled) {
+    const tbl   = scroller.querySelector('table');
+    const clone = tbl.cloneNode(true);
+    clone.querySelector('thead').style.display = 'none';
+    scroller.appendChild(clone);
+    scroller.dataset.doubled = '1';
+  }
+  const dur = Math.max(14, tableH / 24) + 's';
+  scroller.style.setProperty('--gantt-dist', '-' + tableH + 'px');
+  scroller.style.animation = `scrollUpGantt ${dur} linear infinite`;
 }
 
 // Cargar al inicio y refrescar en :05 y :35 de cada hora
