@@ -3,17 +3,18 @@ name: Extraer datos Odoo → CSV
 on:
   schedule:
     - cron: '*/30 * * * *'   # cada 30 minutos
-  workflow_dispatch:           # también se puede lanzar manualmente
+  workflow_dispatch:
 
 jobs:
   extract:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout rama main (para obtener odoo_to_csv.py)
+      - name: Checkout rama main
         uses: actions/checkout@v4
         with:
           ref: main
+          fetch-depth: 0        # necesario para acceder a todas las ramas
 
       - name: Configurar Python
         uses: actions/setup-python@v5
@@ -36,12 +37,22 @@ jobs:
           git config user.name  "hf-dashboard-bot"
           git config user.email "bot@healthyfood.com.ec"
 
-          # Cambiar a rama data (crearla si no existe)
-          git fetch origin data 2>/dev/null || true
-          git checkout -B data origin/data 2>/dev/null || git checkout --orphan data
+          # Guardar CSVs ANTES de cambiar de rama
+          cp -r dashboard-data /tmp/csv-backup
 
-          # Dejar solo la carpeta dashboard-data
-          git rm -rf --cached . > /dev/null 2>&1 || true
+          # Cambiar a rama data (o crearla huérfana si no existe)
+          if git ls-remote --exit-code origin data; then
+            git checkout -B data origin/data
+          else
+            git checkout --orphan data
+            git rm -rf . > /dev/null 2>&1 || true
+          fi
+
+          # Restaurar CSVs en la rama data
+          mkdir -p dashboard-data
+          cp /tmp/csv-backup/* dashboard-data/
+
+          # Commit y push
           git add dashboard-data/
-          git diff --staged --quiet || git commit -m "data: actualizar CSV $(date -u '+%Y-%m-%d %H:%M') UTC"
+          git diff --staged --quiet || git commit -m "data: $(date -u '+%Y-%m-%d %H:%M') UTC"
           git push origin data
