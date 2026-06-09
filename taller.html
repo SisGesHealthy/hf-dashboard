@@ -513,7 +513,17 @@ function ajustarScrollGantt() {
   if (!scroller.dataset.doubled) {
     const tbl   = scroller.querySelector('table');
     const clone = tbl.cloneNode(true);
-    clone.querySelector('thead').style.display = 'none';
+    const cloneThead = clone.querySelector('thead');
+    if (cloneThead) {
+      // Ocultar visualmente pero mantener anchos de columna
+      cloneThead.querySelectorAll('th').forEach(th => {
+        th.style.padding  = '0';
+        th.style.fontSize = '0';
+        th.style.height   = '0';
+        th.style.border   = 'none';
+        th.style.lineHeight = '0';
+      });
+    }
     scroller.appendChild(clone);
     scroller.dataset.doubled = '1';
   }

@@ -665,7 +665,11 @@ function ajustarScroll(scrollerId) {
     const tabla = scroller.querySelector('table');
     const clone = tabla.cloneNode(true);
     const thead = clone.querySelector('thead');
-    if (thead) thead.style.display = 'none';
+    if (thead) thead.querySelectorAll('th').forEach(th => {
+      th.style.padding = '0'; th.style.fontSize = '0';
+      th.style.height  = '0'; th.style.border   = 'none';
+      th.style.lineHeight = '0';
+    });
     scroller.appendChild(clone);
     scroller.dataset.doubled = '1';
   }
