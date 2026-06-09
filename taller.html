@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Taller — Healthy Food</title>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <style>
+    :root {
+      --verde:    #6a8f2f;
+      --verde-c:  #8ab93f;
+      --naranja:  #e07b2a;
+      --azul:     #2a7be0;
+      --gris:     #f5f5f5;
+      --blanco:   #ffffff;
+      --texto:    #2c2c2c;
+      --vacio:    #bdbdbd;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--gris);
+      color: var(--texto);
+      font-size: 13px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--verde);
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 7px 18px;
+      gap: 14px;
+      flex-shrink: 0;
+    }
+    .header-title { flex: 1; }
+    .header-title h1 { font-size: 1.15rem; font-weight: 700; }
+    .header-title p  { font-size: .76rem; opacity: .85; }
+    #reloj { font-size: .95rem; font-weight: 600; text-align: right; white-space: nowrap; }
+    #reloj span { display: block; font-size: .68rem; font-weight: 400; opacity: .8; }
+    .nav-link {
+      color: white; opacity: .8; text-decoration: none;
+      font-size: .8rem; border: 1px solid rgba(255,255,255,.4);
+      padding: 4px 10px; border-radius: 5px; white-space: nowrap;
+    }
+    .nav-link:hover { opacity: 1; background: rgba(255,255,255,.15); }
+
+    /* ── ÚLTIMA ACT ── */
+    #ultima-act {
+      text-align: right; padding: 2px 18px 0;
+      font-size: .68rem; color: #888; flex-shrink: 0;
+    }
+
+    /* ── TARJETAS DE ÁREAS ── */
+    .areas-wrap {
+      padding: 6px 18px 0;
+      flex-shrink: 0;
+    }
+    .areas-grid {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+    .area-card {
+      background: var(--blanco);
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.1);
+      border-top: 4px solid var(--verde);
+      padding: 8px 12px;
+      min-width: 160px;
+      flex: 1;
+    }
+    .area-card.vacia { border-top-color: var(--vacio); opacity: .6; }
+    .area-card.alerta { border-top-color: var(--naranja); }
+    .area-nombre {
+      font-weight: 700; font-size: .82rem;
+      margin-bottom: 5px; display: flex;
+      align-items: center; gap: 5px;
+    }
+    .area-dot {
+      width: 9px; height: 9px; border-radius: 50%;
+      background: var(--verde); flex-shrink: 0;
+    }
+    .area-card.vacia .area-dot { background: var(--vacio); }
+    .area-card.alerta .area-dot { background: var(--naranja); }
+    .empleado-chip {
+      display: inline-block;
+      background: #e8f5e9; color: #2e7d32;
+      border-radius: 12px; padding: 2px 8px;
+      font-size: .7rem; font-weight: 600;
+      margin: 2px 2px 0 0;
+    }
+    .area-card.alerta .empleado-chip { background: #fff3e0; color: #e65100; }
+    .area-vacia-txt { font-size: .72rem; color: var(--vacio); font-style: italic; }
+    .area-ot { font-size: .68rem; color: #888; margin-top: 4px; }
+
+    /* ── GANTT ── */
+    .gantt-wrap {
+      flex: 1; min-height: 0;
+      padding: 6px 18px 6px;
+      display: flex;
+      flex-direction: column;
+    }
+    .gantt-titulo {
+      font-size: .8rem; font-weight: 700; color: var(--verde);
+      margin-bottom: 4px; flex-shrink: 0;
+    }
+    .gantt-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; }
+    .gantt-tabla { width: 100%; border-collapse: collapse; }
+
+    /* cabecera horas */
+    .gantt-tabla thead th {
+      font-size: .62rem; color: #888; font-weight: 600;
+      padding: 2px 0; text-align: center;
+      border-bottom: 1px solid #e0e0e0;
+      white-space: nowrap;
+    }
+    .gantt-tabla thead th.col-nombre {
+      text-align: left; padding-left: 6px; width: 150px; color: var(--verde);
+    }
+
+    /* filas empleado */
+    .gantt-tabla tbody tr { height: 26px; }
+    .gantt-tabla tbody tr:nth-child(even) { background: #fafafa; }
+    .col-nombre-cell {
+      font-size: .72rem; font-weight: 600;
+      padding: 0 6px; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis;
+      max-width: 150px; color: var(--texto);
+    }
+    .gantt-timeline {
+      position: relative; height: 22px;
+    }
+    .gantt-bar {
+      position: absolute;
+      height: 16px; top: 3px;
+      border-radius: 4px;
+      display: flex; align-items: center;
+      padding: 0 5px; overflow: hidden;
+      font-size: .6rem; font-weight: 700;
+      color: white; white-space: nowrap;
+      box-shadow: 0 1px 3px rgba(0,0,0,.2);
+    }
+    .gantt-hora-actual {
+      position: absolute; top: 0; bottom: 0;
+      width: 2px; background: red; opacity: .7;
+      z-index: 10;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center; padding: 3px;
+      font-size: .62rem; color: #bbb; flex-shrink: 0;
+    }
+
+    /* colores por área */
+    .color-0  { background: #6a8f2f; }
+    .color-1  { background: #2a7be0; }
+    .color-2  { background: #e07b2a; }
+    .color-3  { background: #8e24aa; }
+    .color-4  { background: #00838f; }
+    .color-5  { background: #c62828; }
+    .color-6  { background: #2e7d32; }
+    .color-7  { background: #4527a0; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-title">
+    <h1>🏭 Control de Taller</h1>
+    <p>Healthy Food Marcalman Ecuador S.A.</p>
+  </div>
+  <a href="index.html" class="nav-link">📊 Dashboard operativo</a>
+  <div id="reloj">
+    <span id="fecha-hoy"></span>
+    <span id="hora-ahora"></span>
+  </div>
+</header>
+
+<div id="ultima-act">Cargando...</div>
+
+<!-- TARJETAS ÁREAS -->
+<div class="areas-wrap">
+  <div class="areas-grid" id="areas-grid">
+    <div style="color:#999;padding:10px">Cargando áreas...</div>
+  </div>
+</div>
+
+<!-- GANTT -->
+<div class="gantt-wrap">
+  <div class="gantt-titulo">⏱ Actividad de empleados hoy</div>
+  <div class="gantt-scroll">
+    <table class="gantt-tabla" id="gantt-tabla">
+      <tbody><tr><td style="color:#999;padding:10px">Cargando Gantt...</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<footer>Actualización automática · Datos desde Odoo · Healthy Food © 2026</footer>
+
+<script>
+const REPO   = 'SisGesHealthy/hf-dashboard';
+const BRANCH = 'data';
+
+// ── Reloj ──────────────────────────────────────────────────────────────────
+function actualizarReloj() {
+  const a = new Date();
+  const dias  = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio',
+                 'agosto','septiembre','octubre','noviembre','diciembre'];
+  document.getElementById('fecha-hoy').textContent =
+    `${dias[a.getDay()]}, ${a.getDate()} de ${meses[a.getMonth()]} de ${a.getFullYear()}`;
+  document.getElementById('hora-ahora').textContent =
+    a.toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+setInterval(actualizarReloj, 1000);
+actualizarReloj();
+
+function hoyStr() {
+  const h = new Date();
+  return `${h.getFullYear()}-${String(h.getMonth()+1).padStart(2,'0')}-${String(h.getDate()).padStart(2,'0')}`;
+}
+
+async function leerCSV(nombre) {
+  const url = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/dashboard-data/${nombre}?t=${Date.now()}`;
+  const res  = await fetch(url, { cache: 'no-store' });
+  const txt  = await res.text();
+  return new Promise(r => Papa.parse(txt, { header:true, skipEmptyLines:true, complete: d => r(d.data) }));
+}
+
+// Paleta de colores por área
+const PALETA = ['color-0','color-1','color-2','color-3','color-4','color-5','color-6','color-7'];
+const colorArea = {};
+let colorIdx = 0;
+function getColorArea(area) {
+  if (!colorArea[area]) colorArea[area] = PALETA[colorIdx++ % PALETA.length];
+  return colorArea[area];
+}
+
+// ── TARJETAS DE ÁREAS ─────────────────────────────────────────────────────
+function renderAreas(filas) {
+  // Agrupar por centro_trabajo, solo activos hoy (con empleado real)
+  const areas = {};
+  filas.forEach(f => {
+    const area = f.centro_trabajo || 'Sin área';
+    if (!areas[area]) areas[area] = { empleados: new Set(), ots: new Set(), minutos: 0 };
+    if (f.empleado && f.empleado !== 'Sin registro hoy') {
+      areas[area].empleados.add(f.empleado);
+      if (f.orden_trabajo) areas[area].ots.add(f.orden_trabajo.split(' - ')[0].trim());
+      areas[area].minutos += parseFloat(f.minutos_empleado_hoy) || 0;
+    }
+  });
+
+  // También incluir áreas sin personal hoy
+  filas.forEach(f => {
+    const area = f.centro_trabajo || 'Sin área';
+    if (!areas[area]) areas[area] = { empleados: new Set(), ots: new Set(), minutos: 0 };
+  });
+
+  const grid = document.getElementById('areas-grid');
+  grid.innerHTML = Object.entries(areas)
+    .sort((a, b) => b[1].empleados.size - a[1].empleados.size)
+    .map(([nombre, data]) => {
+      const vacia  = data.empleados.size === 0;
+      const cls    = vacia ? 'vacia' : (data.minutos > 480 ? 'alerta' : '');
+      const emps   = [...data.empleados].map(e =>
+        `<span class="empleado-chip">${e.split(' ').slice(0,2).join(' ')}</span>`
+      ).join('');
+      const ots = [...data.ots].slice(0,2).join(', ');
+      return `
+        <div class="area-card ${cls}">
+          <div class="area-nombre">
+            <div class="area-dot"></div>
+            ${nombre}
+          </div>
+          ${vacia
+            ? `<div class="area-vacia-txt">Sin personal activo</div>`
+            : `${emps}<div class="area-ot">${ots}</div>`}
+        </div>`;
+    }).join('');
+}
+
+// ── GANTT ─────────────────────────────────────────────────────────────────
+function renderGantt(filas) {
+  const HORA_INI = 5;   // 05:00
+  const HORA_FIN = 18;  // 18:00
+  const TOTAL_H  = HORA_FIN - HORA_INI;
+
+  // Solo filas con empleado real y fechas de entrada/salida
+  const activos = filas.filter(f =>
+    f.empleado && f.empleado !== 'Sin registro hoy' &&
+    f.emp_fecha_inicio && f.emp_fecha_inicio.trim() !== ''
+  );
+
+  if (!activos.length) {
+    document.getElementById('gantt-tabla').innerHTML =
+      '<tbody><tr><td style="color:#999;padding:10px;font-style:italic">Sin registros de empleados hoy</td></tr></tbody>';
+    return;
+  }
+
+  // Agrupar por empleado → lista de bloques
+  const porEmpleado = {};
+  activos.forEach(f => {
+    const emp = f.empleado;
+    if (!porEmpleado[emp]) porEmpleado[emp] = [];
+    porEmpleado[emp].push(f);
+  });
+
+  // Horas del header
+  const horas = [];
+  for (let h = HORA_INI; h <= HORA_FIN; h++) horas.push(h);
+
+  // Posición % dentro del rango
+  function pct(fechaStr) {
+    if (!fechaStr || !fechaStr.trim()) return null;
+    const partes = fechaStr.trim().split(' ');
+    if (!partes[1]) return null;
+    const [hh, mm] = partes[1].split(':').map(Number);
+    const totalMin = (hh - HORA_INI) * 60 + mm;
+    return Math.min(100, Math.max(0, (totalMin / (TOTAL_H * 60)) * 100));
+  }
+
+  // Hora actual
+  const ahora = new Date();
+  const pctAhora = pct(
+    `hoy ${String(ahora.getHours()).padStart(2,'0')}:${String(ahora.getMinutes()).padStart(2,'0')}:00`
+  );
+  const pctAhoraReal = Math.min(100, Math.max(0,
+    ((ahora.getHours() - HORA_INI) * 60 + ahora.getMinutes()) / (TOTAL_H * 60) * 100
+  ));
+
+  // Construir tabla
+  const colNombreW = 150;
+  let thead = `<thead><tr>
+    <th class="col-nombre">Empleado</th>
+    ${horas.map(h => `<th>${String(h).padStart(2,'0')}:00</th>`).join('')}
+  </tr></thead>`;
+
+  let tbody = '<tbody>';
+  Object.entries(porEmpleado).forEach(([emp, bloques]) => {
+    const colorCls = getColorArea(bloques[0].centro_trabajo || '');
+    const bars = bloques.map(b => {
+      const ini = pct(b.emp_fecha_inicio);
+      const fin = b.emp_fecha_fin && b.emp_fecha_fin.trim()
+        ? pct(b.emp_fecha_fin)
+        : pctAhoraReal;
+      if (ini === null || fin === null || fin <= ini) return '';
+      const left  = ini.toFixed(2);
+      const width = Math.max(0.5, fin - ini).toFixed(2);
+      const ot    = (b.orden_trabajo || '').split(' - ')[0].trim();
+      return `<div class="gantt-bar ${colorCls}" style="left:${left}%;width:${width}%">${ot}</div>`;
+    }).join('');
+
+    tbody += `<tr>
+      <td class="col-nombre-cell" title="${emp}">${emp.split(' ').slice(0,2).join(' ')}</td>
+      <td colspan="${horas.length}" style="padding:0;position:relative">
+        <div class="gantt-timeline">
+          <div class="gantt-hora-actual" style="left:${pctAhoraReal.toFixed(2)}%"></div>
+          ${bars}
+        </div>
+      </td>
+    </tr>`;
+  });
+  tbody += '</tbody>';
+
+  document.getElementById('gantt-tabla').innerHTML = thead + tbody;
+}
+
+// ── Carga principal ────────────────────────────────────────────────────────
+async function cargarDatos() {
+  try {
+    document.getElementById('ultima-act').textContent = 'Actualizando...';
+    const taller = await leerCSV('taller.csv');
+    const hoy    = hoyStr();
+    const filas  = taller.filter(f => (f.fecha || '').startsWith(hoy));
+
+    renderAreas(filas);
+    renderGantt(filas);
+
+    const ahora = new Date().toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'});
+    document.getElementById('ultima-act').textContent =
+      `Última actualización: ${ahora} · próxima en ~30 min`;
+  } catch(e) {
+    document.getElementById('ultima-act').textContent = 'Error: ' + e.message;
+    console.error(e);
+  }
+}
+
+// Cargar y programar en :05 y :35
+cargarDatos();
+function programarSiguiente() {
+  const ahora = new Date();
+  const min = ahora.getMinutes(), seg = ahora.getSeconds();
+  let t;
+  if (min < 5)       t = 5;
+  else if (min < 35) t = 35;
+  else               t = 65;
+  setTimeout(() => { cargarDatos(); programarSiguiente(); },
+    ((t - min) * 60 - seg) * 1000 - ahora.getMilliseconds());
+}
+programarSiguiente();
+</script>
+</body>
+</html>
