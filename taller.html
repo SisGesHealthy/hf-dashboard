@@ -257,9 +257,9 @@ function renderAreas(filas) {
 
   filas.forEach(f => {
     if (!f.empleado || f.empleado === 'Sin registro hoy') return;
-    // "Activo ahora" = emp_fecha_inicio tiene valor y emp_fecha_fin está vacío
-    const enCurso = f.emp_fecha_inicio && f.emp_fecha_inicio.trim() !== ''
-                 && (!f.emp_fecha_fin || f.emp_fecha_fin.trim() === '');
+    // "Activo" = la OT está En progreso Y el empleado trabajó hoy en ella
+    const enCurso = (f.estado_ot || '').toLowerCase().includes('progreso')
+                 && f.emp_fecha_inicio && f.emp_fecha_inicio.trim() !== '';
     if (!enCurso) return;
 
     const area = f.centro_trabajo || 'Sin área';
