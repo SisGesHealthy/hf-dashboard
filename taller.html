@@ -97,6 +97,10 @@
     .area-card.alerta .empleado-chip { background: #fff3e0; color: #e65100; }
     .area-vacia-txt { font-size: .72rem; color: var(--vacio); font-style: italic; }
     .area-ot { font-size: .68rem; color: #888; margin-top: 4px; }
+    .area-bloque { margin-top: 4px; line-height: 1.4; }
+    .area-ot-cod { font-size: .72rem; font-weight: 700; color: var(--verde); }
+    .area-operac { font-size: .68rem; color: #666; }
+    .area-producto { font-size: .7rem; color: #333; font-weight: 600; margin-top: 1px; }
 
     /* ── GANTT ── */
     .gantt-wrap {
@@ -252,26 +256,30 @@ function getColorArea(area) {
 }
 
 // ── TARJETAS DE ÁREAS (solo áreas con empleado activo AHORA) ──────────────
-function renderAreas(filas) {
+function renderAreas(filas, prodIdx) {
   const areas = {};
 
   filas.forEach(f => {
     if (!f.empleado || f.empleado === 'Sin registro hoy') return;
-    // "Activo" = OT en progreso Y (emp_fecha_fin vacío o dice "en curso")
-    const finStr   = (f.emp_fecha_fin || '').trim().toLowerCase();
-    const enCurso  = (f.estado_ot || '').toLowerCase().includes('progreso')
-                  && f.emp_fecha_inicio && f.emp_fecha_inicio.trim() !== ''
-                  && (finStr === '' || finStr.includes('curso'));
+    const finStr  = (f.emp_fecha_fin || '').trim().toLowerCase();
+    const enCurso = (f.estado_ot || '').toLowerCase().includes('progreso')
+                 && f.emp_fecha_inicio && f.emp_fecha_inicio.trim() !== ''
+                 && (finStr === '' || finStr.includes('curso'));
     if (!enCurso) return;
 
     const area = f.centro_trabajo || 'Sin área';
-    if (!areas[area]) areas[area] = { empleados: new Set(), ots: new Set() };
+    if (!areas[area]) areas[area] = { empleados: new Set(), bloques: [] };
     areas[area].empleados.add(f.empleado);
+
     if (f.orden_trabajo) {
-      const partes = f.orden_trabajo.split(' - ');
-      const ot  = partes[0].trim();
-      const op  = partes[1] ? partes[1].trim() : '';
-      areas[area].ots.add(op ? `${ot} · ${op}` : ot);
+      const partes  = f.orden_trabajo.split(' - ');
+      const otCod   = partes[0].trim();
+      const operac  = partes[1] ? partes[1].trim() : '';
+      const producto = (prodIdx && prodIdx[otCod]) || '';
+      const key = otCod + '|' + operac;
+      if (!areas[area].bloques.find(b => b.key === key)) {
+        areas[area].bloques.push({ key, otCod, operac, producto });
+      }
     }
   });
 
@@ -287,12 +295,17 @@ function renderAreas(filas) {
       const emps = [...data.empleados].map(e =>
         `<span class="empleado-chip">${e.split(' ').slice(0,2).join(' ')}</span>`
       ).join('');
-      const ots = [...data.ots].slice(0,2).join('<br>');
+      const bloques = data.bloques.slice(0,2).map(b => `
+        <div class="area-bloque">
+          <span class="area-ot-cod">${b.otCod}</span>
+          ${b.operac ? `<span class="area-operac"> · ${b.operac}</span>` : ''}
+          ${b.producto ? `<div class="area-producto">📦 ${b.producto}</div>` : ''}
+        </div>`).join('');
       return `
         <div class="area-card">
           <div class="area-nombre"><div class="area-dot"></div>${nombre}</div>
-          ${emps}
-          <div class="area-ot">${ots}</div>
+          <div style="margin:3px 0">${emps}</div>
+          ${bloques}
         </div>`;
     }).join('');
 }
@@ -392,11 +405,20 @@ function renderGantt(filas) {
 async function cargarDatos() {
   try {
     document.getElementById('ultima-act').textContent = 'Actualizando...';
-    const taller = await leerCSV('taller.csv');
-    const hoy    = hoyStr();
-    const filas  = taller.filter(f => (f.fecha || '').startsWith(hoy));
+    const [taller, produccion] = await Promise.all([
+      leerCSV('taller.csv'),
+      leerCSV('produccion.csv'),
+    ]);
+    const hoy   = hoyStr();
+    const filas = taller.filter(f => (f.fecha || '').startsWith(hoy));
 
-    renderAreas(filas);
+    // Índice orden → producto (desde produccion.csv)
+    const prodIdx = {};
+    produccion.forEach(p => {
+      if (p.orden_produccion) prodIdx[p.orden_produccion.trim()] = p.producto || '';
+    });
+
+    renderAreas(filas, prodIdx);
     renderGantt(filas);
 
     const ahora = new Date().toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'});
