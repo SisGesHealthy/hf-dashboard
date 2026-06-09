@@ -102,6 +102,26 @@
     .area-operac { font-size: .68rem; color: #666; }
     .area-producto { font-size: .7rem; color: #333; font-weight: 600; margin-top: 1px; }
 
+    /* ── LEYENDA ÓRDENES ── */
+    .leyenda-wrap {
+      padding: 4px 18px 0;
+      flex-shrink: 0;
+    }
+    .leyenda-grid {
+      display: flex; gap: 6px; flex-wrap: wrap;
+    }
+    .leyenda-chip {
+      background: var(--blanco);
+      border-radius: 6px;
+      border-left: 4px solid var(--verde);
+      padding: 4px 10px;
+      font-size: .7rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,.08);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .leyenda-cod  { font-weight: 700; color: var(--verde); white-space: nowrap; }
+    .leyenda-prod { color: #444; }
+
     /* ── GANTT ── */
     .gantt-wrap {
       flex: 1; min-height: 0;
@@ -202,6 +222,11 @@
   <div class="areas-grid" id="areas-grid">
     <div style="color:#999;padding:10px">Cargando áreas...</div>
   </div>
+</div>
+
+<!-- LEYENDA ÓRDENES -->
+<div class="leyenda-wrap">
+  <div class="leyenda-grid" id="leyenda-grid"></div>
 </div>
 
 <!-- GANTT -->
@@ -310,16 +335,43 @@ function renderAreas(filas, prodIdx) {
     }).join('');
 }
 
+// ── LEYENDA ÓRDENES ACTIVAS ───────────────────────────────────────────────
+function renderLeyenda(filas, prodIdx) {
+  const vistas = {};
+  filas.forEach(f => {
+    if (!f.orden_trabajo) return;
+    const otCod = f.orden_trabajo.split(' - ')[0].trim();
+    if (!vistas[otCod]) vistas[otCod] = prodIdx[otCod] || '';
+  });
+  const grid = document.getElementById('leyenda-grid');
+  grid.innerHTML = Object.entries(vistas).map(([cod, prod]) => {
+    const colorCls = getColorArea(cod);
+    return `<div class="leyenda-chip" style="border-left-color: var(--chip-color)" data-color="${colorCls}">
+      <span class="leyenda-cod">${cod}</span>
+      ${prod ? `<span class="leyenda-prod">= ${prod}</span>` : ''}
+    </div>`;
+  }).join('');
+  // aplicar color de paleta
+  grid.querySelectorAll('.leyenda-chip').forEach(el => {
+    const cls = el.dataset.color;
+    const colors = {'color-0':'#6a8f2f','color-1':'#2a7be0','color-2':'#e07b2a',
+                    'color-3':'#8e24aa','color-4':'#00838f','color-5':'#c62828',
+                    'color-6':'#2e7d32','color-7':'#4527a0'};
+    el.style.borderLeftColor = colors[cls] || '#6a8f2f';
+  });
+}
+
 // ── GANTT ─────────────────────────────────────────────────────────────────
-function renderGantt(filas) {
+function renderGantt(filas, prodIdx) {
   const HORA_INI = 5;   // 05:00
   const HORA_FIN = 18;  // 18:00
   const TOTAL_H  = HORA_FIN - HORA_INI;
 
-  // Solo filas con empleado real y fechas de entrada/salida
+  // Solo filas con empleado en OT activa (En progreso)
   const activos = filas.filter(f =>
     f.empleado && f.empleado !== 'Sin registro hoy' &&
-    f.emp_fecha_inicio && f.emp_fecha_inicio.trim() !== ''
+    f.emp_fecha_inicio && f.emp_fecha_inicio.trim() !== '' &&
+    (f.estado_ot || '').toLowerCase().includes('progreso')
   );
 
   if (!activos.length) {
@@ -368,7 +420,7 @@ function renderGantt(filas) {
 
   let tbody = '<tbody>';
   Object.entries(porEmpleado).forEach(([emp, bloques]) => {
-    const colorCls = getColorArea(bloques[0].centro_trabajo || '');
+    const colorCls = getColorArea(bloques[0].orden_trabajo?.split(' - ')[0].trim() || '');
     const bars = bloques.map(b => {
       const ini = pct(b.emp_fecha_inicio);
       const fin = b.emp_fecha_fin && b.emp_fecha_fin.trim()
@@ -419,7 +471,8 @@ async function cargarDatos() {
     });
 
     renderAreas(filas, prodIdx);
-    renderGantt(filas);
+    renderLeyenda(filas, prodIdx);
+    renderGantt(filas, prodIdx);
 
     const ahora = new Date().toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'});
     document.getElementById('ultima-act').textContent =
