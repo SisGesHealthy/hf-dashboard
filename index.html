@@ -181,6 +181,24 @@
       100% { transform: translateY(var(--scroll-dist, -50%)); }
     }
 
+    /* ── FILA RECIBIDA COMPLETA ── */
+    tr.fila-completa td { background: #d4edda !important; }
+    tr.fila-completa:hover td { background: #c3e6cb !important; }
+
+    /* ── SEPARADOR PRODUCCIÓN ── */
+    .sep-arrastre td {
+      background: #e65c00 !important;
+      color: white !important;
+      font-weight: 700;
+      font-size: .7rem;
+      letter-spacing: .3px;
+      padding: 4px 8px !important;
+      border-top: 2px solid #c45000;
+      border-bottom: 2px solid #c45000;
+    }
+    .sep-arrastre:hover td { background: #c45000 !important; }
+    .toggle-icon { float: right; font-size: .8rem; margin-right: 4px; }
+
     /* ── COLAPSABLE ── */
     .sep-arrastre {
       cursor: pointer;
@@ -483,8 +501,9 @@ function renderRecepciones(compras) {
   const rows = [];
   ordenKeys.forEach(k => {
     const lineas = ordenes[k];
+    const completa = (lineas[0].estado_recepcion || '').toLowerCase().includes('recibida completa');
     lineas.forEach((r, i) => {
-      rows.push(`<tr>
+      rows.push(`<tr class="${completa ? 'fila-completa' : ''}">
         ${i === 0 ? `<td rowspan="${lineas.length}"><b>${r.orden_compra}</b></td>
                      <td rowspan="${lineas.length}">${horaDeStr(r.fecha_planificada)}</td>
                      <td rowspan="${lineas.length}">${r.proveedor || '—'}</td>` : ''}
@@ -551,8 +570,8 @@ function renderProduccion(produccion) {
   // Separador colapsable + filas de arrastre
   if (filasArrastre.length) {
     html += `<tr class="sep-arrastre" onclick="toggleArrastre(this)">
-      <td colspan="6" style="background:#fff8e1;color:#856404;font-size:.75rem;font-weight:700;padding:5px 8px;">
-        ⚠️ En curso de días anteriores (${filasArrastre.length})
+      <td colspan="6">
+        ⏳ En curso de días anteriores (${filasArrastre.length})
         <span class="toggle-icon">▼</span>
       </td></tr>`;
     html += filasArrastre.map(r => {
