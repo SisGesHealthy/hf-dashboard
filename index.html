@@ -711,9 +711,30 @@ async function cargarDatos() {
   }
 }
 
-// Cargar al inicio y cada 30 minutos
+// Cargar al inicio y luego en :05 y :35 de cada hora
 cargarDatos();
-setInterval(cargarDatos, 30 * 60 * 1000);
+
+function programarSiguienteActualizacion() {
+  const ahora    = new Date();
+  const min      = ahora.getMinutes();
+  const seg      = ahora.getSeconds();
+  const ms       = ahora.getMilliseconds();
+
+  // Próximo disparo: :05 o :35
+  let minTarget;
+  if (min < 5)       minTarget = 5;
+  else if (min < 35) minTarget = 35;
+  else               minTarget = 65;   // :05 de la siguiente hora
+
+  const msHasta = ((minTarget - min) * 60 - seg) * 1000 - ms;
+
+  setTimeout(() => {
+    cargarDatos();
+    programarSiguienteActualizacion();
+  }, msHasta);
+}
+
+programarSiguienteActualizacion();
 </script>
 </body>
 </html>
