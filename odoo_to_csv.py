@@ -295,6 +295,44 @@ def extraer_compras_lineas(models, uid):
                    "fecha_orden","fecha_planificada","vencida","monto_total_orden","actualizado"]
     escribir_csv("compras_lineas.csv", filas, encabezados)
 
+# ── TRASLADOS INTERNOS A ECLA (Emergen Cold) ──────────────────────────────────
+
+ESTADO_TRASLADO = {
+    "draft": "Borrador", "waiting": "Esperando", "confirmed": "Confirmado",
+    "assigned": "Disponible", "done": "Hecho", "cancel": "Cancelado",
+}
+
+def extraer_traslados_ecla(models, uid):
+    log.info("Extrayendo traslados internos a ECLA (stock.picking)...")
+
+    # Inicio del día en Quito (UTC-5), expresado en UTC
+    hoy_utc = (datetime.now().replace(hour=0, minute=0, second=0, microsecond=0) +
+               timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S")
+
+    pickings = odoo_get(models, uid, "stock.picking",
+        [["location_dest_id.complete_name", "ilike", "ECLA"],
+         ["state", "not in", ["cancel", "draft"]],
+         "|",
+           ["scheduled_date", ">=", hoy_utc],
+           ["date_done", ">=", hoy_utc]],
+        ["id", "name", "state", "scheduled_date", "date_done", "origin", "partner_id"]
+    )
+
+    filas = []
+    for p in pickings:
+        filas.append({
+            "documento":        val(p.get("name")),
+            "origen":           val(p.get("origin")),
+            "cliente":          val(p.get("partner_id")),
+            "estado":           ESTADO_TRASLADO.get(p.get("state",""), p.get("state","")),
+            "fecha_programada": utc_a_local(val(p.get("scheduled_date")), "%Y-%m-%d %H:%M"),
+            "fecha_efectiva":   utc_a_local(val(p.get("date_done")), "%Y-%m-%d %H:%M"),
+            "actualizado":      ahora(),
+        })
+
+    encabezados = ["documento","origen","cliente","estado","fecha_programada","fecha_efectiva","actualizado"]
+    escribir_csv("traslados_ecla.csv", filas, encabezados)
+
 # ── PRODUCCIÓN: órdenes + órdenes de trabajo ──────────────────────────────────
 
 ESTADO_MO = {
@@ -543,6 +581,7 @@ def main():
     extraer_despachos(models, uid)
     extraer_despachos_lineas(models, uid)
     extraer_compras_lineas(models, uid)
+    extraer_traslados_ecla(models, uid)
     extraer_produccion(models, uid)
     extraer_taller(models, uid)
 

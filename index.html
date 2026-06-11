@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard Operativo — Healthy Food</title>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     :root {
       --verde:      #6a8f2f;
@@ -162,7 +161,42 @@
       display: flex;
       flex-direction: column;
     }
-    .chart-wrap { padding: 5px 12px; flex: 1; min-height: 0; }
+    .chart-wrap { padding: 5px 12px; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+
+    /* ── LÍNEA DE TIEMPO (Recepciones / Despachos / Traslados ECLA) ── */
+    #timeline-header-wrap { flex-shrink: 0; overflow: hidden; }
+    #timeline-header-wrap table, .timeline-tabla { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    .timeline-tabla thead th {
+      font-size: .6rem; color: #888; font-weight: 600;
+      padding: 2px 0; text-align: center;
+      border-bottom: 2px solid #e0e0e0; white-space: nowrap;
+    }
+    .timeline-tabla th.col-nombre { text-align: left; padding-left: 4px; }
+    .timeline-tabla tbody tr { height: 26px; }
+    .timeline-tabla tbody tr:nth-child(even) { background: #f8f8f8; }
+    .timeline-label {
+      font-size: .68rem; font-weight: 700; padding: 0 6px;
+      white-space: nowrap; color: var(--texto);
+      border-right: 2px solid #e0e0e0;
+    }
+    .timeline-track { position: relative; height: 22px; }
+    .timeline-marker {
+      position: absolute; top: 3px; width: 1.6%; min-width: 7px; height: 16px;
+      border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,.25);
+    }
+    .timeline-marker.pendiente { opacity: .35; }
+    .timeline-marker.recepcion { background: #2a7be0; }
+    .timeline-marker.despacho  { background: #e07b2a; }
+    .timeline-marker.traslado  { background: #8e24aa; }
+    .timeline-hora-actual {
+      position: absolute; top: 0; bottom: 0; width: 2px;
+      background: #e53935; opacity: .8; z-index: 10;
+    }
+    .timeline-hora-actual::after {
+      content: '▼'; position: absolute; top: -9px; left: -5px;
+      font-size: .6rem; color: #e53935;
+    }
+    .timeline-vacio { position: absolute; left: 8px; top: 4px; color: #ccc; font-style: italic; font-size: .65rem; }
 
     /* ── PRODUCCIÓN: tabla compacta ── */
     #card-produccion table { font-size: .62rem; }
@@ -299,11 +333,14 @@
     </div>
   </div>
 
-  <!-- GRÁFICO -->
+  <!-- LÍNEA DE TIEMPO -->
   <div class="chart-card">
-    <div class="card-header verde">📊 Actividad del día por hora</div>
+    <div class="card-header verde">🗓 Línea de tiempo del día</div>
     <div class="chart-wrap">
-      <canvas id="grafico"></canvas>
+      <div id="timeline-header-wrap"></div>
+      <div id="timeline-body" style="flex:1;min-height:0">
+        <div style="color:#999;padding:10px">Cargando línea de tiempo...</div>
+      </div>
     </div>
   </div>
 </div>
@@ -457,55 +494,115 @@ function horaDeStr(fechaStr) {
   return partes[1] ? partes[1].substring(0,5) : '—';
 }
 
-// ── Gráfico ────────────────────────────────────────────────────────────────
-let graficoInst = null;
+// ── Línea de tiempo (Recepciones / Despachos / Traslados ECLA) ─────────────
+function construirLineaTiempo(recepciones, despachos, traslados, hoy, esHoy) {
+  const HORA_INI = 6;   // 06:00
+  const HORA_FIN = 19;  // 19:00
+  const TOTAL_H  = HORA_FIN - HORA_INI;
 
-function construirGrafico(recepciones, produccion, despachos, hoy) {
-  const horas = Array.from({length: 24}, (_, i) => `${String(i).padStart(2,'0')}:00`);
-
-  function contarPorHora(filas, campoFecha, dedupeKey) {
-    const cnt = new Array(24).fill(0);
-    const vistos = new Set();
-    filas.forEach(f => {
-      if (dedupeKey) {
-        const k = f[dedupeKey];
-        if (vistos.has(k)) return;
-        vistos.add(k);
-      }
-      const v = f[campoFecha] || '';
-      if (v.startsWith(hoy)) {
-        const h = parseInt(v.split(' ')[1]?.split(':')[0] || '0', 10);
-        if (h >= 0 && h < 24) cnt[h]++;
-      }
-    });
-    return cnt;
+  function pct(fechaStr) {
+    if (!fechaStr || !fechaStr.trim()) return null;
+    const partes = fechaStr.trim().split(' ');
+    if (!partes[1]) return null;
+    const [hh, mm] = partes[1].split(':').map(Number);
+    const totalMin = (hh - HORA_INI) * 60 + mm;
+    return Math.min(100, Math.max(0, (totalMin / (TOTAL_H * 60)) * 100));
   }
 
-  const datosRec  = contarPorHora(recepciones, 'fecha_planificada');
-  const datosProd = contarPorHora(produccion,  'fecha_inicio', 'orden_produccion');
-  const datosDes  = contarPorHora(despachos,   'fecha_compromiso');
+  const horas = [];
+  for (let h = HORA_INI; h <= HORA_FIN; h++) horas.push(h);
 
-  const ctx = document.getElementById('grafico').getContext('2d');
-  if (graficoInst) graficoInst.destroy();
-  graficoInst = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: horas,
-      datasets: [
-        { label: '🚚 Recepciones', data: datosRec,  backgroundColor: '#2a7be0aa' },
-        { label: '⚙️ Producción',  data: datosProd, backgroundColor: '#6a8f2faa' },
-        { label: '📦 Despachos',   data: datosDes,  backgroundColor: '#e07b2aaa' },
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { position: 'top', labels: { font: { size: 11 } } } },
-      scales: {
-        x: { stacked: false, ticks: { font: { size: 10 } } },
-        y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 10 } } }
-      }
-    }
+  const ahora = new Date();
+  const pctAhora = esHoy ? Math.min(100, Math.max(0,
+    ((ahora.getHours() - HORA_INI) * 60 + ahora.getMinutes()) / (TOTAL_H * 60) * 100
+  )) : null;
+
+  const colgroup = `<colgroup><col style="width:90px"><col></colgroup>`;
+
+  const theadHtml = `<table class="timeline-tabla" style="table-layout:fixed">
+    ${colgroup}
+    <thead><tr>
+      <th class="col-nombre">&nbsp;</th>
+      <th style="padding:0;position:relative">
+        <div style="position:relative;height:16px">
+          ${horas.map(h => {
+            const pctH = ((h - HORA_INI) / TOTAL_H * 100).toFixed(2);
+            return `<span style="position:absolute;left:${pctH}%;font-size:.6rem;color:#888;transform:translateX(-50%)">${String(h).padStart(2,'0')}:00</span>`;
+          }).join('')}
+        </div>
+      </th>
+    </tr></thead>
+  </table>`;
+  document.getElementById('timeline-header-wrap').innerHTML = theadHtml;
+
+  function itemsRecepciones() {
+    return recepciones
+      .filter(r => (r.fecha_planificada || '').startsWith(hoy))
+      .map(r => ({
+        pos: pct(r.fecha_planificada),
+        completo: (r.estado_recepcion || '').toLowerCase().includes('recibida completa'),
+        titulo: `${r.orden_compra || ''} · ${r.proveedor || ''} (${horaDeStr(r.fecha_planificada)})`,
+      }));
+  }
+
+  function itemsDespachos() {
+    return despachos
+      .filter(d => (d.fecha_compromiso || '').startsWith(hoy))
+      .map(d => {
+        const completo = (d.estado_entrega || '').toLowerCase().includes('despach') ||
+                          (d.estado_entrega || '').toLowerCase().includes('hecho') ||
+                          (d.estado_entrega || '').toLowerCase().includes('done');
+        const fechaPos = (completo && d.fecha_despacho_real) ? d.fecha_despacho_real : d.fecha_compromiso;
+        const real = (completo && d.fecha_despacho_real) ? ` → real ${horaDeStr(d.fecha_despacho_real)}` : '';
+        return {
+          pos: pct(fechaPos),
+          completo,
+          titulo: `${d.orden_venta || ''} · ${d.cliente || ''} (${horaDeStr(d.fecha_compromiso)}${real})`,
+        };
+      });
+  }
+
+  function itemsTraslados() {
+    return (traslados || [])
+      .filter(t => (t.fecha_programada || '').startsWith(hoy) || (t.fecha_efectiva || '').startsWith(hoy))
+      .map(t => {
+        const completo = (t.estado || '').toLowerCase() === 'hecho';
+        const fechaPos = (completo && t.fecha_efectiva) ? t.fecha_efectiva : t.fecha_programada;
+        const real = (completo && t.fecha_efectiva) ? ` → real ${horaDeStr(t.fecha_efectiva)}` : '';
+        return {
+          pos: pct(fechaPos),
+          completo,
+          titulo: `${t.documento || ''} → ECLA · ${t.origen || ''} (${horaDeStr(t.fecha_programada)}${real})`,
+        };
+      });
+  }
+
+  const filas = [
+    { label: '🚚 Recepciones',    clase: 'recepcion', items: itemsRecepciones() },
+    { label: '📦 Despachos',      clase: 'despacho',  items: itemsDespachos() },
+    { label: '🧊 Traslados ECLA', clase: 'traslado',  items: itemsTraslados() },
+  ];
+
+  let tbody = '<tbody>';
+  filas.forEach(f => {
+    const visibles = f.items.filter(it => it.pos !== null);
+    const marcas = visibles
+      .map(it => `<div class="timeline-marker ${f.clase} ${it.completo ? 'completo' : 'pendiente'}" style="left:${it.pos.toFixed(2)}%" title="${it.titulo}"></div>`)
+      .join('');
+    tbody += `<tr>
+      <td class="timeline-label">${f.label}</td>
+      <td style="padding:0;position:relative">
+        <div class="timeline-track">
+          ${esHoy && pctAhora !== null ? `<div class="timeline-hora-actual" style="left:${pctAhora.toFixed(2)}%"></div>` : ''}
+          ${visibles.length ? marcas : '<span class="timeline-vacio">Sin registros para este día</span>'}
+        </div>
+      </td>
+    </tr>`;
   });
+  tbody += '</tbody>';
+
+  document.getElementById('timeline-body').innerHTML =
+    `<table class="timeline-tabla" style="table-layout:fixed">${colgroup}${tbody}</table>`;
 }
 
 // ── Tablas ─────────────────────────────────────────────────────────────────
@@ -734,11 +831,12 @@ async function cargarDatos() {
     const esHoy    = fechaSel === hoyStr();
 
     document.getElementById('ultima-act').textContent = 'Actualizando datos...';
-    const [compras, produccion, despachos, lineas] = await Promise.all([
+    const [compras, produccion, despachos, lineas, traslados] = await Promise.all([
       leerCSV('compras_lineas.csv', fechaSel),
       leerCSV('produccion.csv', fechaSel),
       leerCSV('despachos.csv', fechaSel),
       leerCSV('despachos_lineas.csv', fechaSel),
+      leerCSV('traslados_ecla.csv', fechaSel),
     ]);
 
     if (!esHoy && (compras === null || produccion === null || despachos === null || lineas === null)) {
@@ -749,7 +847,9 @@ async function cargarDatos() {
       document.getElementById('kpi-recepciones').textContent = '—';
       document.getElementById('kpi-produccion').textContent  = '—';
       document.getElementById('kpi-despachos').textContent   = '—';
-      if (graficoInst) { graficoInst.destroy(); graficoInst = null; }
+      document.getElementById('timeline-header-wrap').innerHTML = '';
+      document.getElementById('timeline-body').innerHTML =
+        '<div style="color:#999;padding:10px;font-style:italic">Sin datos históricos guardados aún para esta fecha</div>';
       document.getElementById('ultima-act').textContent =
         `Sin datos históricos guardados aún para ${fechaSel} (disponibles desde la próxima actualización, cada 30 min)`;
       return;
@@ -773,7 +873,7 @@ async function cargarDatos() {
     document.getElementById('kpi-produccion').textContent  = nProd;
     document.getElementById('kpi-despachos').textContent   = nDes;
 
-    construirGrafico(compras, produccion, despachos, fechaSel);
+    construirLineaTiempo(compras, despachos, traslados || [], fechaSel, esHoy);
 
     const ahora = new Date().toLocaleTimeString('es-EC',
       {hour:'2-digit', minute:'2-digit'});
