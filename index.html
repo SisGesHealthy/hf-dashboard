@@ -391,7 +391,7 @@ async function leerCSV(nombre, fecha) {
   const ruta  = esHoy ? nombre : `historico/${fecha}/${nombre}`;
   const url   = csvUrl(ruta);
   const res = await fetch(url + '?t=' + Date.now(), { cache: 'no-store' });
-  if (!res.ok) return [];
+  if (!res.ok) return null;
   const texto = await res.text();
   return new Promise(resolve => {
     Papa.parse(texto, { header: true, skipEmptyLines: true,
@@ -725,6 +725,20 @@ async function cargarDatos() {
       leerCSV('despachos.csv', fechaSel),
       leerCSV('despachos_lineas.csv', fechaSel),
     ]);
+
+    if (!esHoy && (compras === null || produccion === null || despachos === null || lineas === null)) {
+      ['tbody-recepciones','tbody-produccion','tbody-despachos'].forEach(id => {
+        document.getElementById(id).innerHTML =
+          '<tr><td colspan="6" style="text-align:center;color:#999;font-style:italic">Aún no hay datos guardados para esta fecha</td></tr>';
+      });
+      document.getElementById('kpi-recepciones').textContent = '—';
+      document.getElementById('kpi-produccion').textContent  = '—';
+      document.getElementById('kpi-despachos').textContent   = '—';
+      if (graficoInst) { graficoInst.destroy(); graficoInst = null; }
+      document.getElementById('ultima-act').textContent =
+        `Sin datos históricos guardados aún para ${fechaSel} (disponibles desde la próxima actualización, cada 30 min)`;
+      return;
+    }
 
     const nRec  = renderRecepciones(compras, fechaSel);
     const nProd = renderProduccion(produccion, fechaSel);

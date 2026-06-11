@@ -301,7 +301,7 @@ async function leerCSV(nombre, fecha) {
   const ruta  = esHoy ? nombre : `historico/${fecha}/${nombre}`;
   const url   = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/dashboard-data/${ruta}?t=${Date.now()}`;
   const res   = await fetch(url, { cache: 'no-store' });
-  if (!res.ok) return [];
+  if (!res.ok) return null;
   const txt   = await res.text();
   return new Promise(r => Papa.parse(txt, { header:true, skipEmptyLines:true, complete: d => r(d.data) }));
 }
@@ -517,6 +517,19 @@ async function cargarDatos() {
       leerCSV('taller.csv', fechaSel),
       leerCSV('produccion.csv', fechaSel),
     ]);
+
+    if (!esHoy && (taller === null || produccion === null)) {
+      document.getElementById('areas-grid').innerHTML =
+        '<div style="color:#999;font-style:italic;padding:8px">Sin datos guardados para esta fecha</div>';
+      document.getElementById('leyenda-grid').innerHTML = '';
+      document.getElementById('gantt-titulo').textContent = `⏱ Actividad de empleados — ${fechaSel}`;
+      document.getElementById('gantt-tabla').innerHTML =
+        '<tbody><tr><td style="color:#999;padding:10px;font-style:italic">Aún no hay datos guardados para esta fecha</td></tr></tbody>';
+      document.getElementById('ultima-act').textContent =
+        `Sin datos históricos guardados aún para ${fechaSel} (disponibles desde la próxima actualización, cada 30 min)`;
+      return;
+    }
+
     const filas = taller.filter(f => (f.fecha || '').startsWith(fechaSel));
 
     // Índice orden → producto (desde produccion.csv)
