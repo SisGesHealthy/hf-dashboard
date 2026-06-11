@@ -87,7 +87,7 @@
     /* ── MAIN GRID (tablas) ── */
     .main {
       display: grid;
-      grid-template-columns: 2fr 2.2fr 1.4fr;
+      grid-template-columns: 1.5fr 2.2fr 1.9fr;
       gap: 7px;
       padding: 6px 18px 6px;
       flex: 1;
@@ -204,9 +204,14 @@
     #card-produccion thead th { padding: 2px 4px; font-size: .62rem; }
 
     /* ── RECEPCIONES Y DESPACHOS: tabla compacta ── */
-    #card-recepciones table, #card-despachos table { font-size: .68rem; }
-    #card-recepciones td, #card-despachos td { padding: 2px 6px; }
-    #card-recepciones thead th, #card-despachos thead th { padding: 3px 6px; font-size: .65rem; }
+    #card-recepciones table, #card-despachos table { font-size: .64rem; table-layout: fixed; }
+    #card-recepciones td, #card-despachos td {
+      padding: 2px 4px; overflow: hidden; text-overflow: ellipsis;
+      word-break: break-word;
+    }
+    #card-recepciones thead th, #card-despachos thead th {
+      padding: 3px 4px; font-size: .6rem; overflow: hidden; text-overflow: ellipsis;
+    }
 
     /* ── AUTO-SCROLL (todas las tablas) ── */
     .card-body {
@@ -356,13 +361,17 @@
     <div class="card-body">
       <div id="scroll-recepciones" class="auto-scroller">
         <table>
+          <colgroup>
+            <col style="width:11%"><col style="width:8%"><col style="width:21%">
+            <col><col style="width:11%"><col style="width:13%">
+          </colgroup>
           <thead>
             <tr>
               <th>Orden</th>
               <th>Hora</th>
               <th>Proveedor</th>
               <th>Producto</th>
-              <th>Cantidad</th>
+              <th>Cant.</th>
               <th>Estado</th>
             </tr>
           </thead>
@@ -400,6 +409,10 @@
     <div class="card-body">
       <div id="scroll-despachos" class="auto-scroller">
         <table>
+          <colgroup>
+            <col style="width:10%"><col style="width:9%"><col style="width:9%">
+            <col style="width:16%"><col><col style="width:11%"><col style="width:13%">
+          </colgroup>
           <thead>
             <tr>
               <th>Orden</th>
