@@ -48,6 +48,12 @@
       padding: 4px 10px; border-radius: 5px; white-space: nowrap;
     }
     .nav-link:hover { opacity: 1; background: rgba(255,255,255,.15); }
+    #fecha-selector {
+      font-size: .8rem; padding: 4px 8px; border-radius: 5px;
+      border: 1px solid rgba(255,255,255,.4); background: rgba(255,255,255,.15);
+      color: white;
+    }
+    #fecha-selector::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
 
     /* ── ÚLTIMA ACT ── */
     #ultima-act {
@@ -221,6 +227,7 @@
     <p>Healthy Food Marcalman Ecuador S.A.</p>
   </div>
   <a href="index.html" class="nav-link">📊 Dashboard operativo</a>
+  <input type="date" id="fecha-selector" title="Ver otro día (semana en curso)">
   <div id="reloj">
     <span id="fecha-hoy"></span>
     <span id="hora-ahora"></span>
@@ -243,7 +250,7 @@
 
 <!-- GANTT -->
 <div class="gantt-wrap">
-  <div class="gantt-titulo">⏱ Actividad de empleados hoy</div>
+  <div class="gantt-titulo" id="gantt-titulo">⏱ Actividad de empleados hoy</div>
   <!-- Cabecera fija (horas) -->
   <div id="gantt-header-wrap"></div>
   <!-- Cuerpo con scroll -->
@@ -281,10 +288,21 @@ function hoyStr() {
   return `${h.getFullYear()}-${String(h.getMonth()+1).padStart(2,'0')}-${String(h.getDate()).padStart(2,'0')}`;
 }
 
-async function leerCSV(nombre) {
-  const url = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/dashboard-data/${nombre}?t=${Date.now()}`;
-  const res  = await fetch(url, { cache: 'no-store' });
-  const txt  = await res.text();
+function lunesActualStr() {
+  const h = new Date();
+  const dow = (h.getDay() + 6) % 7; // 0 = lunes
+  const lunes = new Date(h);
+  lunes.setDate(h.getDate() - dow);
+  return `${lunes.getFullYear()}-${String(lunes.getMonth()+1).padStart(2,'0')}-${String(lunes.getDate()).padStart(2,'0')}`;
+}
+
+async function leerCSV(nombre, fecha) {
+  const esHoy = fecha === hoyStr();
+  const ruta  = esHoy ? nombre : `historico/${fecha}/${nombre}`;
+  const url   = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/dashboard-data/${ruta}?t=${Date.now()}`;
+  const res   = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) return [];
+  const txt   = await res.text();
   return new Promise(r => Papa.parse(txt, { header:true, skipEmptyLines:true, complete: d => r(d.data) }));
 }
 
@@ -378,21 +396,22 @@ function renderLeyenda(filas, prodIdx) {
 }
 
 // ── GANTT ─────────────────────────────────────────────────────────────────
-function renderGantt(filas, prodIdx) {
+function renderGantt(filas, prodIdx, esHoy) {
   const HORA_INI = 5;   // 05:00
   const HORA_FIN = 18;  // 18:00
   const TOTAL_H  = HORA_FIN - HORA_INI;
 
-  // Solo filas con empleado en OT activa (En progreso)
-  const activos = filas.filter(f =>
-    f.empleado && f.empleado !== 'Sin registro hoy' &&
-    f.emp_fecha_inicio && f.emp_fecha_inicio.trim() !== '' &&
-    (f.estado_ot || '').toLowerCase().includes('progreso')
-  );
+  // Hoy: solo OT activas (En progreso). Días pasados: todo registro con inicio.
+  const activos = filas.filter(f => {
+    if (!f.empleado || f.empleado === 'Sin registro hoy') return false;
+    if (!f.emp_fecha_inicio || !f.emp_fecha_inicio.trim()) return false;
+    if (esHoy) return (f.estado_ot || '').toLowerCase().includes('progreso');
+    return true;
+  });
 
   if (!activos.length) {
     document.getElementById('gantt-tabla').innerHTML =
-      '<tbody><tr><td style="color:#999;padding:10px;font-style:italic">Sin registros de empleados hoy</td></tr></tbody>';
+      '<tbody><tr><td style="color:#999;padding:10px;font-style:italic">Sin registros de empleados para este día</td></tr></tbody>';
     return;
   }
 
@@ -453,16 +472,19 @@ function renderGantt(filas, prodIdx) {
   // ── Cuerpo (en el scroller) ──
   let tbody = '<tbody>';
   Object.entries(porEmpleado).forEach(([emp, bloques]) => {
-    const colorCls = getColorArea(bloques[0].orden_trabajo?.split(' - ')[0].trim() || '');
     const bars = bloques.map(b => {
       const ini = pct(b.emp_fecha_inicio);
-      const fin = b.emp_fecha_fin && b.emp_fecha_fin.trim() && !b.emp_fecha_fin.toLowerCase().includes('curso')
-        ? pct(b.emp_fecha_fin) : pctAhoraReal;
+      const finRaw = (b.emp_fecha_fin || '').trim();
+      let fin;
+      if (finRaw && !finRaw.toLowerCase().includes('curso')) fin = pct(finRaw);
+      else if (esHoy) fin = pctAhoraReal;
+      else fin = 100;
       if (ini === null || fin === null || fin <= ini) return '';
       const left  = ini.toFixed(2);
       const width = Math.max(0.5, fin - ini).toFixed(2);
-      const op    = (b.orden_trabajo || '').split(' - ')[1]?.trim() || b.orden_trabajo || '';
       const ot    = (b.orden_trabajo || '').split(' - ')[0].trim();
+      const op    = (b.orden_trabajo || '').split(' - ')[1]?.trim() || ot;
+      const colorCls = getColorArea(ot); // color propio según la orden de ESTE bloque
       return `<div class="gantt-bar ${colorCls}" style="left:${left}%;width:${width}%" title="${ot} · ${op}">
         <span style="font-size:.63rem">${op}</span>
       </div>`;
@@ -472,7 +494,7 @@ function renderGantt(filas, prodIdx) {
       <td class="col-nombre-cell" title="${emp}">${emp.split(' ').slice(0,2).join(' ')}</td>
       <td style="padding:0;position:relative">
         <div class="gantt-timeline">
-          <div class="gantt-hora-actual" style="left:${pctAhoraReal.toFixed(2)}%"></div>
+          ${esHoy ? `<div class="gantt-hora-actual" style="left:${pctAhoraReal.toFixed(2)}%"></div>` : ''}
           ${bars}
         </div>
       </td>
@@ -487,13 +509,15 @@ function renderGantt(filas, prodIdx) {
 // ── Carga principal ────────────────────────────────────────────────────────
 async function cargarDatos() {
   try {
+    const fechaSel = document.getElementById('fecha-selector').value || hoyStr();
+    const esHoy    = fechaSel === hoyStr();
+
     document.getElementById('ultima-act').textContent = 'Actualizando...';
     const [taller, produccion] = await Promise.all([
-      leerCSV('taller.csv'),
-      leerCSV('produccion.csv'),
+      leerCSV('taller.csv', fechaSel),
+      leerCSV('produccion.csv', fechaSel),
     ]);
-    const hoy   = hoyStr();
-    const filas = taller.filter(f => (f.fecha || '').startsWith(hoy));
+    const filas = taller.filter(f => (f.fecha || '').startsWith(fechaSel));
 
     // Índice orden → producto (desde produccion.csv)
     const prodIdx = {};
@@ -501,19 +525,29 @@ async function cargarDatos() {
       if (p.orden_produccion) prodIdx[p.orden_produccion.trim()] = p.producto || '';
     });
 
-    renderAreas(filas, prodIdx);
-    renderLeyenda(filas, prodIdx);
+    if (esHoy) {
+      renderAreas(filas, prodIdx);
+      renderLeyenda(filas, prodIdx);
+    } else {
+      document.getElementById('areas-grid').innerHTML =
+        '<div style="color:#999;font-style:italic;padding:8px">Vista histórica — sin panel de personal activo</div>';
+      document.getElementById('leyenda-grid').innerHTML = '';
+    }
+
+    document.getElementById('gantt-titulo').textContent =
+      esHoy ? '⏱ Actividad de empleados hoy' : `⏱ Actividad de empleados — ${fechaSel}`;
 
     // reset gantt scroll antes de re-renderizar
     const sg = document.getElementById('scroll-gantt');
     if (sg) { while (sg.children.length > 1) sg.removeChild(sg.lastChild); sg.dataset.doubled = ''; sg.style.animation = 'none'; sg.style.transform = 'translateY(0)'; }
 
-    renderGantt(filas, prodIdx);
+    renderGantt(filas, prodIdx, esHoy);
     setTimeout(ajustarScrollGantt, 150);
 
     const ahora = new Date().toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'});
-    document.getElementById('ultima-act').textContent =
-      `Última actualización: ${ahora} · próxima en ~30 min`;
+    document.getElementById('ultima-act').textContent = esHoy
+      ? `Última actualización: ${ahora} · próxima en ~30 min`
+      : `Vista histórica del ${fechaSel}`;
   } catch(e) {
     document.getElementById('ultima-act').textContent = 'Error: ' + e.message;
     console.error(e);
@@ -540,6 +574,13 @@ function ajustarScrollGantt() {
   scroller.style.setProperty('--gantt-dist', '-' + tableH + 'px');
   scroller.style.animation = `scrollUpGantt ${dur} linear infinite`;
 }
+
+// ── Selector de fecha (semana en curso, default hoy) ───────────────────────
+const selFecha = document.getElementById('fecha-selector');
+selFecha.value = hoyStr();
+selFecha.min   = lunesActualStr();
+selFecha.max   = hoyStr();
+selFecha.addEventListener('change', cargarDatos);
 
 // Cargar al inicio y refrescar en :05 y :35 de cada hora
 cargarDatos();

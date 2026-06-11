@@ -59,6 +59,24 @@ jobs:
           mkdir -p /tmp/data-worktree/dashboard-data
           cp dashboard-data/* /tmp/data-worktree/dashboard-data/
 
+          # Snapshot histórico del día (zona horaria Ecuador)
+          HOY_EC=$(TZ='America/Guayaquil' date '+%Y-%m-%d')
+          DOW=$(TZ='America/Guayaquil' date '+%u')
+          LUNES=$(TZ='America/Guayaquil' date -d "-$((DOW-1)) days" '+%Y-%m-%d')
+
+          mkdir -p /tmp/data-worktree/dashboard-data/historico/$HOY_EC
+          cp dashboard-data/*.csv /tmp/data-worktree/dashboard-data/historico/$HOY_EC/
+
+          # Limpiar histórico de semanas anteriores (solo se conserva la semana en curso)
+          if [ -d /tmp/data-worktree/dashboard-data/historico ]; then
+            find /tmp/data-worktree/dashboard-data/historico -mindepth 1 -maxdepth 1 -type d | while read -r d; do
+              fecha=$(basename "$d")
+              if [[ "$fecha" < "$LUNES" ]]; then
+                rm -rf "$d"
+              fi
+            done
+          fi
+
           # Commit y push desde el worktree
           cd /tmp/data-worktree
           git add dashboard-data/

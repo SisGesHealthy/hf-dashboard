@@ -216,6 +216,13 @@
       flex-shrink: 0;
     }
 
+    #fecha-selector {
+      font-size: .8rem; padding: 4px 8px; border-radius: 5px;
+      border: 1px solid rgba(255,255,255,.4); background: rgba(255,255,255,.15);
+      color: white;
+    }
+    #fecha-selector::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+
     /* ── ÚLTIMA ACTUALIZACIÓN ── */
     #ultima-act {
       text-align: right;
@@ -254,6 +261,7 @@
     <p>Healthy Food Marcalman Ecuador S.A.</p>
   </div>
   <a href="taller.html" style="color:white;opacity:.8;text-decoration:none;font-size:.8rem;border:1px solid rgba(255,255,255,.4);padding:4px 10px;border-radius:5px;white-space:nowrap">🏭 Taller</a>
+  <input type="date" id="fecha-selector" title="Ver otro día (semana en curso)">
   <div id="reloj">
     <span id="fecha-hoy"></span>
     <span id="hora-ahora"></span>
@@ -378,9 +386,12 @@ function csvUrl(nombre) {
   return `https://raw.githubusercontent.com/${REPO}/${BRANCH}/dashboard-data/${nombre}`;
 }
 
-async function leerCSV(nombre) {
-  const url = csvUrl(nombre);
+async function leerCSV(nombre, fecha) {
+  const esHoy = fecha === hoyStr();
+  const ruta  = esHoy ? nombre : `historico/${fecha}/${nombre}`;
+  const url   = csvUrl(ruta);
   const res = await fetch(url + '?t=' + Date.now(), { cache: 'no-store' });
+  if (!res.ok) return [];
   const texto = await res.text();
   return new Promise(resolve => {
     Papa.parse(texto, { header: true, skipEmptyLines: true,
@@ -406,6 +417,14 @@ actualizarReloj();
 function hoyStr() {
   const h = new Date();
   return `${h.getFullYear()}-${String(h.getMonth()+1).padStart(2,'0')}-${String(h.getDate()).padStart(2,'0')}`;
+}
+
+function lunesActualStr() {
+  const h = new Date();
+  const dow = (h.getDay() + 6) % 7; // 0 = lunes
+  const lunes = new Date(h);
+  lunes.setDate(h.getDate() - dow);
+  return `${lunes.getFullYear()}-${String(lunes.getMonth()+1).padStart(2,'0')}-${String(lunes.getDate()).padStart(2,'0')}`;
 }
 
 function badge(texto, tipo) {
@@ -435,8 +454,7 @@ function horaDeStr(fechaStr) {
 // ── Gráfico ────────────────────────────────────────────────────────────────
 let graficoInst = null;
 
-function construirGrafico(recepciones, produccion, despachos) {
-  const hoy = hoyStr();
+function construirGrafico(recepciones, produccion, despachos, hoy) {
   const horas = Array.from({length: 24}, (_, i) => `${String(i).padStart(2,'0')}:00`);
 
   function contarPorHora(filas, campoFecha) {
@@ -479,14 +497,13 @@ function construirGrafico(recepciones, produccion, despachos) {
 }
 
 // ── Tablas ─────────────────────────────────────────────────────────────────
-function renderRecepciones(compras) {
-  const hoy = hoyStr();
+function renderRecepciones(compras, hoy) {
   const filas = compras
     .filter(r => (r.fecha_planificada || '').startsWith(hoy))
     .sort((a, b) => (a.fecha_planificada || '').localeCompare(b.fecha_planificada || ''));
   const tbody = document.getElementById('tbody-recepciones');
   if (!filas.length) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999">Sin recepciones programadas para hoy</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999">Sin recepciones programadas para este día</td></tr>';
     return 0;
   }
 
@@ -526,8 +543,7 @@ function barAvance(avance) {
   <span style="font-size:.7rem;color:#666;margin-left:4px">${avance}%</span>`;
 }
 
-function renderProduccion(produccion) {
-  const hoy = hoyStr();
+function renderProduccion(produccion, hoy) {
   const vistos = new Set();
 
   const filasHoy      = [];
@@ -593,8 +609,7 @@ function renderProduccion(produccion) {
   return filasHoy.length;
 }
 
-function renderDespachos(despachos, lineas) {
-  const hoy = hoyStr();
+function renderDespachos(despachos, lineas, hoy) {
   const filas = despachos.filter(r => (r.fecha_compromiso || '').startsWith(hoy));
 
   // Índice de líneas por orden
@@ -700,17 +715,20 @@ function toggleArrastre(sepRow) {
 // ── Carga principal ────────────────────────────────────────────────────────
 async function cargarDatos() {
   try {
+    const fechaSel = document.getElementById('fecha-selector').value || hoyStr();
+    const esHoy    = fechaSel === hoyStr();
+
     document.getElementById('ultima-act').textContent = 'Actualizando datos...';
     const [compras, produccion, despachos, lineas] = await Promise.all([
-      leerCSV('compras_lineas.csv'),
-      leerCSV('produccion.csv'),
-      leerCSV('despachos.csv'),
-      leerCSV('despachos_lineas.csv'),
+      leerCSV('compras_lineas.csv', fechaSel),
+      leerCSV('produccion.csv', fechaSel),
+      leerCSV('despachos.csv', fechaSel),
+      leerCSV('despachos_lineas.csv', fechaSel),
     ]);
 
-    const nRec  = renderRecepciones(compras);
-    const nProd = renderProduccion(produccion);
-    const nDes  = renderDespachos(despachos, lineas);
+    const nRec  = renderRecepciones(compras, fechaSel);
+    const nProd = renderProduccion(produccion, fechaSel);
+    const nDes  = renderDespachos(despachos, lineas, fechaSel);
     // reset y recalcular scroll en todas las tablas
     ['scroll-recepciones','scroll-produccion','scroll-despachos'].forEach(id => {
       const sc = document.getElementById(id);
@@ -726,18 +744,26 @@ async function cargarDatos() {
     document.getElementById('kpi-produccion').textContent  = nProd;
     document.getElementById('kpi-despachos').textContent   = nDes;
 
-    construirGrafico(compras, produccion, despachos);
+    construirGrafico(compras, produccion, despachos, fechaSel);
 
     const ahora = new Date().toLocaleTimeString('es-EC',
       {hour:'2-digit', minute:'2-digit'});
-    document.getElementById('ultima-act').textContent =
-      `Última actualización de datos: ${ahora} · próxima en ~30 min`;
+    document.getElementById('ultima-act').textContent = esHoy
+      ? `Última actualización de datos: ${ahora} · próxima en ~30 min`
+      : `Vista histórica del ${fechaSel}`;
 
   } catch(e) {
     document.getElementById('ultima-act').textContent = 'Error al cargar datos: ' + e.message;
     console.error(e);
   }
 }
+
+// ── Selector de fecha (semana en curso, default hoy) ───────────────────────
+const selFecha = document.getElementById('fecha-selector');
+selFecha.value = hoyStr();
+selFecha.min   = lunesActualStr();
+selFecha.max   = hoyStr();
+selFecha.addEventListener('change', cargarDatos);
 
 // Cargar al inicio y luego en :05 y :35 de cada hora
 cargarDatos();
