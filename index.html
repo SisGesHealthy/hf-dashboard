@@ -169,6 +169,11 @@
     #card-produccion td    { padding: 1px 4px; }
     #card-produccion thead th { padding: 2px 4px; font-size: .62rem; }
 
+    /* ── RECEPCIONES Y DESPACHOS: tabla compacta ── */
+    #card-recepciones table, #card-despachos table { font-size: .68rem; }
+    #card-recepciones td, #card-despachos td { padding: 2px 6px; }
+    #card-recepciones thead th, #card-despachos thead th { padding: 3px 6px; font-size: .65rem; }
+
     /* ── AUTO-SCROLL (todas las tablas) ── */
     .card-body {
       overflow: hidden;
@@ -361,14 +366,15 @@
           <thead>
             <tr>
               <th>Orden</th>
-              <th>Hora</th>
+              <th>Hora plan.</th>
+              <th>Hora real</th>
               <th>Cliente</th>
               <th>Producto</th>
               <th>Cant.</th>
               <th>Estado</th>
             </tr>
           </thead>
-          <tbody id="tbody-despachos"><tr><td colspan="6">Cargando...</td></tr></tbody>
+          <tbody id="tbody-despachos"><tr><td colspan="7">Cargando...</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -457,9 +463,15 @@ let graficoInst = null;
 function construirGrafico(recepciones, produccion, despachos, hoy) {
   const horas = Array.from({length: 24}, (_, i) => `${String(i).padStart(2,'0')}:00`);
 
-  function contarPorHora(filas, campoFecha) {
+  function contarPorHora(filas, campoFecha, dedupeKey) {
     const cnt = new Array(24).fill(0);
+    const vistos = new Set();
     filas.forEach(f => {
+      if (dedupeKey) {
+        const k = f[dedupeKey];
+        if (vistos.has(k)) return;
+        vistos.add(k);
+      }
       const v = f[campoFecha] || '';
       if (v.startsWith(hoy)) {
         const h = parseInt(v.split(' ')[1]?.split(':')[0] || '0', 10);
@@ -470,7 +482,7 @@ function construirGrafico(recepciones, produccion, despachos, hoy) {
   }
 
   const datosRec  = contarPorHora(recepciones, 'fecha_planificada');
-  const datosProd = contarPorHora(produccion,  'fecha_inicio');
+  const datosProd = contarPorHora(produccion,  'fecha_inicio', 'orden_produccion');
   const datosDes  = contarPorHora(despachos,   'fecha_compromiso');
 
   const ctx = document.getElementById('grafico').getContext('2d');
@@ -622,7 +634,7 @@ function renderDespachos(despachos, lineas, hoy) {
 
   const tbody = document.getElementById('tbody-despachos');
   if (!filas.length) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999">Sin despachos comprometidos para hoy</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#999">Sin despachos comprometidos para hoy</td></tr>';
     return filas.length;
   }
 
@@ -633,12 +645,14 @@ function renderDespachos(despachos, lineas, hoy) {
                        (d.estado_entrega || '').toLowerCase().includes('hecho') ||
                        (d.estado_entrega || '').toLowerCase().includes('done');
     const clsFila = despachada ? 'fila-completa' : '';
+    const horaReal = d.fecha_despacho_real ? horaDeStr(d.fecha_despacho_real) : '—';
     if (lineasOV.length) {
       lineasOV.forEach((l, i) => {
         rows.push(`
           <tr class="${clsFila}">
             ${i === 0 ? `<td rowspan="${lineasOV.length}"><b>${d.orden_venta}</b></td>
                          <td rowspan="${lineasOV.length}">${horaDeStr(d.fecha_compromiso)}</td>
+                         <td rowspan="${lineasOV.length}">${horaReal}</td>
                          <td rowspan="${lineasOV.length}">${d.cliente || '—'}</td>` : ''}
             <td>${l.producto || '—'}</td>
             <td>${l.cantidad || '—'} ${l.unidad_medida || ''}</td>
@@ -650,6 +664,7 @@ function renderDespachos(despachos, lineas, hoy) {
         <tr class="${clsFila}">
           <td><b>${d.orden_venta}</b></td>
           <td>${horaDeStr(d.fecha_compromiso)}</td>
+          <td>${horaReal}</td>
           <td>${d.cliente || '—'}</td>
           <td colspan="2">—</td>
           <td>${estadoBadge(d.estado_entrega)}</td>

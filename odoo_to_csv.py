@@ -339,6 +339,13 @@ def extraer_produccion(models, uid):
         prod_date = val(o.get("production_date"))
         wos = wo_por_produccion.get(o["id"], [])
 
+        # Avance real: % de órdenes de trabajo (procesos del taller) terminadas.
+        # qty_produced suele quedar en 0 hasta el último paso, por lo que el
+        # avance basado en cantidad se ve siempre en 0% o 100%.
+        if wos:
+            terminadas = sum(1 for wo in wos if wo.get("state") == "done")
+            avance = round(terminadas / len(wos) * 100, 1)
+
         # Una fila por orden de trabajo (o una fila sola si no tiene)
         if wos:
             for wo in wos:
