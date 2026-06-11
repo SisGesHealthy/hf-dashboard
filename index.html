@@ -212,6 +212,12 @@
     #card-recepciones thead th, #card-despachos thead th {
       padding: 3px 4px; font-size: .6rem; overflow: hidden; text-overflow: ellipsis;
     }
+    /* Hora pactada/real: nunca truncar (es el dato clave de la tabla) */
+    #card-recepciones td:nth-child(2), #card-recepciones th:nth-child(2),
+    #card-despachos td:nth-child(2), #card-despachos th:nth-child(2),
+    #card-despachos td:nth-child(3), #card-despachos th:nth-child(3) {
+      white-space: nowrap; text-overflow: clip;
+    }
 
     /* ── AUTO-SCROLL (todas las tablas) ── */
     .card-body {
@@ -362,7 +368,7 @@
       <div id="scroll-recepciones" class="auto-scroller">
         <table>
           <colgroup>
-            <col style="width:11%"><col style="width:8%"><col style="width:21%">
+            <col style="width:11%"><col style="width:10%"><col style="width:19%">
             <col><col style="width:11%"><col style="width:13%">
           </colgroup>
           <thead>
