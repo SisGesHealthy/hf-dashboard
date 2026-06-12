@@ -899,7 +899,7 @@ function construirAgenda(compras, despachos, lineas, produccion) {
     const label = esHoy ? 'Hoy' : `${DIAS[d.getDay()].substring(0,3)} ${d.getDate()}`;
 
     const recepciones = (compras || [])
-      .filter(r => (r.fecha_planificada || '').startsWith(dateStr))
+      .filter(r => (r.fecha_planificada || '').startsWith(dateStr) && r.estado_recepcion !== 'Recibida completa')
       .map(r => `<div class="agenda-item" title="${r.producto || ''} · ${r.proveedor || ''}"><b>${r.producto || '—'}</b> · ${r.proveedor || '—'}</div>`);
 
     const despachosItems = [];
