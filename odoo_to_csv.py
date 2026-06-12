@@ -306,7 +306,8 @@ def extraer_traslados_ecla(models, uid):
     log.info("Extrayendo traslados internos a ECLA (stock.picking)...")
 
     # Inicio del día en Quito (UTC-5), expresado en UTC
-    hoy_utc = (datetime.now().replace(hour=0, minute=0, second=0, microsecond=0) +
+    ahora_quito = datetime.now() - timedelta(hours=5)
+    hoy_utc = (ahora_quito.replace(hour=0, minute=0, second=0, microsecond=0) +
                timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S")
 
     pickings = odoo_get(models, uid, "stock.picking",
@@ -445,9 +446,10 @@ def extraer_taller(models, uid):
     log.info("Extrayendo taller (mrp.workorder + productividad)...")
 
     # Fecha de "hoy" en hora de Quito (UTC-5), no la del runner (UTC)
-    hoy = (datetime.now() - timedelta(hours=5)).strftime("%Y-%m-%d")
+    ahora_quito = datetime.now() - timedelta(hours=5)
+    hoy = ahora_quito.strftime("%Y-%m-%d")
     # UTC equivalente de inicio del día en Quito (UTC-5)
-    hoy_utc = (datetime.now().replace(hour=0, minute=0, second=0, microsecond=0) +
+    hoy_utc = (ahora_quito.replace(hour=0, minute=0, second=0, microsecond=0) +
                timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S")
 
     # OTs activas (ready/progress) sin filtrar por fecha
