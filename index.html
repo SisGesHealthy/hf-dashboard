@@ -266,12 +266,14 @@
       flex-shrink: 0;
     }
 
-    #fecha-selector {
+    #fecha-selector, #modo-vista {
       font-size: .8rem; padding: 4px 8px; border-radius: 5px;
       border: 1px solid rgba(255,255,255,.4); background: rgba(255,255,255,.15);
       color: white;
     }
     #fecha-selector::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+    #modo-vista { cursor: pointer; }
+    #modo-vista option { color: var(--texto); }
 
     /* ── ÚLTIMA ACTUALIZACIÓN ── */
     #ultima-act {
@@ -281,6 +283,72 @@
       color: #888;
       flex-shrink: 0;
     }
+
+    /* ── VISTAS (dashboard / agenda) ── */
+    #vista-dashboard {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+    }
+
+    /* ── AGENDA: PRÓXIMOS 7 DÍAS ── */
+    #vista-agenda {
+      display: none;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      padding: 8px 18px;
+      gap: 6px;
+    }
+    .agenda-titulo {
+      font-size: .85rem; font-weight: 700; color: var(--verde);
+      flex-shrink: 0;
+    }
+    .agenda-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      flex: 1;
+      min-height: 0;
+    }
+    .agenda-dia {
+      background: var(--blanco);
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+    }
+    .agenda-dia.hoy { box-shadow: 0 0 0 2px var(--verde); }
+    .agenda-dia-header {
+      padding: 5px 4px; text-align: center; flex-shrink: 0;
+      font-size: .7rem; font-weight: 700; color: white;
+      background: #aab582; text-transform: capitalize;
+    }
+    .agenda-dia.hoy .agenda-dia-header { background: var(--verde); }
+    .agenda-secciones {
+      flex: 1; min-height: 0; display: flex; flex-direction: column;
+    }
+    .agenda-seccion {
+      flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column;
+      border-top: 1px solid #eee; padding: 3px 5px;
+    }
+    .agenda-seccion:first-child { border-top: none; }
+    .agenda-seccion-titulo {
+      font-size: .6rem; font-weight: 700; color: #999;
+      text-transform: uppercase; letter-spacing: .03em;
+      flex-shrink: 0; margin-bottom: 1px;
+    }
+    .agenda-lista { flex: 1; min-height: 0; overflow-y: auto; }
+    .agenda-item {
+      font-size: .62rem; line-height: 1.3; padding: 1px 0;
+      border-bottom: 1px solid #f5f5f5;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .agenda-item b { color: var(--texto); }
+    .agenda-vacio { font-size: .6rem; color: #ccc; font-style: italic; }
   </style>
 </head>
 <body>
@@ -311,12 +379,20 @@
     <p>Healthy Food Marcalman Ecuador S.A.</p>
   </div>
   <a href="taller.html" style="color:white;opacity:.8;text-decoration:none;font-size:.8rem;border:1px solid rgba(255,255,255,.4);padding:4px 10px;border-radius:5px;white-space:nowrap">🏭 Taller</a>
+  <select id="modo-vista" title="Modo de visualización">
+    <option value="auto">🔄 Rotar (1 min)</option>
+    <option value="dashboard">📊 Solo Dashboard</option>
+    <option value="agenda">🗓 Solo Agenda</option>
+  </select>
   <input type="date" id="fecha-selector" title="Ver otro día (semana en curso)">
   <div id="reloj">
     <span id="fecha-hoy"></span>
     <span id="hora-ahora"></span>
   </div>
 </header>
+
+<!-- VISTA: DASHBOARD DEL DÍA -->
+<div id="vista-dashboard">
 
 <!-- FILA SUPERIOR: KPIs + Gráfico -->
 <div class="top-row">
@@ -436,6 +512,16 @@
     </div>
   </div>
 
+</div>
+
+</div> <!-- /vista-dashboard -->
+
+<!-- VISTA: AGENDA PRÓXIMOS 7 DÍAS -->
+<div id="vista-agenda">
+  <div class="agenda-titulo">🗓 Próximos 7 días — Recepciones · Producción · Despachos</div>
+  <div class="agenda-grid" id="agenda-grid">
+    <div style="color:#999;padding:10px">Cargando agenda...</div>
+  </div>
 </div>
 
 <footer>Actualización automática cada 30 minutos · Datos desde Odoo · Healthy Food © 2026</footer>
@@ -791,6 +877,117 @@ function renderDespachos(despachos, lineas, hoy) {
   return filas.length;
 }
 
+// ── Agenda: próximos 7 días (recepciones / producción / despachos) ─────────
+function construirAgenda(compras, despachos, lineas, produccion) {
+  const DIAS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+
+  const lineasIdx = {};
+  (lineas || []).forEach(l => {
+    const k = l.orden_venta;
+    if (!lineasIdx[k]) lineasIdx[k] = [];
+    lineasIdx[k].push(l);
+  });
+
+  let html = '';
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(hoy);
+    d.setDate(hoy.getDate() + i);
+    const dateStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const esHoy = i === 0;
+    const label = esHoy ? 'Hoy' : `${DIAS[d.getDay()].substring(0,3)} ${d.getDate()}`;
+
+    const recepciones = (compras || [])
+      .filter(r => (r.fecha_planificada || '').startsWith(dateStr))
+      .map(r => `<div class="agenda-item" title="${r.producto || ''} · ${r.proveedor || ''}"><b>${r.producto || '—'}</b> · ${r.proveedor || '—'}</div>`);
+
+    const despachosItems = [];
+    (despachos || [])
+      .filter(d2 => (d2.fecha_compromiso || '').startsWith(dateStr))
+      .forEach(d2 => {
+        const lineasOV = lineasIdx[d2.orden_venta] || [];
+        if (lineasOV.length) {
+          lineasOV.forEach(l => {
+            despachosItems.push(`<div class="agenda-item" title="${l.producto || ''} · ${d2.cliente || ''} · ${l.cantidad || ''} ${l.unidad_medida || ''}"><b>${l.producto || '—'}</b> · ${d2.cliente || '—'} · ${l.cantidad || '—'}${l.unidad_medida || ''}</div>`);
+          });
+        } else {
+          despachosItems.push(`<div class="agenda-item"><b>${d2.orden_venta || '—'}</b> · ${d2.cliente || '—'}</div>`);
+        }
+      });
+
+    const vistos = new Set();
+    const produccionItems = [];
+    (produccion || []).forEach(p => {
+      if ((p.fecha_produccion || '') !== dateStr) return;
+      if (vistos.has(p.orden_produccion)) return;
+      vistos.add(p.orden_produccion);
+      produccionItems.push(`<div class="agenda-item" title="${p.producto || ''}"><b>${p.producto || '—'}</b> · ${p.qty_planificada || ''} ${p.unidad || ''}</div>`);
+    });
+
+    html += `<div class="agenda-dia ${esHoy ? 'hoy' : ''}">
+      <div class="agenda-dia-header">${label}</div>
+      <div class="agenda-secciones">
+        <div class="agenda-seccion">
+          <div class="agenda-seccion-titulo">🚚 Recepciones</div>
+          <div class="agenda-lista">${recepciones.length ? recepciones.join('') : '<div class="agenda-vacio">Sin registros</div>'}</div>
+        </div>
+        <div class="agenda-seccion">
+          <div class="agenda-seccion-titulo">⚙️ Producción</div>
+          <div class="agenda-lista">${produccionItems.length ? produccionItems.join('') : '<div class="agenda-vacio">Sin registros</div>'}</div>
+        </div>
+        <div class="agenda-seccion">
+          <div class="agenda-seccion-titulo">📦 Despachos</div>
+          <div class="agenda-lista">${despachosItems.length ? despachosItems.join('') : '<div class="agenda-vacio">Sin registros</div>'}</div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  document.getElementById('agenda-grid').innerHTML = html;
+}
+
+async function cargarAgenda() {
+  try {
+    const hoy = hoyStr();
+    const [compras, produccion, despachos, lineas] = await Promise.all([
+      leerCSV('compras_lineas.csv', hoy),
+      leerCSV('produccion.csv', hoy),
+      leerCSV('despachos.csv', hoy),
+      leerCSV('despachos_lineas.csv', hoy),
+    ]);
+    construirAgenda(compras || [], despachos || [], lineas || [], produccion || []);
+  } catch(e) {
+    console.error('Error cargando agenda', e);
+  }
+}
+
+// ── Modo de visualización (dashboard / agenda / rotación automática) ───────
+let vistaActual = 'dashboard';
+
+function mostrarVista(v) {
+  vistaActual = v;
+  document.getElementById('vista-dashboard').style.display = v === 'agenda' ? 'none' : 'flex';
+  document.getElementById('vista-agenda').style.display    = v === 'agenda' ? 'flex' : 'none';
+}
+
+function aplicarModoVista() {
+  const modo = document.getElementById('modo-vista').value;
+  localStorage.setItem('hf-modo-vista', modo);
+  mostrarVista(modo === 'auto' ? 'dashboard' : modo);
+}
+
+const selModo = document.getElementById('modo-vista');
+selModo.value = localStorage.getItem('hf-modo-vista') || 'auto';
+selModo.addEventListener('change', aplicarModoVista);
+aplicarModoVista();
+
+// Rotación cada 1 minuto (solo si el modo es 'auto')
+setInterval(() => {
+  if (document.getElementById('modo-vista').value !== 'auto') return;
+  mostrarVista(vistaActual === 'dashboard' ? 'agenda' : 'dashboard');
+}, 60000);
+
 // ── Auto-scroll genérico ──────────────────────────────────────────────────
 function ajustarScroll(scrollerId) {
   const scroller = document.getElementById(scrollerId);
@@ -915,6 +1112,7 @@ selFecha.addEventListener('change', cargarDatos);
 
 // Cargar al inicio y luego en :05 y :35 de cada hora
 cargarDatos();
+cargarAgenda();
 
 function programarSiguienteActualizacion() {
   const ahora    = new Date();
@@ -932,6 +1130,7 @@ function programarSiguienteActualizacion() {
 
   setTimeout(() => {
     cargarDatos();
+    cargarAgenda();
     programarSiguienteActualizacion();
   }, msHasta);
 }
