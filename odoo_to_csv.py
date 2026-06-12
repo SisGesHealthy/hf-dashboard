@@ -444,7 +444,8 @@ def extraer_produccion(models, uid):
 def extraer_taller(models, uid):
     log.info("Extrayendo taller (mrp.workorder + productividad)...")
 
-    hoy = datetime.now().strftime("%Y-%m-%d")
+    # Fecha de "hoy" en hora de Quito (UTC-5), no la del runner (UTC)
+    hoy = (datetime.now() - timedelta(hours=5)).strftime("%Y-%m-%d")
     # UTC equivalente de inicio del día en Quito (UTC-5)
     hoy_utc = (datetime.now().replace(hour=0, minute=0, second=0, microsecond=0) +
                timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S")
