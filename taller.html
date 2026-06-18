@@ -373,10 +373,12 @@ function renderAreas(filas, prodIdx) {
 // ── LEYENDA ÓRDENES ACTIVAS ───────────────────────────────────────────────
 function renderLeyenda(filas, prodIdx) {
   const vistas = {};
-  // Solo órdenes EN PROGRESO en el taller
+  // Solo OTs En Progreso que tienen actividad de empleados en el día mostrado
   filas.forEach(f => {
     if (!f.orden_trabajo) return;
     if (!(f.estado_ot || '').toLowerCase().includes('progreso')) return;
+    if (!f.empleado || f.empleado === 'Sin registro hoy') return;
+    if (!f.emp_fecha_inicio || !f.emp_fecha_inicio.trim()) return;
     const otCod = f.orden_trabajo.split(' - ')[0].trim();
     if (!vistas[otCod]) vistas[otCod] = prodIdx[otCod] || '';
   });

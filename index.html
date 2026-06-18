@@ -823,8 +823,11 @@ function renderProduccion(produccion, hoy) {
   return filasHoy.length;
 }
 
-function renderDespachos(despachos, lineas, hoy) {
+function renderDespachos(despachos, lineas, traslados, hoy) {
   const filas = despachos.filter(r => (r.fecha_compromiso || '').startsWith(hoy));
+  const filasEcla = (traslados || []).filter(r =>
+    (r.fecha_programada || '').startsWith(hoy) && r.estado !== 'Cancelado'
+  );
 
   // Índice de líneas por orden
   const lineasIdx = {};
@@ -835,9 +838,9 @@ function renderDespachos(despachos, lineas, hoy) {
   });
 
   const tbody = document.getElementById('tbody-despachos');
-  if (!filas.length) {
+  if (!filas.length && !filasEcla.length) {
     tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#999">Sin despachos comprometidos para hoy</td></tr>';
-    return filas.length;
+    return 0;
   }
 
   const rows = [];
@@ -873,8 +876,27 @@ function renderDespachos(despachos, lineas, hoy) {
         </tr>`);
     }
   });
+
+  // Traslados ECLA
+  if (filasEcla.length) {
+    rows.push(`<tr><td colspan="7" style="font-size:.58rem;font-weight:700;color:#00838f;
+      background:rgba(0,131,143,.07);padding:2px 4px;letter-spacing:.03em">
+      🧊 TRASLADOS A ECLA</td></tr>`);
+    filasEcla.forEach(t => {
+      const hecho = t.estado === 'Hecho';
+      rows.push(`
+        <tr class="${hecho ? 'fila-completa' : ''}">
+          <td><b>${t.documento || '—'}</b></td>
+          <td>${horaDeStr(t.fecha_programada)}</td>
+          <td>${hecho ? horaDeStr(t.fecha_efectiva) : '—'}</td>
+          <td colspan="3">${t.origen || '—'}</td>
+          <td>${estadoBadge(t.estado)}</td>
+        </tr>`);
+    });
+  }
+
   tbody.innerHTML = rows.join('');
-  return filas.length;
+  return filas.length + filasEcla.length;
 }
 
 // ── Agenda: próximos 7 días (recepciones / producción / despachos) ─────────
@@ -1073,7 +1095,7 @@ async function cargarDatos() {
 
     const nRec  = renderRecepciones(compras, fechaSel);
     const nProd = renderProduccion(produccion, fechaSel);
-    const nDes  = renderDespachos(despachos, lineas, fechaSel);
+    const nDes  = renderDespachos(despachos, lineas, traslados || [], fechaSel);
     // reset y recalcular scroll en todas las tablas
     ['scroll-recepciones','scroll-produccion','scroll-despachos'].forEach(id => {
       const sc = document.getElementById(id);
