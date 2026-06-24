@@ -579,13 +579,18 @@ def extraer_calidad(models, uid):
     hoy_utc = (ahora_quito.replace(hour=0, minute=0, second=0, microsecond=0) +
                timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S")
 
-    checks = odoo_get(models, uid, "quality.check",
-        ["|",
-         ["quality_state", "in", ["none", "in_progress"]],   # abiertos (cualquier fecha)
-         ["create_date", ">=", hoy_utc]],                    # + cerrados de hoy
+    # Ventana amplia: últimos 7 días; filtro de estado se aplica en Python
+    hace_7_dias = (ahora_quito - timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S")
+    checks_raw = odoo_get(models, uid, "quality.check",
+        [["create_date", ">=", hace_7_dias]],
         ["id", "name", "title", "point_id", "product_id", "picking_id",
          "production_id", "user_id", "team_id", "quality_state", "create_date"]
     )
+    hoy_ec = ahora_quito.strftime("%Y-%m-%d")
+    # Mantener: abiertos siempre + cerrados de hoy
+    checks = [c for c in checks_raw if
+              c.get("quality_state") in ("none", "in_progress") or
+              str(c.get("create_date", ""))[:10] >= hoy_ec]
 
     # Plantilla de hoja de trabajo desde quality.point
     point_ids = list({c["point_id"][0] for c in checks
