@@ -368,8 +368,8 @@ function renderChecks(filas) {
               <div class="estado-dot ${ESTADO_DOT[f.quality_state] || 'dot-pendiente'}"></div>
               <div class="check-info">
                 <div class="check-nombre">${f.check_name || f.check_title || '—'}</div>
-                ${f.producto ? `<div class="check-detalle">📦 ${f.producto}</div>` : ''}
-                ${f.partner ? `<div class="check-partner">🏭 ${f.partner}</div>` : (f.produccion ? `<div class="check-partner">🔧 ${f.produccion}</div>` : '')}
+                ${f.productos ? `<div class="check-detalle">📦 ${f.productos}</div>` : ''}
+                ${(f.partner || f.origen_doc || f.produccion) ? `<div class="check-partner">${f.partner ? '🏭 ' + f.partner : (f.produccion ? '🔧 ' + f.produccion : '')}${f.origen_doc ? ' · 🧾 ' + f.origen_doc : ''}</div>` : ''}
               </div>
               <span class="check-estado ${ESTADO_BADGE[f.quality_state] || 'badge-pendiente'}">${f.quality_state}</span>
               ${hora ? `<span class="check-hora">${hora}</span>` : ''}

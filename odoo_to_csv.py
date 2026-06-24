@@ -594,14 +594,28 @@ def extraer_calidad(models, uid):
     ) if point_ids else []
     punto_idx = {p["id"]: p for p in puntos_raw}
 
-    # Partner (proveedor/cliente) desde stock.picking
+    # Partner, origen (OC) y productos desde stock.picking + stock.move
     pick_ids = list({c["picking_id"][0] for c in checks
                      if c.get("picking_id") and c["picking_id"] is not False})
     pickings_raw = odoo_get(models, uid, "stock.picking",
         [["id", "in", pick_ids]],
-        ["id", "partner_id"]
+        ["id", "partner_id", "origin", "move_ids"]
     ) if pick_ids else []
     picking_idx = {p["id"]: p for p in pickings_raw}
+
+    # Productos por picking desde stock.move
+    move_ids = [mid for p in pickings_raw for mid in (p.get("move_ids") or [])]
+    moves_raw = odoo_get(models, uid, "stock.move",
+        [["id", "in", move_ids]],
+        ["id", "picking_id", "product_id"]
+    ) if move_ids else []
+    prods_por_picking = {}
+    for m in moves_raw:
+        if m.get("picking_id"):
+            pk = m["picking_id"][0]
+            nombre = val(m.get("product_id"))
+            if nombre:
+                prods_por_picking.setdefault(pk, []).append(nombre)
 
     filas = []
     for c in checks:
@@ -609,14 +623,17 @@ def extraer_calidad(models, uid):
         pk_id = c["picking_id"][0] if c.get("picking_id") and c["picking_id"] is not False else None
         punto   = punto_idx.get(pid, {})
         picking = picking_idx.get(pk_id, {})
+        # Deduplicar productos conservando orden
+        prods = list(dict.fromkeys(prods_por_picking.get(pk_id, [])))
         filas.append({
             "check_name":       val(c.get("name")),
             "check_title":      val(c.get("title")),
             "quality_state":    ESTADO_CHECK.get(c.get("quality_state", "none"), "Pendiente"),
             "punto_control":    val(c.get("point_id")),
             "plantilla":        val(punto.get("worksheet_template_id", False)),
-            "producto":         val(c.get("product_id")),
+            "productos":        " | ".join(prods),
             "picking":          val(c.get("picking_id")),
+            "origen_doc":       val(picking.get("origin", False)),
             "produccion":       val(c.get("production_id")),
             "partner":          val(picking.get("partner_id", False)),
             "responsable":      val(c.get("user_id")),
@@ -626,8 +643,8 @@ def extraer_calidad(models, uid):
         })
 
     encabezados = ["check_name", "check_title", "quality_state", "punto_control", "plantilla",
-                   "producto", "picking", "produccion", "partner", "responsable", "equipo",
-                   "fecha_asignacion", "actualizado"]
+                   "productos", "picking", "origen_doc", "produccion", "partner",
+                   "responsable", "equipo", "fecha_asignacion", "actualizado"]
     escribir_csv("calidad.csv", filas, encabezados)
 
 # ── Main ───────────────────────────────────────────────────────────────────────
