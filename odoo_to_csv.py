@@ -580,7 +580,9 @@ def extraer_calidad(models, uid):
                timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S")
 
     checks = odoo_get(models, uid, "quality.check",
-        [["create_date", ">=", hoy_utc]],
+        ["|",
+         ["quality_state", "in", ["none", "in_progress"]],   # abiertos (cualquier fecha)
+         ["create_date", ">=", hoy_utc]],                    # + cerrados de hoy
         ["id", "name", "title", "point_id", "product_id", "picking_id",
          "production_id", "user_id", "team_id", "quality_state", "create_date"]
     )
