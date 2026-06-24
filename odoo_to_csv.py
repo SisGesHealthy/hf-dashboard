@@ -594,10 +594,21 @@ def extraer_calidad(models, uid):
     ) if point_ids else []
     punto_idx = {p["id"]: p for p in puntos_raw}
 
+    # Partner (proveedor/cliente) desde stock.picking
+    pick_ids = list({c["picking_id"][0] for c in checks
+                     if c.get("picking_id") and c["picking_id"] is not False})
+    pickings_raw = odoo_get(models, uid, "stock.picking",
+        [["id", "in", pick_ids]],
+        ["id", "partner_id"]
+    ) if pick_ids else []
+    picking_idx = {p["id"]: p for p in pickings_raw}
+
     filas = []
     for c in checks:
-        pid = c["point_id"][0] if c.get("point_id") and c["point_id"] is not False else None
-        punto = punto_idx.get(pid, {})
+        pid   = c["point_id"][0]   if c.get("point_id")   and c["point_id"]   is not False else None
+        pk_id = c["picking_id"][0] if c.get("picking_id") and c["picking_id"] is not False else None
+        punto   = punto_idx.get(pid, {})
+        picking = picking_idx.get(pk_id, {})
         filas.append({
             "check_name":       val(c.get("name")),
             "check_title":      val(c.get("title")),
@@ -607,16 +618,16 @@ def extraer_calidad(models, uid):
             "producto":         val(c.get("product_id")),
             "picking":          val(c.get("picking_id")),
             "produccion":       val(c.get("production_id")),
+            "partner":          val(picking.get("partner_id", False)),
             "responsable":      val(c.get("user_id")),
             "equipo":           val(c.get("team_id")),
             "fecha_asignacion": utc_a_local(val(c.get("create_date")), "%Y-%m-%d %H:%M"),
-            "fecha_cierre":     "",
             "actualizado":      ahora(),
         })
 
     encabezados = ["check_name", "check_title", "quality_state", "punto_control", "plantilla",
-                   "producto", "picking", "produccion", "responsable", "equipo",
-                   "fecha_asignacion", "fecha_cierre", "actualizado"]
+                   "producto", "picking", "produccion", "partner", "responsable", "equipo",
+                   "fecha_asignacion", "actualizado"]
     escribir_csv("calidad.csv", filas, encabezados)
 
 # ── Main ───────────────────────────────────────────────────────────────────────

@@ -143,6 +143,7 @@
     .check-info { flex: 1; min-width: 0; }
     .check-nombre { font-size: .76rem; font-weight: 600; color: var(--texto); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .check-detalle { font-size: .65rem; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .check-partner { font-size: .6rem; color: #aaa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-style: italic; }
     .check-estado {
       font-size: .65rem; font-weight: 700; padding: 2px 7px;
       border-radius: 10px; white-space: nowrap; flex-shrink: 0;
@@ -362,13 +363,13 @@ function renderChecks(filas) {
     const filaHtml = checks.length
       ? checks.map(f => {
           const hora = (f.fecha_asignacion || '').split(' ')[1]?.slice(0,5) || '';
-          const detalle = [f.producto, f.picking || f.produccion].filter(Boolean).join(' · ');
           return `
             <div class="check-row">
               <div class="estado-dot ${ESTADO_DOT[f.quality_state] || 'dot-pendiente'}"></div>
               <div class="check-info">
                 <div class="check-nombre">${f.check_name || f.check_title || '—'}</div>
-                ${detalle ? `<div class="check-detalle">${detalle}</div>` : ''}
+                ${f.producto ? `<div class="check-detalle">📦 ${f.producto}</div>` : ''}
+                ${f.partner ? `<div class="check-partner">🏭 ${f.partner}</div>` : (f.produccion ? `<div class="check-partner">🔧 ${f.produccion}</div>` : '')}
               </div>
               <span class="check-estado ${ESTADO_BADGE[f.quality_state] || 'badge-pendiente'}">${f.quality_state}</span>
               ${hora ? `<span class="check-hora">${hora}</span>` : ''}
