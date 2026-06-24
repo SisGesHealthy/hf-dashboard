@@ -580,10 +580,10 @@ def extraer_calidad(models, uid):
                timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S")
 
     checks = odoo_get(models, uid, "quality.check",
-        ["|", ["date_assign", ">=", hoy_utc], ["create_date", ">=", hoy_utc]],
+        [["create_date", ">=", hoy_utc]],
         ["id", "name", "title", "point_id", "product_id", "picking_id",
          "production_id", "user_id", "team_id", "quality_state",
-         "date_assign", "date_close"]
+         "create_date", "date_close"]
     )
 
     # Plantilla de hoja de trabajo desde quality.point
@@ -610,7 +610,7 @@ def extraer_calidad(models, uid):
             "produccion":       val(c.get("production_id")),
             "responsable":      val(c.get("user_id")),
             "equipo":           val(c.get("team_id")),
-            "fecha_asignacion": utc_a_local(val(c.get("date_assign")), "%Y-%m-%d %H:%M"),
+            "fecha_asignacion": utc_a_local(val(c.get("create_date")), "%Y-%m-%d %H:%M"),
             "fecha_cierre":     utc_a_local(val(c.get("date_close")), "%Y-%m-%d %H:%M"),
             "actualizado":      ahora(),
         })
