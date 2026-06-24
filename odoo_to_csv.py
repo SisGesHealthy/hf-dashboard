@@ -563,6 +563,63 @@ def extraer_taller(models, uid):
                    "actualizado"]
     escribir_csv("taller.csv", filas, encabezados)
 
+# ── CALIDAD: checks del día ────────────────────────────────────────────────────
+
+ESTADO_CHECK = {
+    "none":        "Pendiente",
+    "in_progress": "En proceso",
+    "pass":        "Aprobado",
+    "fail":        "Rechazado",
+}
+
+def extraer_calidad(models, uid):
+    log.info("Extrayendo calidad (quality.check)...")
+
+    ahora_quito = datetime.now() - timedelta(hours=5)
+    hoy_utc = (ahora_quito.replace(hour=0, minute=0, second=0, microsecond=0) +
+               timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S")
+
+    checks = odoo_get(models, uid, "quality.check",
+        ["|", ["date_assign", ">=", hoy_utc], ["create_date", ">=", hoy_utc]],
+        ["id", "name", "title", "point_id", "product_id", "picking_id",
+         "production_id", "user_id", "team_id", "quality_state",
+         "date_assign", "date_close"]
+    )
+
+    # Plantilla de hoja de trabajo desde quality.point
+    point_ids = list({c["point_id"][0] for c in checks
+                      if c.get("point_id") and c["point_id"] is not False})
+    puntos_raw = odoo_get(models, uid, "quality.point",
+        [["id", "in", point_ids]],
+        ["id", "name", "title", "worksheet_template_id"]
+    ) if point_ids else []
+    punto_idx = {p["id"]: p for p in puntos_raw}
+
+    filas = []
+    for c in checks:
+        pid = c["point_id"][0] if c.get("point_id") and c["point_id"] is not False else None
+        punto = punto_idx.get(pid, {})
+        filas.append({
+            "check_name":       val(c.get("name")),
+            "check_title":      val(c.get("title")),
+            "quality_state":    ESTADO_CHECK.get(c.get("quality_state", "none"), "Pendiente"),
+            "punto_control":    val(c.get("point_id")),
+            "plantilla":        val(punto.get("worksheet_template_id", False)),
+            "producto":         val(c.get("product_id")),
+            "picking":          val(c.get("picking_id")),
+            "produccion":       val(c.get("production_id")),
+            "responsable":      val(c.get("user_id")),
+            "equipo":           val(c.get("team_id")),
+            "fecha_asignacion": utc_a_local(val(c.get("date_assign")), "%Y-%m-%d %H:%M"),
+            "fecha_cierre":     utc_a_local(val(c.get("date_close")), "%Y-%m-%d %H:%M"),
+            "actualizado":      ahora(),
+        })
+
+    encabezados = ["check_name", "check_title", "quality_state", "punto_control", "plantilla",
+                   "producto", "picking", "produccion", "responsable", "equipo",
+                   "fecha_asignacion", "fecha_cierre", "actualizado"]
+    escribir_csv("calidad.csv", filas, encabezados)
+
 # ── Main ───────────────────────────────────────────────────────────────────────
 
 def main():
@@ -587,6 +644,7 @@ def main():
     extraer_traslados_ecla(models, uid)
     extraer_produccion(models, uid)
     extraer_taller(models, uid)
+    extraer_calidad(models, uid)
 
     log.info("=" * 60)
     log.info(f"✓ Extracción completa — {ahora()}")

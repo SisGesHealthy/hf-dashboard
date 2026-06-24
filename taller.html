@@ -227,6 +227,7 @@
     <p>Healthy Food Marcalman Ecuador S.A.</p>
   </div>
   <a href="index.html" class="nav-link">📊 Dashboard operativo</a>
+  <a href="calidad.html" class="nav-link">🔬 Calidad</a>
   <input type="date" id="fecha-selector" title="Ver otro día (semana en curso)">
   <div id="reloj">
     <span id="fecha-hoy"></span>
@@ -610,6 +611,9 @@ function programarSiguienteActualizacion() {
     ((t - min) * 60 - seg) * 1000 - ms);
 }
 programarSiguienteActualizacion();
+
+// ── Rotación automática → Calidad (60 s) ─────────────────────────────────
+setTimeout(() => { window.location.href = 'calidad.html'; }, 60000);
 </script>
 </body>
 </html>

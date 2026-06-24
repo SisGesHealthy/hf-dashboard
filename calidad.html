@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calidad — Healthy Food</title>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <style>
+    :root {
+      --verde:   #6a8f2f;
+      --verde-c: #8ab93f;
+      --naranja: #e07b2a;
+      --azul:    #2a7be0;
+      --rojo:    #c62828;
+      --gris:    #f5f5f5;
+      --blanco:  #ffffff;
+      --texto:   #2c2c2c;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--gris);
+      color: var(--texto);
+      font-size: 13px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--verde);
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 7px 18px;
+      gap: 14px;
+      flex-shrink: 0;
+    }
+    .header-title { flex: 1; }
+    .header-title h1 { font-size: 1.15rem; font-weight: 700; }
+    .header-title p  { font-size: .76rem; opacity: .85; }
+    #reloj { font-size: .95rem; font-weight: 600; text-align: right; white-space: nowrap; }
+    #reloj span { display: block; font-size: .68rem; font-weight: 400; opacity: .8; }
+    .nav-link {
+      color: white; opacity: .8; text-decoration: none;
+      font-size: .8rem; border: 1px solid rgba(255,255,255,.4);
+      padding: 4px 10px; border-radius: 5px; white-space: nowrap;
+    }
+    .nav-link:hover { opacity: 1; background: rgba(255,255,255,.15); }
+    #rotacion-chip {
+      font-size: .72rem; background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 5px; padding: 4px 10px;
+      white-space: nowrap; cursor: pointer;
+    }
+
+    /* ── ÚLTIMA ACT ── */
+    #ultima-act {
+      text-align: right; padding: 2px 18px 0;
+      font-size: .68rem; color: #888; flex-shrink: 0;
+    }
+
+    /* ── KPI CHIPS ── */
+    .kpi-wrap {
+      padding: 6px 18px 0;
+      flex-shrink: 0;
+      display: flex; gap: 8px;
+    }
+    .kpi-chip {
+      flex: 1; background: var(--blanco);
+      border-radius: 8px; padding: 8px 14px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.1);
+      border-top: 4px solid var(--verde);
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .kpi-chip.pendiente { border-top-color: #9e9e9e; }
+    .kpi-chip.en-proceso { border-top-color: var(--naranja); }
+    .kpi-chip.aprobado   { border-top-color: var(--verde); }
+    .kpi-chip.rechazado  { border-top-color: var(--rojo); }
+    .kpi-num  { font-size: 1.6rem; font-weight: 800; line-height: 1; }
+    .kpi-chip.pendiente  .kpi-num { color: #757575; }
+    .kpi-chip.en-proceso .kpi-num { color: var(--naranja); }
+    .kpi-chip.aprobado   .kpi-num { color: var(--verde); }
+    .kpi-chip.rechazado  .kpi-num { color: var(--rojo); }
+    .kpi-label { font-size: .68rem; font-weight: 600; color: #888; margin-top: 2px; }
+
+    /* ── GRID PLANTILLAS ── */
+    .plantillas-wrap {
+      flex: 1; min-height: 0;
+      padding: 6px 18px 6px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 8px;
+    }
+    .plantilla-card {
+      background: var(--blanco);
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.1);
+      border-top: 4px solid var(--verde-c);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+    .plantilla-card.tiene-rechazados { border-top-color: var(--rojo); }
+    .plantilla-card.tiene-pendientes { border-top-color: var(--naranja); }
+    .plantilla-header {
+      padding: 7px 12px 5px;
+      border-bottom: 1px solid #eee;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .plantilla-nombre {
+      font-weight: 700; font-size: .82rem; color: var(--verde);
+    }
+    .plantilla-card.tiene-rechazados .plantilla-nombre { color: var(--rojo); }
+    .plantilla-counters { display: flex; gap: 5px; }
+    .mini-badge {
+      font-size: .65rem; font-weight: 700; padding: 2px 7px;
+      border-radius: 10px; white-space: nowrap;
+    }
+    .badge-pendiente  { background: #f5f5f5; color: #757575; }
+    .badge-en-proceso { background: #fff3e0; color: #e65100; }
+    .badge-aprobado   { background: #e8f5e9; color: #2e7d32; }
+    .badge-rechazado  { background: #ffebee; color: #c62828; }
+
+    .checks-lista {
+      flex: 1; overflow-y: auto; padding: 4px 0;
+    }
+    .check-row {
+      display: flex; align-items: center;
+      padding: 4px 12px; gap: 8px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .check-row:last-child { border-bottom: none; }
+    .estado-dot {
+      width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
+    }
+    .dot-pendiente  { background: #9e9e9e; }
+    .dot-en-proceso { background: var(--naranja); }
+    .dot-aprobado   { background: var(--verde); }
+    .dot-rechazado  { background: var(--rojo); }
+    .check-info { flex: 1; min-width: 0; }
+    .check-nombre { font-size: .76rem; font-weight: 600; color: var(--texto); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .check-detalle { font-size: .65rem; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .check-estado {
+      font-size: .65rem; font-weight: 700; padding: 2px 7px;
+      border-radius: 10px; white-space: nowrap; flex-shrink: 0;
+    }
+    .check-hora { font-size: .65rem; color: #aaa; flex-shrink: 0; white-space: nowrap; }
+    .sin-checks {
+      font-size: .76rem; color: #bbb; font-style: italic;
+      text-align: center; padding: 18px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center; padding: 3px;
+      font-size: .62rem; color: #bbb; flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-title">
+    <h1>🔬 Control de Calidad</h1>
+    <p>Healthy Food Marcalman Ecuador S.A.</p>
+  </div>
+  <a href="index.html" class="nav-link">📊 Dashboard operativo</a>
+  <a href="taller.html" class="nav-link">🏭 Taller</a>
+  <span id="rotacion-chip" title="Click para cancelar rotación automática">↻ <span id="countdown">60</span>s → Taller</span>
+  <div id="reloj">
+    <span id="fecha-hoy"></span>
+    <span id="hora-ahora"></span>
+  </div>
+</header>
+
+<div id="ultima-act">Cargando...</div>
+
+<!-- KPIs -->
+<div class="kpi-wrap">
+  <div class="kpi-chip pendiente">
+    <div class="kpi-num" id="kpi-pendiente">—</div>
+    <div class="kpi-label">PENDIENTES</div>
+  </div>
+  <div class="kpi-chip en-proceso">
+    <div class="kpi-num" id="kpi-en-proceso">—</div>
+    <div class="kpi-label">EN PROCESO</div>
+  </div>
+  <div class="kpi-chip aprobado">
+    <div class="kpi-num" id="kpi-aprobado">—</div>
+    <div class="kpi-label">APROBADOS</div>
+  </div>
+  <div class="kpi-chip rechazado">
+    <div class="kpi-num" id="kpi-rechazado">—</div>
+    <div class="kpi-label">RECHAZADOS</div>
+  </div>
+</div>
+
+<!-- GRID PLANTILLAS -->
+<div class="plantillas-wrap" id="plantillas-wrap">
+  <div style="grid-column:1/-1;text-align:center;color:#999;padding:30px">Cargando checks de calidad...</div>
+</div>
+
+<footer>Actualización automática · Datos desde Odoo · Healthy Food © 2026</footer>
+
+<script>
+const REPO   = 'SisGesHealthy/hf-dashboard';
+const BRANCH = 'data';
+
+// ── Reloj ──────────────────────────────────────────────────────────────────
+function actualizarReloj() {
+  const a = new Date();
+  const dias  = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio',
+                 'agosto','septiembre','octubre','noviembre','diciembre'];
+  document.getElementById('fecha-hoy').textContent =
+    `${dias[a.getDay()]}, ${a.getDate()} de ${meses[a.getMonth()]} de ${a.getFullYear()}`;
+  document.getElementById('hora-ahora').textContent =
+    a.toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+setInterval(actualizarReloj, 1000);
+actualizarReloj();
+
+function hoyStr() {
+  const h = new Date();
+  return `${h.getFullYear()}-${String(h.getMonth()+1).padStart(2,'0')}-${String(h.getDate()).padStart(2,'0')}`;
+}
+
+async function leerCSV(nombre) {
+  const url = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/dashboard-data/${nombre}?t=${Date.now()}`;
+  const res  = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) return null;
+  const txt  = await res.text();
+  return new Promise(r => Papa.parse(txt, { header:true, skipEmptyLines:true, complete: d => r(d.data) }));
+}
+
+// ── Rotación automática ────────────────────────────────────────────────────
+let rotacionActiva = true;
+let segsRestantes  = 60;
+let timerRotacion;
+
+function iniciarCountdown() {
+  const chip = document.getElementById('rotacion-chip');
+  timerRotacion = setInterval(() => {
+    if (!rotacionActiva) { clearInterval(timerRotacion); return; }
+    segsRestantes--;
+    document.getElementById('countdown').textContent = segsRestantes;
+    if (segsRestantes <= 0) {
+      clearInterval(timerRotacion);
+      window.location.href = 'taller.html';
+    }
+  }, 1000);
+}
+
+document.getElementById('rotacion-chip').addEventListener('click', () => {
+  rotacionActiva = !rotacionActiva;
+  clearInterval(timerRotacion);
+  const chip = document.getElementById('rotacion-chip');
+  if (rotacionActiva) {
+    segsRestantes = 60;
+    chip.textContent = '';
+    chip.innerHTML = '↻ <span id="countdown">60</span>s → Taller';
+    iniciarCountdown();
+  } else {
+    chip.textContent = '⏸ Auto-rotación pausada';
+  }
+});
+
+iniciarCountdown();
+
+// ── Helpers de estado ──────────────────────────────────────────────────────
+const ESTADO_DOT = {
+  'Pendiente':  'dot-pendiente',
+  'En proceso': 'dot-en-proceso',
+  'Aprobado':   'dot-aprobado',
+  'Rechazado':  'dot-rechazado',
+};
+const ESTADO_BADGE = {
+  'Pendiente':  'badge-pendiente',
+  'En proceso': 'badge-en-proceso',
+  'Aprobado':   'badge-aprobado',
+  'Rechazado':  'badge-rechazado',
+};
+
+// Orden canónico de plantillas (las 4 del sistema)
+const ORDEN_PLANTILLAS = [
+  'LIBERACIÓN DE MATERIA PRIMA',
+  'LIBERACIÓN DE PRODUCTO EN PROCESO',
+  'LIBERACIÓN DE PRODUCTO TERMINADO',
+  'LIBERACIÓN DE INSUMOS',
+];
+
+function normPlantilla(nombre) {
+  return (nombre || 'Sin plantilla').toUpperCase().trim();
+}
+
+// ── Renderizar checks ──────────────────────────────────────────────────────
+function renderChecks(filas) {
+  // KPIs globales
+  const conteo = { 'Pendiente': 0, 'En proceso': 0, 'Aprobado': 0, 'Rechazado': 0 };
+  filas.forEach(f => { if (conteo[f.quality_state] !== undefined) conteo[f.quality_state]++; });
+  document.getElementById('kpi-pendiente').textContent  = conteo['Pendiente'];
+  document.getElementById('kpi-en-proceso').textContent = conteo['En proceso'];
+  document.getElementById('kpi-aprobado').textContent   = conteo['Aprobado'];
+  document.getElementById('kpi-rechazado').textContent  = conteo['Rechazado'];
+
+  // Agrupar por plantilla
+  const grupos = {};
+  filas.forEach(f => {
+    const k = normPlantilla(f.plantilla);
+    if (!grupos[k]) grupos[k] = [];
+    grupos[k].push(f);
+  });
+
+  // Unión ordenada: canónicas primero, luego cualquier extra
+  const claves = [...new Set([
+    ...ORDEN_PLANTILLAS.filter(p => grupos[p]),
+    ...Object.keys(grupos).filter(p => !ORDEN_PLANTILLAS.includes(p)),
+  ])];
+
+  // Si hay menos de 4 plantillas, rellenar con las canónicas vacías
+  const ORDEN_PLANTILLAS_CORTO = [
+    'LIBERACIÓN DE MATERIA PRIMA',
+    'LIBERACIÓN DE PRODUCTO EN PROCESO',
+    'LIBERACIÓN DE PRODUCTO TERMINADO',
+    'LIBERACIÓN DE INSUMOS',
+  ];
+  const clavesFinales = [...new Set([...claves, ...ORDEN_PLANTILLAS_CORTO])].slice(0, 4);
+
+  const wrap = document.getElementById('plantillas-wrap');
+  wrap.innerHTML = '';
+
+  clavesFinales.forEach(clave => {
+    const checks = (grupos[clave] || []).sort((a, b) => {
+      const ord = ['Rechazado','En proceso','Pendiente','Aprobado'];
+      return ord.indexOf(a.quality_state) - ord.indexOf(b.quality_state);
+    });
+
+    const c = { 'Pendiente': 0, 'En proceso': 0, 'Aprobado': 0, 'Rechazado': 0 };
+    checks.forEach(f => { if (c[f.quality_state] !== undefined) c[f.quality_state]++; });
+
+    const tieneRechazados = c['Rechazado'] > 0;
+    const tienePendientes = c['Pendiente'] > 0 || c['En proceso'] > 0;
+
+    const nombreCorto = {
+      'LIBERACIÓN DE MATERIA PRIMA':        'Liberación Materia Prima',
+      'LIBERACIÓN DE PRODUCTO EN PROCESO':  'Liberación Producto en Proceso',
+      'LIBERACIÓN DE PRODUCTO TERMINADO':   'Liberación Producto Terminado',
+      'LIBERACIÓN DE INSUMOS':              'Liberación Insumos',
+    }[clave] || clave;
+
+    const badges = [
+      c['Rechazado']  ? `<span class="mini-badge badge-rechazado">${c['Rechazado']} rechazado${c['Rechazado']>1?'s':''}</span>` : '',
+      c['En proceso'] ? `<span class="mini-badge badge-en-proceso">${c['En proceso']} en proceso</span>` : '',
+      c['Pendiente']  ? `<span class="mini-badge badge-pendiente">${c['Pendiente']} pendiente${c['Pendiente']>1?'s':''}</span>` : '',
+      c['Aprobado']   ? `<span class="mini-badge badge-aprobado">${c['Aprobado']} aprobado${c['Aprobado']>1?'s':''}</span>` : '',
+    ].filter(Boolean).join('');
+
+    const filaHtml = checks.length
+      ? checks.map(f => {
+          const hora = (f.fecha_asignacion || '').split(' ')[1]?.slice(0,5) || '';
+          const detalle = [f.producto, f.picking || f.produccion].filter(Boolean).join(' · ');
+          return `
+            <div class="check-row">
+              <div class="estado-dot ${ESTADO_DOT[f.quality_state] || 'dot-pendiente'}"></div>
+              <div class="check-info">
+                <div class="check-nombre">${f.check_name || f.check_title || '—'}</div>
+                ${detalle ? `<div class="check-detalle">${detalle}</div>` : ''}
+              </div>
+              <span class="check-estado ${ESTADO_BADGE[f.quality_state] || 'badge-pendiente'}">${f.quality_state}</span>
+              ${hora ? `<span class="check-hora">${hora}</span>` : ''}
+            </div>`;
+        }).join('')
+      : '<div class="sin-checks">Sin checks registrados hoy</div>';
+
+    const cardClass = tieneRechazados ? 'tiene-rechazados'
+                    : tienePendientes ? 'tiene-pendientes'
+                    : '';
+
+    wrap.innerHTML += `
+      <div class="plantilla-card ${cardClass}">
+        <div class="plantilla-header">
+          <div class="plantilla-nombre">${nombreCorto}</div>
+          <div class="plantilla-counters">${badges || '<span class="mini-badge badge-aprobado">Sin pendientes</span>'}</div>
+        </div>
+        <div class="checks-lista">${filaHtml}</div>
+      </div>`;
+  });
+}
+
+// ── Carga principal ────────────────────────────────────────────────────────
+async function cargarDatos() {
+  try {
+    document.getElementById('ultima-act').textContent = 'Actualizando...';
+    const filas = await leerCSV('calidad.csv');
+    if (!filas) {
+      document.getElementById('plantillas-wrap').innerHTML =
+        '<div style="grid-column:1/-1;text-align:center;color:#aaa;padding:30px;font-style:italic">' +
+        'Datos de calidad no disponibles aún (se generan cada 30 min)</div>';
+      document.getElementById('ultima-act').textContent = 'Sin datos — próxima actualización en ~30 min';
+      return;
+    }
+    renderChecks(filas);
+    const ahora = new Date().toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'});
+    document.getElementById('ultima-act').textContent =
+      `Última actualización: ${ahora} · ${filas.length} checks hoy · próxima en ~30 min`;
+  } catch(e) {
+    document.getElementById('ultima-act').textContent = 'Error: ' + e.message;
+    console.error(e);
+  }
+}
+
+cargarDatos();
+
+// Refrescar en :05 y :35 de cada hora (mismo patrón que taller.html)
+function programarSiguienteActualizacion() {
+  const ahora = new Date();
+  const min = ahora.getMinutes(), seg = ahora.getSeconds(), ms = ahora.getMilliseconds();
+  let t;
+  if (min < 5)       t = 5;
+  else if (min < 35) t = 35;
+  else               t = 65;
+  setTimeout(() => { cargarDatos(); programarSiguienteActualizacion(); },
+    ((t - min) * 60 - seg) * 1000 - ms);
+}
+programarSiguienteActualizacion();
+</script>
+</body>
+</html>
