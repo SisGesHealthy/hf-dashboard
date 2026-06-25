@@ -470,6 +470,55 @@ function renderChecks(filas) {
         </div>
       </div>`;
   });
+
+  // ── Banda de pendientes anteriores ──────────────────────────────────────
+  const band = document.getElementById('band-anteriores');
+  const bandScroll = document.getElementById('band-scroll');
+  if (todosAnteriores.length) {
+    band.classList.add('visible');
+    const porFecha = {};
+    todosAnteriores.forEach(f => {
+      const fecha = (f.fecha_asignacion || '').split(' ')[0] || 'Sin fecha';
+      if (!porFecha[fecha]) porFecha[fecha] = [];
+      porFecha[fecha].push(f);
+    });
+    const fechasOrdenadas = Object.keys(porFecha).sort().reverse();
+    document.getElementById('band-subtitulo').textContent =
+      `— ${todosAnteriores.length} check${todosAnteriores.length>1?'s':''} sin resolver`;
+    bandScroll.innerHTML = fechasOrdenadas.map(fecha => {
+      const items = porFecha[fecha];
+      const [,m,d] = fecha.split('-');
+      const meses = ['','ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+      const fechaLabel = fecha === 'Sin fecha' ? fecha : `${d} ${meses[+m]}`;
+      const filas2 = items.map(f => {
+        const enProceso = f.quality_state === 'En proceso';
+        const prod = f.productos ? f.productos.split(' | ')[0] : (f.check_name || '—');
+        return `<div class="fecha-mini-check${enProceso?' en-proceso':''}">
+          <div class="dot-mini"></div>
+          <span title="${f._seccion}">${prod}</span>
+        </div>${f.partner ? `<div class="fecha-mini-sub">🏭 ${f.partner}</div>` : ''}`;
+      }).join('');
+      return `<div class="fecha-mini-card">
+        <div class="fecha-mini-titulo">📅 ${fechaLabel} · ${items.length} pendiente${items.length>1?'s':''}</div>
+        ${filas2}
+      </div>`;
+    }).join('');
+  } else {
+    band.classList.remove('visible');
+  }
+
+  // ── Auto-scroll en listas que desborden ──────────────────────────────────
+  setTimeout(() => {
+    document.querySelectorAll('.checks-lista').forEach(lista => {
+      const scroller = lista.querySelector('.checks-scroll');
+      if (!scroller) return;
+      if (scroller.scrollHeight <= lista.clientHeight) return;
+      scroller.innerHTML += scroller.innerHTML;
+      const dur = Math.max(10, scroller.scrollHeight / 2 / 30) + 's';
+      scroller.style.setProperty('--scroll-dist', '-' + (scroller.scrollHeight / 2) + 'px');
+      scroller.style.animation = `scrollUpChecks ${dur} linear infinite`;
+    });
+  }, 200);
 }
 
 // ── Carga principal ────────────────────────────────────────────────────────
@@ -485,65 +534,9 @@ async function cargarDatos() {
       return;
     }
     renderChecks(filas);
-    // ── Banda de pendientes anteriores ────────────────────────────────────────
-  const band = document.getElementById('band-anteriores');
-  const bandScroll = document.getElementById('band-scroll');
-  if (todosAnteriores.length) {
-    band.classList.add('visible');
-    // Agrupar por fecha
-    const porFecha = {};
-    todosAnteriores.forEach(f => {
-      const fecha = (f.fecha_asignacion || '').split(' ')[0] || 'Sin fecha';
-      if (!porFecha[fecha]) porFecha[fecha] = [];
-      porFecha[fecha].push(f);
-    });
-    // Ordenar fechas desc (más reciente primero)
-    const fechasOrdenadas = Object.keys(porFecha).sort().reverse();
-    document.getElementById('band-subtitulo').textContent =
-      `— ${todosAnteriores.length} check${todosAnteriores.length>1?'s':''} sin resolver`;
-    bandScroll.innerHTML = fechasOrdenadas.map(fecha => {
-      const items = porFecha[fecha];
-      const filas = items.map(f => {
-        const enProceso = f.quality_state === 'En proceso';
-        const prod = f.productos ? f.productos.split(' | ')[0] : (f.check_name || '—');
-        return `<div class="fecha-mini-check${enProceso?' en-proceso':''}">
-          <div class="dot-mini"></div>
-          <span title="${f._seccion}">${prod}</span>
-        </div>
-        ${f.partner ? `<div class="fecha-mini-sub">🏭 ${f.partner}</div>` : ''}`;
-      }).join('');
-      // Formatear fecha legible
-      const [y,m,d] = fecha.split('-');
-      const meses = ['','ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-      const fechaLabel = fecha === 'Sin fecha' ? fecha : `${d} ${meses[+m]}`;
-      return `<div class="fecha-mini-card">
-        <div class="fecha-mini-titulo">📅 ${fechaLabel} · ${items.length} pendiente${items.length>1?'s':''}</div>
-        ${filas}
-      </div>`;
-    }).join('');
-  } else {
-    band.classList.remove('visible');
-  }
-
-  // Auto-scroll en cada lista que desborde
-  setTimeout(() => {
-    document.querySelectorAll('.checks-lista').forEach(lista => {
-      const scroller = lista.querySelector('.checks-scroll');
-      if (!scroller) return;
-      const listaH   = lista.clientHeight;
-      const contenidoH = scroller.scrollHeight;
-      if (contenidoH <= listaH) return;        // cabe todo, sin scroll
-      // Duplicar contenido para scroll continuo
-      scroller.innerHTML += scroller.innerHTML;
-      const dur = Math.max(10, contenidoH / 30) + 's';
-      scroller.style.setProperty('--scroll-dist', '-' + contenidoH + 'px');
-      scroller.style.animation = `scrollUpChecks ${dur} linear infinite`;
-    });
-  }, 200);
-
-  const ahora = new Date().toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'});
+    const ahora = new Date().toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'});
     document.getElementById('ultima-act').textContent =
-      `Última actualización: ${ahora} · ${filas.length} checks hoy · próxima en ~30 min`;
+      `Última actualización: ${ahora} · ${filas.length} checks · próxima en ~30 min`;
   } catch(e) {
     document.getElementById('ultima-act').textContent = 'Error: ' + e.message;
     console.error(e);
