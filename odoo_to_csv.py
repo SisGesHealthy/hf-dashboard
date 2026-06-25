@@ -709,45 +709,41 @@ def extraer_recepciones_sp():
                    + timedelta(hours=5)).strftime("%Y-%m-%dT%H:%M:%SZ")
     base = f"https://graph.microsoft.com/v1.0/sites/{site_id}/lists"
 
-    # Listar todas las listas disponibles para diagnóstico
+    # Recepciones1 — sin filtro OData (filtramos en Python por fecha)
     try:
-        listas = graph_get(token, f"{base}", {"$select": "name,displayName"})
-        nombres = [(l.get("name",""), l.get("displayName",""))
-                   for l in listas.get("value", [])]
-        log.info(f"  Listas en el sitio: {nombres}")
-    except Exception as e:
-        log.warning(f"  ⚠ No se pudieron listar las listas: {e}")
-
-    try:
-        rec_data = graph_get(token, f"{base}/Recepciones1/items", {
-            "$expand": "fields($select=ID_1,Fruta,Proveedor,TotalNeto,"
-                       "ObservacionesProveedor,HoraLlegada,HoraCierre)",
-            "$filter": f"fields/HoraLlegada ge '{hoy_utc_str}'",
-            "$top":    "200",
-        })
-        recepciones = rec_data.get("value", [])
+        rec_data = graph_get(token, f"{base}/Recepciones1/items",
+                             {"$expand": "fields", "$top": "500"})
+        # Paginar si hay más de 500
+        todos = rec_data.get("value", [])
+        while rec_data.get("@odata.nextLink"):
+            rec_data = graph_get(token, rec_data["@odata.nextLink"])
+            todos += rec_data.get("value", [])
+        # Filtrar por fecha en Python (hoy hora Ecuador)
+        hoy_ec = ahora_quito.strftime("%Y-%m-%d")
+        recepciones = [r for r in todos
+                       if (r.get("fields",{}).get("HoraLlegada","") or "")[:10] >= hoy_ec]
+        log.info(f"  Recepciones hoy: {len(recepciones)} de {len(todos)} totales")
     except Exception as e:
         log.error(f"  ✗ Error leyendo Recepciones1: {e}")
         return
 
-    # Índice de Liberaciones por ID_1
+    # Liberaciones — traer todas y filtrar en Python por ID_1
     libera_idx = {}
-    ids_hoy = list({str(r["fields"].get("ID_1",""))
-                    for r in recepciones if r["fields"].get("ID_1")})
-    if ids_hoy:
-        try:
-            filtro = " or ".join(f"fields/ID_1 eq '{i}'" for i in ids_hoy)
-            lib_data = graph_get(token, f"{base}/Liberaciones/items", {
-                "$expand": "fields($select=ID_1,_x00b0_Brix,PH,Acidez,Observaciones)",
-                "$filter": filtro,
-                "$top":    "200",
-            })
-            for item in lib_data.get("value", []):
-                k = str(item["fields"].get("ID_1",""))
-                if k:
-                    libera_idx[k] = item["fields"]
-        except Exception as e:
-            log.warning(f"  ⚠ Error leyendo Liberaciones: {e}")
+    try:
+        lib_data = graph_get(token, f"{base}/Liberaciones/items",
+                             {"$expand": "fields", "$top": "500"})
+        lib_todos = lib_data.get("value", [])
+        while lib_data.get("@odata.nextLink"):
+            lib_data = graph_get(token, lib_data["@odata.nextLink"])
+            lib_todos += lib_data.get("value", [])
+        ids_hoy = {str(r["fields"].get("ID_1","")) for r in recepciones
+                   if r["fields"].get("ID_1")}
+        for item in lib_todos:
+            k = str(item["fields"].get("ID_1",""))
+            if k in ids_hoy:
+                libera_idx[k] = item["fields"]
+    except Exception as e:
+        log.warning(f"  ⚠ Error leyendo Liberaciones: {e}")
 
     filas = []
     for r in recepciones:
