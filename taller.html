@@ -400,8 +400,8 @@ function renderLeyenda(filas, prodIdx) {
 
 // ── GANTT ─────────────────────────────────────────────────────────────────
 function renderGantt(filas, prodIdx, esHoy) {
-  const HORA_INI = 5;   // 05:00
-  const HORA_FIN = 18;  // 18:00
+  const HORA_INI = 6;   // 06:00
+  const HORA_FIN = 24;  // 00:00 (medianoche)
   const TOTAL_H  = HORA_FIN - HORA_INI;
 
   // Hoy: solo OT activas (En progreso). Días pasados: todo registro con inicio.
@@ -430,12 +430,13 @@ function renderGantt(filas, prodIdx, esHoy) {
   const horas = [];
   for (let h = HORA_INI; h <= HORA_FIN; h++) horas.push(h);
 
-  // Posición % dentro del rango
+  // Posición % dentro del rango (hora 0 = medianoche = 24)
   function pct(fechaStr) {
     if (!fechaStr || !fechaStr.trim()) return null;
     const partes = fechaStr.trim().split(' ');
     if (!partes[1]) return null;
-    const [hh, mm] = partes[1].split(':').map(Number);
+    let [hh, mm] = partes[1].split(':').map(Number);
+    if (hh === 0) hh = 24; // medianoche = fin de jornada
     const totalMin = (hh - HORA_INI) * 60 + mm;
     return Math.min(100, Math.max(0, (totalMin / (TOTAL_H * 60)) * 100));
   }
@@ -464,7 +465,7 @@ function renderGantt(filas, prodIdx, esHoy) {
         <div style="position:relative;height:20px">
           ${horas.map(h => {
             const pctH = ((h - HORA_INI) / TOTAL_H * 100).toFixed(2);
-            return `<span style="position:absolute;left:${pctH}%;font-size:.65rem;color:#888;transform:translateX(-50%)">${String(h).padStart(2,'0')}:00</span>`;
+            return `<span style="position:absolute;left:${pctH}%;font-size:.65rem;color:#888;transform:translateX(-50%)">${h === 24 ? '00:00' : String(h).padStart(2,'0') + ':00'}</span>`;
           }).join('')}
         </div>
       </th>
