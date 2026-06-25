@@ -606,7 +606,7 @@ def extraer_calidad(models, uid):
                      if c.get("picking_id") and c["picking_id"] is not False})
     pickings_raw = odoo_get(models, uid, "stock.picking",
         [["id", "in", pick_ids]],
-        ["id", "partner_id", "origin", "move_ids"]
+        ["id", "partner_id", "origin", "move_ids", "scheduled_date"]
     ) if pick_ids else []
     picking_idx = {p["id"]: p for p in pickings_raw}
 
@@ -641,6 +641,7 @@ def extraer_calidad(models, uid):
             "productos":        " | ".join(prods),
             "picking":          val(c.get("picking_id")),
             "origen_doc":       val(picking.get("origin", False)),
+            "fecha_programada": utc_a_local(val(picking.get("scheduled_date", False)), "%Y-%m-%d"),
             "produccion":       val(c.get("production_id")),
             "partner":          val(picking.get("partner_id", False)),
             "responsable":      val(c.get("user_id")),
@@ -650,7 +651,7 @@ def extraer_calidad(models, uid):
         })
 
     encabezados = ["check_name", "check_title", "quality_state", "punto_control", "plantilla",
-                   "productos", "picking", "origen_doc", "produccion", "partner",
+                   "productos", "picking", "origen_doc", "fecha_programada", "produccion", "partner",
                    "responsable", "equipo", "fecha_asignacion", "actualizado"]
     escribir_csv("calidad.csv", filas, encabezados)
 

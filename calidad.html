@@ -171,43 +171,46 @@
     /* ── BANDA PENDIENTES ANTERIORES ── */
     #band-anteriores {
       flex-shrink: 0;
-      padding: 0 18px 5px;
+      padding: 2px 18px 4px;
       display: none;
+      background: #fff8f0;
+      border-top: 1px solid #ffe0b2;
     }
     #band-anteriores.visible { display: block; }
     .band-titulo {
-      font-size: .68rem; font-weight: 700; color: #e65100;
-      margin-bottom: 4px; display: flex; align-items: center; gap: 6px;
+      font-size: .63rem; font-weight: 700; color: #e65100;
+      margin-bottom: 3px; display: flex; align-items: center; gap: 5px;
     }
-    .band-titulo span { font-weight: 400; color: #aaa; font-size: .62rem; }
+    .band-titulo span { font-weight: 400; color: #bbb; font-size: .6rem; }
     .band-scroll {
-      display: flex; gap: 7px; overflow-x: auto;
-      padding-bottom: 3px;
+      display: flex; gap: 6px; overflow-x: auto;
+      padding-bottom: 2px;
     }
-    .band-scroll::-webkit-scrollbar { height: 3px; }
-    .band-scroll::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
+    .band-scroll::-webkit-scrollbar { height: 2px; }
+    .band-scroll::-webkit-scrollbar-thumb { background: #ffcc80; border-radius: 2px; }
     .fecha-mini-card {
-      background: white; border-radius: 7px;
-      border-left: 4px solid var(--naranja);
-      box-shadow: 0 1px 3px rgba(0,0,0,.1);
-      padding: 5px 10px; min-width: 190px; flex-shrink: 0;
+      background: white; border-radius: 5px;
+      border-left: 3px solid var(--naranja);
+      box-shadow: 0 1px 2px rgba(0,0,0,.08);
+      padding: 3px 8px; min-width: 150px; max-width: 200px; flex-shrink: 0;
     }
     .fecha-mini-titulo {
-      font-size: .67rem; font-weight: 700; color: #e65100;
-      margin-bottom: 3px; white-space: nowrap;
+      font-size: .6rem; font-weight: 700; color: #e65100;
+      margin-bottom: 2px; white-space: nowrap;
     }
     .fecha-mini-check {
-      font-size: .65rem; color: #555;
-      padding: 1px 0; white-space: nowrap;
+      font-size: .6rem; color: #666;
+      padding: 0; white-space: nowrap;
       overflow: hidden; text-overflow: ellipsis;
-      display: flex; align-items: center; gap: 4px;
+      display: flex; align-items: center; gap: 3px;
+      line-height: 1.5;
     }
     .fecha-mini-check .dot-mini {
-      width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+      width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0;
       background: #9e9e9e;
     }
     .fecha-mini-check.en-proceso .dot-mini { background: var(--naranja); }
-    .fecha-mini-sub { font-size: .58rem; color: #bbb; padding-left: 10px; }
+    .fecha-mini-sub { font-size: .55rem; color: #bbb; padding-left: 8px; line-height: 1.3; }
 
     /* ── FOOTER ── */
     footer {
@@ -420,19 +423,25 @@ function renderChecks(filas) {
   clavesFinales.forEach(clave => {
     const todosChecks = (grupos[clave] || []);
 
+    // Usar fecha_programada (scheduled_date del picking) para clasificar.
+    // Si no existe (p.ej. check de producción), caer en fecha_asignacion.
+    function fechaClasif(f) {
+      return (f.fecha_programada || f.fecha_asignacion || '').split(' ')[0];
+    }
+
     const checksHoy = todosChecks.filter(f => {
-      const fecha = (f.fecha_asignacion || '').split(' ')[0];
-      return fecha >= hoyLocal;
+      const fc = fechaClasif(f);
+      return !fc || fc === hoyLocal;   // sin fecha o programada hoy → mostrar hoy
     }).sort((a, b) => {
       const ord = ['Rechazado','En proceso','Pendiente','Aprobado'];
       return ord.indexOf(a.quality_state) - ord.indexOf(b.quality_state);
     });
 
-    // Anteriores: abrir, solo fechas pasadas
+    // Anteriores: programados antes de hoy y aún abiertos (excluye futuros)
     todosChecks
       .filter(f => {
-        const fecha = (f.fecha_asignacion || '').split(' ')[0];
-        return fecha < hoyLocal && ['Pendiente','En proceso'].includes(f.quality_state);
+        const fc = fechaClasif(f);
+        return fc && fc < hoyLocal && ['Pendiente','En proceso'].includes(f.quality_state);
       })
       .forEach(f => todosAnteriores.push({ ...f, _seccion: NOMBRE_CORTO[clave] || clave }));
 
