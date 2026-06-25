@@ -85,10 +85,16 @@
     .kpi-chip.rechazado  .kpi-num { color: var(--rojo); }
     .kpi-label { font-size: .68rem; font-weight: 600; color: #888; margin-top: 2px; }
 
+    /* ── LAYOUT PRINCIPAL (cards + sidebar) ── */
+    .main-layout {
+      flex: 1; min-height: 0;
+      display: flex;
+      gap: 8px;
+      padding: 6px 18px 6px;
+    }
     /* ── GRID PLANTILLAS ── */
     .plantillas-wrap {
       flex: 1; min-height: 0;
-      padding: 6px 18px 6px;
       display: grid;
       grid-template-columns: 1fr 1fr;
       grid-auto-rows: 1fr;
@@ -168,49 +174,53 @@
       text-align: center; padding: 18px;
     }
 
-    /* ── BANDA PENDIENTES ANTERIORES ── */
-    #band-anteriores {
+    /* ── SIDEBAR PENDIENTES ANTERIORES ── */
+    #sidebar-ant {
+      width: 200px; flex-shrink: 0;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.1);
+      border-top: 4px solid var(--naranja);
+      display: none; flex-direction: column;
+      overflow: hidden;
+    }
+    #sidebar-ant.visible { display: flex; }
+    .sidebar-header {
+      padding: 5px 9px 4px;
+      border-bottom: 1px solid #ffe0b2;
       flex-shrink: 0;
-      padding: 2px 18px 4px;
-      display: none;
-      background: #fff8f0;
-      border-top: 1px solid #ffe0b2;
     }
-    #band-anteriores.visible { display: block; }
-    .band-titulo {
-      font-size: .63rem; font-weight: 700; color: #e65100;
-      margin-bottom: 3px; display: flex; align-items: center; gap: 5px;
+    .sidebar-header-titulo {
+      font-size: .67rem; font-weight: 700; color: #e65100;
     }
-    .band-titulo span { font-weight: 400; color: #bbb; font-size: .6rem; }
-    .band-scroll {
-      display: flex; gap: 6px; overflow-x: auto;
-      padding-bottom: 2px;
+    .sidebar-header-sub {
+      font-size: .58rem; color: #bbb;
     }
-    .band-scroll::-webkit-scrollbar { height: 2px; }
-    .band-scroll::-webkit-scrollbar-thumb { background: #ffcc80; border-radius: 2px; }
-    .fecha-mini-card {
-      background: white; border-radius: 5px;
-      border-left: 3px solid var(--naranja);
-      box-shadow: 0 1px 2px rgba(0,0,0,.08);
-      padding: 3px 8px; min-width: 150px; max-width: 200px; flex-shrink: 0;
+    .sidebar-lista-wrap { flex: 1; overflow: hidden; position: relative; }
+    .sidebar-lista-scroll { display: block; }
+    .sidebar-lista-scroll:hover { animation-play-state: paused !important; }
+    @keyframes scrollUpSidebar {
+      0%   { transform: translateY(0); }
+      100% { transform: translateY(var(--sb-dist, -50%)); }
     }
-    .fecha-mini-titulo {
-      font-size: .6rem; font-weight: 700; color: #e65100;
-      margin-bottom: 2px; white-space: nowrap;
+    .sb-fecha-sep {
+      font-size: .58rem; font-weight: 700; color: #e65100;
+      background: #fff3e0;
+      padding: 2px 9px; border-bottom: 1px solid #ffe0b2;
+      letter-spacing: .03em;
     }
-    .fecha-mini-check {
-      font-size: .6rem; color: #666;
-      padding: 0; white-space: nowrap;
-      overflow: hidden; text-overflow: ellipsis;
-      display: flex; align-items: center; gap: 3px;
-      line-height: 1.5;
+    .sb-item {
+      padding: 3px 9px 2px;
+      border-bottom: 1px solid #f5f5f5;
     }
-    .fecha-mini-check .dot-mini {
-      width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0;
-      background: #9e9e9e;
+    .sb-item-nombre {
+      font-size: .62rem; font-weight: 600; color: #444;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-    .fecha-mini-check.en-proceso .dot-mini { background: var(--naranja); }
-    .fecha-mini-sub { font-size: .55rem; color: #bbb; padding-left: 8px; line-height: 1.3; }
+    .sb-item-sub {
+      font-size: .56rem; color: #aaa; font-style: italic;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
 
     /* ── FOOTER ── */
     footer {
@@ -258,15 +268,21 @@
   </div>
 </div>
 
-<!-- GRID PLANTILLAS -->
-<div class="plantillas-wrap" id="plantillas-wrap">
-  <div style="grid-column:1/-1;text-align:center;color:#999;padding:30px">Cargando checks de calidad...</div>
-</div>
-
-<!-- BANDA PENDIENTES DÍAS ANTERIORES -->
-<div id="band-anteriores">
-  <div class="band-titulo">⚠ Pendientes de días anteriores <span id="band-subtitulo"></span></div>
-  <div class="band-scroll" id="band-scroll"></div>
+<!-- LAYOUT PRINCIPAL -->
+<div class="main-layout">
+  <div class="plantillas-wrap" id="plantillas-wrap">
+    <div style="grid-column:1/-1;text-align:center;color:#999;padding:30px">Cargando checks de calidad...</div>
+  </div>
+  <!-- SIDEBAR PENDIENTES ANTERIORES -->
+  <div id="sidebar-ant">
+    <div class="sidebar-header">
+      <div class="sidebar-header-titulo">⚠ Pendientes anteriores</div>
+      <div class="sidebar-header-sub" id="sb-subtitulo"></div>
+    </div>
+    <div class="sidebar-lista-wrap">
+      <div class="sidebar-lista-scroll" id="sb-lista"></div>
+    </div>
+  </div>
 </div>
 
 <footer>Actualización automática · Datos desde Odoo · Healthy Food © 2026</footer>
@@ -394,9 +410,11 @@ function renderChecks(filas) {
     const hora = (f.fecha_asignacion || '').split(' ')[1]?.slice(0,5) || '';
     const rowCls = f.quality_state === 'Aprobado'  ? 'row-aprobado'
                  : f.quality_state === 'Rechazado' ? 'row-rechazado' : '';
-    // Aprobado: solo ✓ verde, sin badge de texto
+    // Solo En proceso y Rechazado muestran badge de texto; el color comunica el resto
     const badge = f.quality_state === 'Aprobado'
-      ? `<span style="color:#2e7d32;font-size:1rem;font-weight:900">✓</span>`
+      ? `<span style="color:#2e7d32;font-size:1rem;font-weight:900;flex-shrink:0">✓</span>`
+      : f.quality_state === 'Pendiente'
+      ? ''
       : `<span class="check-estado ${ESTADO_BADGE[f.quality_state] || 'badge-pendiente'}">${f.quality_state}</span>`;
     return `
       <div class="check-row ${rowCls}">
@@ -480,40 +498,49 @@ function renderChecks(filas) {
       </div>`;
   });
 
-  // ── Banda de pendientes anteriores ──────────────────────────────────────
-  const band = document.getElementById('band-anteriores');
-  const bandScroll = document.getElementById('band-scroll');
+  // ── Sidebar pendientes anteriores ────────────────────────────────────────
+  const sbEl = document.getElementById('sidebar-ant');
+  const sbLista = document.getElementById('sb-lista');
   if (todosAnteriores.length) {
-    band.classList.add('visible');
+    sbEl.classList.add('visible');
+    document.getElementById('sb-subtitulo').textContent =
+      `${todosAnteriores.length} check${todosAnteriores.length>1?'s':''} sin resolver`;
     const porFecha = {};
-    todosAnteriores.forEach(f => {
-      const fecha = (f.fecha_asignacion || '').split(' ')[0] || 'Sin fecha';
-      if (!porFecha[fecha]) porFecha[fecha] = [];
-      porFecha[fecha].push(f);
-    });
-    const fechasOrdenadas = Object.keys(porFecha).sort().reverse();
-    document.getElementById('band-subtitulo').textContent =
-      `— ${todosAnteriores.length} check${todosAnteriores.length>1?'s':''} sin resolver`;
-    bandScroll.innerHTML = fechasOrdenadas.map(fecha => {
-      const items = porFecha[fecha];
+    todosAnteriores
+      .sort((a,b) => (b.fecha_programada||b.fecha_asignacion||'') > (a.fecha_programada||a.fecha_asignacion||'') ? 1 : -1)
+      .forEach(f => {
+        const fc = (f.fecha_programada || f.fecha_asignacion || '').split(' ')[0] || 'Sin fecha';
+        if (!porFecha[fc]) porFecha[fc] = [];
+        porFecha[fc].push(f);
+      });
+    const meses = ['','ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    let html = '';
+    Object.keys(porFecha).sort().reverse().forEach(fecha => {
       const [,m,d] = fecha.split('-');
-      const meses = ['','ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-      const fechaLabel = fecha === 'Sin fecha' ? fecha : `${d} ${meses[+m]}`;
-      const filas2 = items.map(f => {
-        const enProceso = f.quality_state === 'En proceso';
+      const label = fecha === 'Sin fecha' ? fecha : `${d} ${meses[+m]}`;
+      html += `<div class="sb-fecha-sep">📅 ${label} · ${porFecha[fecha].length}</div>`;
+      porFecha[fecha].forEach(f => {
         const prod = f.productos ? f.productos.split(' | ')[0] : (f.check_name || '—');
-        return `<div class="fecha-mini-check${enProceso?' en-proceso':''}">
-          <div class="dot-mini"></div>
-          <span title="${f._seccion}">${prod}</span>
-        </div>${f.partner ? `<div class="fecha-mini-sub">🏭 ${f.partner}</div>` : ''}`;
-      }).join('');
-      return `<div class="fecha-mini-card">
-        <div class="fecha-mini-titulo">📅 ${fechaLabel} · ${items.length} pendiente${items.length>1?'s':''}</div>
-        ${filas2}
-      </div>`;
-    }).join('');
+        html += `<div class="sb-item">
+          <div class="sb-item-nombre">${prod}</div>
+          ${f.partner ? `<div class="sb-item-sub">🏭 ${f.partner}</div>` : ''}
+        </div>`;
+      });
+    });
+    sbLista.innerHTML = html;
+    // Auto-scroll vertical
+    setTimeout(() => {
+      const wrap = sbEl.querySelector('.sidebar-lista-wrap');
+      if (!wrap || !sbLista) return;
+      if (sbLista.scrollHeight <= wrap.clientHeight) return;
+      sbLista.innerHTML += sbLista.innerHTML;
+      const dist = sbLista.scrollHeight / 2;
+      const dur  = Math.max(12, dist / 25) + 's';
+      sbLista.style.setProperty('--sb-dist', '-' + dist + 'px');
+      sbLista.style.animation = `scrollUpSidebar ${dur} linear infinite`;
+    }, 250);
   } else {
-    band.classList.remove('visible');
+    sbEl.classList.remove('visible');
   }
 
   // ── Auto-scroll en listas que desborden ──────────────────────────────────
