@@ -673,9 +673,10 @@ def get_ms_token():
         return _json.loads(resp.read())["access_token"]
 
 def graph_get(token, url, params=None):
-    import urllib.request, urllib.parse, json as _json
+    import urllib.request, json as _json
     if params:
-        url = url + "?" + urllib.parse.urlencode(params)
+        # NO usar urlencode: codifica $ como %24 y Graph no reconoce %24expand
+        url = url + "?" + "&".join(f"{k}={v}" for k, v in params.items())
     req = urllib.request.Request(url, headers={"Authorization": f"Bearer {token}"})
     with urllib.request.urlopen(req, timeout=20) as resp:
         return _json.loads(resp.read())
