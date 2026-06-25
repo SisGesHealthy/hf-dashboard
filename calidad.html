@@ -141,6 +141,17 @@
       border-bottom: 1px solid #f0f0f0;
     }
     .check-row:last-child { border-bottom: none; }
+    .check-row.row-aprobado { background: #e8f5e9; }
+    .check-row.row-rechazado { background: #ffebee; }
+
+    /* Sub-sección de pendientes de fechas anteriores */
+    .anteriores-header {
+      font-size: .62rem; font-weight: 700; color: #bbb;
+      padding: 4px 12px 2px; background: #fafafa;
+      border-top: 1px dashed #e0e0e0; letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .check-row.row-anterior { background: #fafafa; opacity: .85; }
     .estado-dot {
       width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
     }
@@ -324,6 +335,9 @@ function renderChecks(filas) {
     grupos[k].push(f);
   });
 
+  // Hoy en hora Ecuador (el browser del TV está en Ecuador)
+  const hoyLocal = new Date().toLocaleDateString('en-CA'); // "2026-06-24"
+
   // Siempre las 4 canónicas; extras al final si existen
   const extras = Object.keys(grupos).filter(p => !ORDEN_PLANTILLAS.includes(p));
   const clavesFinales = [...ORDEN_PLANTILLAS, ...extras];
@@ -331,17 +345,47 @@ function renderChecks(filas) {
   const wrap = document.getElementById('plantillas-wrap');
   wrap.innerHTML = '';
 
+  function buildCheckRow(f, claseExtra = '') {
+    const hora = (f.fecha_asignacion || '').split(' ')[1]?.slice(0,5) || '';
+    const rowCls = f.quality_state === 'Aprobado'   ? 'row-aprobado'
+                 : f.quality_state === 'Rechazado'  ? 'row-rechazado'
+                 : '';
+    return `
+      <div class="check-row ${rowCls} ${claseExtra}">
+        <div class="estado-dot ${ESTADO_DOT[f.quality_state] || 'dot-pendiente'}"></div>
+        <div class="check-info">
+          <div class="check-nombre">${f.check_name || f.check_title || '—'}</div>
+          ${f.productos ? `<div class="check-detalle">📦 ${f.productos}</div>` : ''}
+          ${(f.partner || f.origen_doc || f.produccion) ? `<div class="check-partner">${f.partner ? '🏭 ' + f.partner : (f.produccion ? '🔧 ' + f.produccion : '')}${f.origen_doc ? ' · 🧾 ' + f.origen_doc : ''}</div>` : ''}
+        </div>
+        <span class="check-estado ${ESTADO_BADGE[f.quality_state] || 'badge-pendiente'}">${f.quality_state}</span>
+        ${hora ? `<span class="check-hora">${hora}</span>` : ''}
+      </div>`;
+  }
+
   clavesFinales.forEach(clave => {
-    const checks = (grupos[clave] || []).sort((a, b) => {
+    const todosChecks = (grupos[clave] || []);
+
+    // Separar: hoy vs. anteriores pendientes (excluir fechas futuras)
+    const checksHoy = todosChecks.filter(f => {
+      const fecha = (f.fecha_asignacion || '').split(' ')[0];
+      return fecha >= hoyLocal;  // hoy o sin fecha
+    }).sort((a, b) => {
       const ord = ['Rechazado','En proceso','Pendiente','Aprobado'];
       return ord.indexOf(a.quality_state) - ord.indexOf(b.quality_state);
     });
 
+    const checksAnteriores = todosChecks.filter(f => {
+      const fecha = (f.fecha_asignacion || '').split(' ')[0];
+      return fecha < hoyLocal && ['Pendiente','En proceso'].includes(f.quality_state);
+    }).sort((a, b) => a.fecha_asignacion > b.fecha_asignacion ? 1 : -1);
+
+    // Contadores solo de hoy para los badges del header
     const c = { 'Pendiente': 0, 'En proceso': 0, 'Aprobado': 0, 'Rechazado': 0 };
-    checks.forEach(f => { if (c[f.quality_state] !== undefined) c[f.quality_state]++; });
+    checksHoy.forEach(f => { if (c[f.quality_state] !== undefined) c[f.quality_state]++; });
 
     const tieneRechazados = c['Rechazado'] > 0;
-    const tienePendientes = c['Pendiente'] > 0 || c['En proceso'] > 0;
+    const tienePendientes = c['Pendiente'] > 0 || c['En proceso'] > 0 || checksAnteriores.length > 0;
 
     const nombreCorto = {
       'LIBERACIÓN DE MATERIA PRIMA':        'Liberación Materia Prima',
@@ -355,24 +399,20 @@ function renderChecks(filas) {
       c['En proceso'] ? `<span class="mini-badge badge-en-proceso">${c['En proceso']} en proceso</span>` : '',
       c['Pendiente']  ? `<span class="mini-badge badge-pendiente">${c['Pendiente']} pendiente${c['Pendiente']>1?'s':''}</span>` : '',
       c['Aprobado']   ? `<span class="mini-badge badge-aprobado">${c['Aprobado']} aprobado${c['Aprobado']>1?'s':''}</span>` : '',
+      checksAnteriores.length ? `<span class="mini-badge badge-pendiente" title="Pendientes de días anteriores">⚠ ${checksAnteriores.length} anterior${checksAnteriores.length>1?'es':''}</span>` : '',
     ].filter(Boolean).join('');
 
-    const filasHtml = checks.length
-      ? checks.map(f => {
-          const hora = (f.fecha_asignacion || '').split(' ')[1]?.slice(0,5) || '';
-          return `
-            <div class="check-row">
-              <div class="estado-dot ${ESTADO_DOT[f.quality_state] || 'dot-pendiente'}"></div>
-              <div class="check-info">
-                <div class="check-nombre">${f.check_name || f.check_title || '—'}</div>
-                ${f.productos ? `<div class="check-detalle">📦 ${f.productos}</div>` : ''}
-                ${(f.partner || f.origen_doc || f.produccion) ? `<div class="check-partner">${f.partner ? '🏭 ' + f.partner : (f.produccion ? '🔧 ' + f.produccion : '')}${f.origen_doc ? ' · 🧾 ' + f.origen_doc : ''}</div>` : ''}
-              </div>
-              <span class="check-estado ${ESTADO_BADGE[f.quality_state] || 'badge-pendiente'}">${f.quality_state}</span>
-              ${hora ? `<span class="check-hora">${hora}</span>` : ''}
-            </div>`;
-        }).join('')
-      : '<div class="sin-checks">Sin checks registrados hoy</div>';
+    // HTML del cuerpo
+    let filasHtml = '';
+    if (checksHoy.length) {
+      filasHtml += checksHoy.map(f => buildCheckRow(f)).join('');
+    } else {
+      filasHtml += '<div class="sin-checks">Sin checks hoy</div>';
+    }
+    if (checksAnteriores.length) {
+      filasHtml += `<div class="anteriores-header">⚠ Pendientes días anteriores</div>`;
+      filasHtml += checksAnteriores.map(f => buildCheckRow(f, 'row-anterior')).join('');
+    }
 
     const cardClass = tieneRechazados ? 'tiene-rechazados'
                     : tienePendientes ? 'tiene-pendientes'
