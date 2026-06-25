@@ -710,16 +710,32 @@ def extraer_recepciones_sp():
                    + timedelta(hours=5)).strftime("%Y-%m-%dT%H:%M:%SZ")
     base = f"https://graph.microsoft.com/v1.0/sites/{site_id}/lists"
 
-    # Recepciones1 — sin filtro OData (filtramos en Python por fecha)
+    # Obtener GUIDs de las listas por nombre (más fiable que usar el nombre en la URL)
     try:
-        rec_data = graph_get(token, f"{base}/Recepciones1/items",
-                             {"$expand": "fields", "$top": "500"})
-        # Paginar si hay más de 500
-        todos = rec_data.get("value", [])
-        while rec_data.get("@odata.nextLink"):
-            rec_data = graph_get(token, rec_data["@odata.nextLink"])
-            todos += rec_data.get("value", [])
-        # Filtrar por fecha en Python (hoy hora Ecuador)
+        listas_meta = graph_get(token, base, {"$select": "id,name,displayName"})
+        lista_ids = {l["name"]: l["id"] for l in listas_meta.get("value", [])}
+        log.info(f"  GUIDs obtenidos: Recepciones1={lista_ids.get('Recepciones1','?')[:8]}... "
+                 f"Liberaciones={lista_ids.get('Liberaciones','?')[:8]}...")
+    except Exception as e:
+        log.error(f"  ✗ Error listando listas: {e}")
+        return
+
+    def sp_items(list_guid):
+        url = f"{base}/{list_guid}/items"
+        data = graph_get(token, url, {"$expand": "fields", "$top": "500"})
+        items = data.get("value", [])
+        while data.get("@odata.nextLink"):
+            data = graph_get(token, data["@odata.nextLink"])
+            items += data.get("value", [])
+        return items
+
+    # Recepciones1
+    rec_guid = lista_ids.get("Recepciones1")
+    if not rec_guid:
+        log.error("  ✗ Lista Recepciones1 no encontrada en el sitio")
+        return
+    try:
+        todos = sp_items(rec_guid)
         hoy_ec = ahora_quito.strftime("%Y-%m-%d")
         recepciones = [r for r in todos
                        if (r.get("fields",{}).get("HoraLlegada","") or "")[:10] >= hoy_ec]
@@ -728,23 +744,20 @@ def extraer_recepciones_sp():
         log.error(f"  ✗ Error leyendo Recepciones1: {e}")
         return
 
-    # Liberaciones — traer todas y filtrar en Python por ID_1
+    # Liberaciones
     libera_idx = {}
-    try:
-        lib_data = graph_get(token, f"{base}/Liberaciones/items",
-                             {"$expand": "fields", "$top": "500"})
-        lib_todos = lib_data.get("value", [])
-        while lib_data.get("@odata.nextLink"):
-            lib_data = graph_get(token, lib_data["@odata.nextLink"])
-            lib_todos += lib_data.get("value", [])
-        ids_hoy = {str(r["fields"].get("ID_1","")) for r in recepciones
-                   if r["fields"].get("ID_1")}
-        for item in lib_todos:
-            k = str(item["fields"].get("ID_1",""))
-            if k in ids_hoy:
-                libera_idx[k] = item["fields"]
-    except Exception as e:
-        log.warning(f"  ⚠ Error leyendo Liberaciones: {e}")
+    lib_guid = lista_ids.get("Liberaciones")
+    if lib_guid:
+        try:
+            lib_todos = sp_items(lib_guid)
+            ids_hoy = {str(r["fields"].get("ID_1","")) for r in recepciones
+                       if r["fields"].get("ID_1")}
+            for item in lib_todos:
+                k = str(item["fields"].get("ID_1",""))
+                if k in ids_hoy:
+                    libera_idx[k] = item["fields"]
+        except Exception as e:
+            log.warning(f"  ⚠ Error leyendo Liberaciones: {e}")
 
     filas = []
     for r in recepciones:
