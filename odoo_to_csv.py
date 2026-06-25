@@ -23,11 +23,12 @@ from datetime import datetime, timedelta
 UTC_OFFSET = -5  # America/Guayaquil (Ecuador, sin horario de verano)
 
 def utc_a_local(fecha_str, formato="%Y-%m-%d %H:%M"):
-    """Convierte string UTC de Odoo a hora local Ecuador (UTC-5)."""
+    """Convierte string UTC (Odoo o SharePoint ISO 8601) a hora local Ecuador (UTC-5)."""
     if not fecha_str or fecha_str is False:
         return ""
     try:
-        dt = datetime.strptime(str(fecha_str)[:19], "%Y-%m-%d %H:%M:%S")
+        s = str(fecha_str)[:19].replace("T", " ")  # soporta 2026-06-25T14:52:00Z
+        dt = datetime.strptime(s, "%Y-%m-%d %H:%M:%S")
         dt_local = dt + timedelta(hours=UTC_OFFSET)
         return dt_local.strftime(formato)
     except Exception:
