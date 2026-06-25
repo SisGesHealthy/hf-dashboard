@@ -655,6 +655,116 @@ def extraer_calidad(models, uid):
                    "responsable", "equipo", "fecha_asignacion", "actualizado"]
     escribir_csv("calidad.csv", filas, encabezados)
 
+# ── SHAREPOINT: Recepciones + Liberaciones ────────────────────────────────────
+
+def get_ms_token():
+    import urllib.request, urllib.parse, json as _json
+    tenant  = os.environ["AZURE_TENANT_ID"]
+    payload = urllib.parse.urlencode({
+        "grant_type":    "client_credentials",
+        "client_id":     os.environ["AZURE_CLIENT_ID"],
+        "client_secret": os.environ["AZURE_CLIENT_SECRET"],
+        "scope":         "https://graph.microsoft.com/.default",
+    }).encode()
+    req = urllib.request.Request(
+        f"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token",
+        data=payload, method="POST")
+    with urllib.request.urlopen(req, timeout=15) as resp:
+        return _json.loads(resp.read())["access_token"]
+
+def graph_get(token, url, params=None):
+    import urllib.request, urllib.parse, json as _json
+    if params:
+        url = url + "?" + urllib.parse.urlencode(params)
+    req = urllib.request.Request(url, headers={"Authorization": f"Bearer {token}"})
+    with urllib.request.urlopen(req, timeout=20) as resp:
+        return _json.loads(resp.read())
+
+def extraer_recepciones_sp():
+    log.info("Extrayendo SharePoint (Recepciones + Liberaciones)...")
+
+    # Verificar que existen los secrets antes de intentar
+    if not all(os.environ.get(k) for k in
+               ("AZURE_TENANT_ID", "AZURE_CLIENT_ID", "AZURE_CLIENT_SECRET")):
+        log.warning("  ⚠ Secrets de Azure no configurados — omitiendo SharePoint")
+        return
+
+    try:
+        token = get_ms_token()
+    except Exception as e:
+        log.error(f"  ✗ Error de autenticación MS: {e}")
+        return
+
+    try:
+        site_info = graph_get(token,
+            "https://graph.microsoft.com/v1.0/sites/"
+            "marcalman.sharepoint.com:/sites/EspacioColaborativo")
+        site_id = site_info["id"]
+    except Exception as e:
+        log.error(f"  ✗ Error obteniendo site SharePoint: {e}")
+        return
+
+    ahora_quito = datetime.now() - timedelta(hours=5)
+    hoy_utc_str = (ahora_quito.replace(hour=0, minute=0, second=0, microsecond=0)
+                   + timedelta(hours=5)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    base = f"https://graph.microsoft.com/v1.0/sites/{site_id}/lists"
+
+    try:
+        rec_data = graph_get(token, f"{base}/Recepciones1/items", {
+            "$expand": "fields($select=ID_1,Fruta,Proveedor,TotalNeto,"
+                       "ObservacionesProveedor,HoraLlegada,HoraCierre)",
+            "$filter": f"fields/HoraLlegada ge '{hoy_utc_str}'",
+            "$top":    "200",
+        })
+        recepciones = rec_data.get("value", [])
+    except Exception as e:
+        log.error(f"  ✗ Error leyendo Recepciones1: {e}")
+        return
+
+    # Índice de Liberaciones por ID_1
+    libera_idx = {}
+    ids_hoy = list({str(r["fields"].get("ID_1",""))
+                    for r in recepciones if r["fields"].get("ID_1")})
+    if ids_hoy:
+        try:
+            filtro = " or ".join(f"fields/ID_1 eq '{i}'" for i in ids_hoy)
+            lib_data = graph_get(token, f"{base}/Liberaciones/items", {
+                "$expand": "fields($select=ID_1,_x00b0_Brix,PH,Acidez,Observaciones)",
+                "$filter": filtro,
+                "$top":    "200",
+            })
+            for item in lib_data.get("value", []):
+                k = str(item["fields"].get("ID_1",""))
+                if k:
+                    libera_idx[k] = item["fields"]
+        except Exception as e:
+            log.warning(f"  ⚠ Error leyendo Liberaciones: {e}")
+
+    filas = []
+    for r in recepciones:
+        f   = r["fields"]
+        id1 = str(f.get("ID_1",""))
+        lib = libera_idx.get(id1, {})
+        filas.append({
+            "id_recepcion":  id1,
+            "hora_llegada":  utc_a_local(f.get("HoraLlegada",""),  "%Y-%m-%d %H:%M"),
+            "hora_cierre":   utc_a_local(f.get("HoraCierre",""),   "%Y-%m-%d %H:%M"),
+            "fruta":         f.get("Fruta",""),
+            "total_neto_kg": f.get("TotalNeto",""),
+            "proveedor":     f.get("Proveedor",""),
+            "observaciones": f.get("ObservacionesProveedor",""),
+            "brix":          lib.get("_x00b0_Brix",""),
+            "ph":            lib.get("PH",""),
+            "acidez":        lib.get("Acidez",""),
+            "obs_calidad":   lib.get("Observaciones",""),
+            "actualizado":   ahora(),
+        })
+
+    encabezados = ["id_recepcion","hora_llegada","hora_cierre","fruta",
+                   "total_neto_kg","proveedor","observaciones",
+                   "brix","ph","acidez","obs_calidad","actualizado"]
+    escribir_csv("recepciones_sp.csv", filas, encabezados)
+
 # ── Main ───────────────────────────────────────────────────────────────────────
 
 def main():
@@ -680,6 +790,7 @@ def main():
     extraer_produccion(models, uid)
     extraer_taller(models, uid)
     extraer_calidad(models, uid)
+    extraer_recepciones_sp()
 
     log.info("=" * 60)
     log.info(f"✓ Extracción completa — {ahora()}")

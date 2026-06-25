@@ -85,6 +85,40 @@
     .kpi-chip.rechazado  .kpi-num { color: var(--rojo); }
     .kpi-label { font-size: .68rem; font-weight: 600; color: #888; margin-top: 2px; }
 
+    /* ── FRANJA RECEPCIONES SP ── */
+    #recepciones-wrap {
+      flex-shrink: 0; padding: 4px 18px 0;
+      display: none;
+    }
+    #recepciones-wrap.visible { display: block; }
+    .rec-titulo {
+      font-size: .63rem; font-weight: 700; color: var(--verde);
+      margin-bottom: 3px;
+    }
+    .rec-scroll {
+      display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px;
+    }
+    .rec-scroll::-webkit-scrollbar { height: 3px; }
+    .rec-scroll::-webkit-scrollbar-thumb { background: #c5e1a5; border-radius: 2px; }
+    .rec-card {
+      background: white; border-radius: 6px;
+      border-left: 4px solid var(--verde-c);
+      box-shadow: 0 1px 3px rgba(0,0,0,.08);
+      padding: 5px 10px; min-width: 200px; max-width: 260px; flex-shrink: 0;
+    }
+    .rec-card.con-calidad { border-left-color: var(--verde); }
+    .rec-fruta  { font-size: .72rem; font-weight: 700; color: #2e7d32;
+                  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .rec-prov   { font-size: .6rem; color: #888; white-space: nowrap;
+                  overflow: hidden; text-overflow: ellipsis; }
+    .rec-meta   { font-size: .6rem; color: #aaa; margin-top: 1px; }
+    .rec-params { display: flex; gap: 5px; margin-top: 3px; flex-wrap: wrap; }
+    .rec-param  {
+      font-size: .6rem; font-weight: 700; padding: 1px 6px;
+      border-radius: 8px; background: #e8f5e9; color: #2e7d32;
+    }
+    .rec-param.sin-dato { background: #f5f5f5; color: #bbb; font-weight: 400; }
+
     /* ── LAYOUT PRINCIPAL (cards + sidebar) ── */
     .main-layout {
       flex: 1; min-height: 0;
@@ -266,6 +300,12 @@
     <div class="kpi-num" id="kpi-rechazado">—</div>
     <div class="kpi-label">RECHAZADOS</div>
   </div>
+</div>
+
+<!-- FRANJA RECEPCIONES SHAREPOINT -->
+<div id="recepciones-wrap">
+  <div class="rec-titulo">🚛 Recepciones del día — Fruta</div>
+  <div class="rec-scroll" id="rec-scroll"></div>
 </div>
 
 <!-- LAYOUT PRINCIPAL -->
@@ -570,6 +610,41 @@ async function cargarDatos() {
       return;
     }
     renderChecks(filas);
+
+    // Recepciones SharePoint (opcional — no falla si no existe el CSV)
+    const recSP = await leerCSV('recepciones_sp.csv');
+    const recWrap  = document.getElementById('recepciones-wrap');
+    const recScroll = document.getElementById('rec-scroll');
+    if (recSP && recSP.length) {
+      recWrap.classList.add('visible');
+      recScroll.innerHTML = recSP
+        .sort((a,b) => (a.hora_llegada||'') > (b.hora_llegada||'') ? 1 : -1)
+        .map(r => {
+          const tieneCalidad = r.brix || r.ph || r.acidez;
+          const params = [
+            r.brix   ? `<span class="rec-param">°Bx ${r.brix}</span>`   : `<span class="rec-param sin-dato">°Bx —</span>`,
+            r.ph     ? `<span class="rec-param">pH ${r.ph}</span>`       : `<span class="rec-param sin-dato">pH —</span>`,
+            r.acidez ? `<span class="rec-param">Ac ${r.acidez}</span>`   : `<span class="rec-param sin-dato">Ac —</span>`,
+          ].join('');
+          const durMin = (() => {
+            if (!r.hora_llegada || !r.hora_cierre) return '';
+            const [,hL,mL] = r.hora_llegada.match(/(\d+):(\d+)/) || [];
+            const [,hC,mC] = r.hora_cierre.match(/(\d+):(\d+)/)  || [];
+            if (!hL) return '';
+            const diff = (parseInt(hC)*60+parseInt(mC)) - (parseInt(hL)*60+parseInt(mL));
+            return diff > 0 ? ` · ${diff} min` : '';
+          })();
+          return `<div class="rec-card${tieneCalidad?' con-calidad':''}">
+            <div class="rec-fruta">${r.fruta || '—'}</div>
+            <div class="rec-prov">🏭 ${r.proveedor || '—'}</div>
+            <div class="rec-meta">${(r.hora_llegada||'').split(' ')[1]||''} → ${(r.hora_cierre||'').split(' ')[1]||'en curso'}${durMin} · ${r.total_neto_kg ? r.total_neto_kg+' kg' : ''}</div>
+            <div class="rec-params">${params}</div>
+          </div>`;
+        }).join('');
+    } else {
+      recWrap.classList.remove('visible');
+    }
+
     const ahora = new Date().toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'});
     document.getElementById('ultima-act').textContent =
       `Última actualización: ${ahora} · ${filas.length} checks · próxima en ~30 min`;

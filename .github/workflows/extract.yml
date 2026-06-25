@@ -31,6 +31,9 @@ jobs:
           ODOO_DB:   ${{ secrets.ODOO_DB }}
           ODOO_USER: ${{ secrets.ODOO_USER }}
           ODOO_PASS: ${{ secrets.ODOO_PASS }}
+          AZURE_TENANT_ID:     ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_CLIENT_ID:     ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
         run: python odoo_to_csv.py
 
       - name: Publicar CSV en rama data
