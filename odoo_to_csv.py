@@ -709,6 +709,15 @@ def extraer_recepciones_sp():
                    + timedelta(hours=5)).strftime("%Y-%m-%dT%H:%M:%SZ")
     base = f"https://graph.microsoft.com/v1.0/sites/{site_id}/lists"
 
+    # Listar todas las listas disponibles para diagnóstico
+    try:
+        listas = graph_get(token, f"{base}", {"$select": "name,displayName"})
+        nombres = [(l.get("name",""), l.get("displayName",""))
+                   for l in listas.get("value", [])]
+        log.info(f"  Listas en el sitio: {nombres}")
+    except Exception as e:
+        log.warning(f"  ⚠ No se pudieron listar las listas: {e}")
+
     try:
         rec_data = graph_get(token, f"{base}/Recepciones1/items", {
             "$expand": "fields($select=ID_1,Fruta,Proveedor,TotalNeto,"
