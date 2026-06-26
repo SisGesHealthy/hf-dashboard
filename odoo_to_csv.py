@@ -785,6 +785,25 @@ def extraer_recepciones_sp():
                    "brix","ph","acidez","obs_calidad","actualizado"]
     escribir_csv("recepciones_sp.csv", filas, encabezados)
 
+    # ── Liberaciones Producto en Proceso (exploración de campos) ──────────────
+    log.info("Extrayendo SharePoint Liberaciones PP...")
+    lib_pp_guid = lista_ids.get("Liberaciones")
+    if lib_pp_guid:
+        try:
+            lib_pp_items = sp_items(lib_pp_guid)
+            hoy_ec = ahora_quito.strftime("%Y-%m-%d")
+            # Filtrar por Created de hoy hasta conocer el campo de fecha de fab.
+            lib_pp_hoy = [i for i in lib_pp_items
+                          if (i.get("createdDateTime","") or "")[:10] >= hoy_ec]
+            log.info(f"  Liberaciones PP hoy: {len(lib_pp_hoy)} de {len(lib_pp_items)}")
+            # Exploración: loguear campos no vacíos del primer ítem
+            if lib_pp_hoy:
+                campos = {k: v for k, v in lib_pp_hoy[0].get("fields",{}).items()
+                          if v not in (None, "", False) and not k.startswith("@")}
+                log.info(f"  Campos disponibles (1er ítem): {list(campos.keys())}")
+        except Exception as e:
+            log.warning(f"  ⚠ Error leyendo Liberaciones PP: {e}")
+
 # ── Main ───────────────────────────────────────────────────────────────────────
 
 def main():
