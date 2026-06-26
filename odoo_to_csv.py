@@ -791,16 +791,40 @@ def extraer_recepciones_sp():
     if reg_guid:
         try:
             reg_items = sp_items(reg_guid)
-            hoy_ec = ahora_quito.strftime("%Y-%m-%d")
-            # Filtrar por Created de hoy (no conocemos aún el campo de fecha)
+            # Filtrar por Fecha_produccion == hoy (almacenada como medianoche UTC-5 en UTC)
+            hoy_utc_str = (ahora_quito.replace(hour=0, minute=0, second=0, microsecond=0)
+                           + timedelta(hours=5)).strftime("%Y-%m-%dT%H:%M:%SZ")
             reg_hoy = [i for i in reg_items
-                       if (i.get("createdDateTime","") or "")[:10] >= hoy_ec]
+                       if (i.get("fields",{}).get("Fecha_produccion","") or "") >= hoy_utc_str]
             log.info(f"  Registros PP hoy: {len(reg_hoy)} de {len(reg_items)}")
-            # Exploración: mostrar campos del primer ítem con valor
-            if reg_hoy:
-                campos = {k: v for k, v in reg_hoy[0].get("fields",{}).items()
-                          if v not in (None, "", False) and not k.startswith("@")}
-                log.info(f"  Campos (1er ítem): {campos}")
+            filas_reg = []
+            for i in sorted(reg_hoy,
+                            key=lambda x: (x.get("fields",{}).get("Title",""),
+                                           x.get("fields",{}).get("field_1") or 0)):
+                f = i.get("fields", {})
+                def nv(campo):  # None→""
+                    v = f.get(campo)
+                    return "" if v is None else str(v)
+                filas_reg.append({
+                    "lote":           nv("Title"),
+                    "num_parada":     nv("field_1"),
+                    "brix":           nv("field_2"),
+                    "ph":             nv("field_3"),
+                    "acidez":         nv("field_4"),
+                    "recorrido":      nv("field_5"),
+                    "viscosidad":     nv("field_6"),
+                    "pct_fruta":      nv("field_7"),
+                    "ratio":          nv("field_8"),
+                    "responsable":    nv("field_9"),
+                    "repeticion":     nv("Repeticion"),
+                    "observaciones":  nv("Observaciones"),
+                    "fecha_produccion": (f.get("Fecha_produccion","") or "")[:10],
+                    "actualizado":    ahora(),
+                })
+            enc_reg = ["lote","num_parada","brix","ph","acidez","recorrido",
+                       "viscosidad","pct_fruta","ratio","responsable",
+                       "repeticion","observaciones","fecha_produccion","actualizado"]
+            escribir_csv("registros_pp.csv", filas_reg, enc_reg)
         except Exception as e:
             log.warning(f"  ⚠ Error leyendo Registros: {e}")
 

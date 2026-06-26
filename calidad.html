@@ -119,6 +119,61 @@
     }
     .rec-param.sin-dato { background: #f5f5f5; color: #bbb; font-weight: 400; }
 
+    /* ── FRANJA REGISTROS PP ── */
+    #registros-wrap {
+      flex-shrink: 0; padding: 4px 18px 0;
+      display: none;
+    }
+    #registros-wrap.visible { display: block; }
+    .reg-titulo {
+      font-size: .63rem; font-weight: 700; color: #00838f;
+      margin-bottom: 3px;
+    }
+    .reg-scroll {
+      display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px;
+    }
+    .reg-scroll::-webkit-scrollbar { height: 3px; }
+    .reg-scroll::-webkit-scrollbar-thumb { background: #b2ebf2; border-radius: 2px; }
+    /* Card por lote */
+    .reg-lote-card {
+      background: white; border-radius: 6px;
+      border-left: 4px solid #00838f;
+      box-shadow: 0 1px 3px rgba(0,0,0,.08);
+      padding: 5px 8px; min-width: 220px; flex-shrink: 0;
+    }
+    .reg-lote-nombre {
+      font-size: .72rem; font-weight: 800; color: #00695c;
+      margin-bottom: 3px; white-space: nowrap;
+    }
+    /* Paradas dentro de cada lote */
+    .reg-parada {
+      display: flex; align-items: flex-start; gap: 5px;
+      padding: 2px 0; border-top: 1px solid #e0f7fa;
+    }
+    .reg-parada-num {
+      font-size: .6rem; font-weight: 800; color: white;
+      background: #00838f; border-radius: 3px;
+      padding: 1px 5px; flex-shrink: 0; margin-top: 1px;
+    }
+    .reg-parada-num.repeticion { background: #ff7043; }
+    .reg-parada-campos {
+      display: flex; flex-wrap: wrap; gap: 3px; flex: 1;
+    }
+    .reg-campo {
+      font-size: .58rem; font-weight: 700;
+      padding: 1px 5px; border-radius: 6px;
+      background: #e0f7fa; color: #006064;
+      white-space: nowrap;
+    }
+    .reg-campo.obs {
+      background: #fff8e1; color: #795548;
+      font-weight: 400; font-style: italic;
+    }
+    .reg-responsable {
+      font-size: .57rem; color: #aaa;
+      white-space: nowrap; align-self: center;
+    }
+
     /* ── LAYOUT PRINCIPAL (cards + sidebar) ── */
     .main-layout {
       flex: 1; min-height: 0;
@@ -306,6 +361,12 @@
 <div id="recepciones-wrap">
   <div class="rec-titulo">🚛 Recepciones del día — Fruta</div>
   <div class="rec-scroll" id="rec-scroll"></div>
+</div>
+
+<!-- FRANJA REGISTROS PARADAS PP -->
+<div id="registros-wrap">
+  <div class="reg-titulo">🏭 Registros de paradas — Producto en proceso</div>
+  <div class="reg-scroll" id="reg-scroll"></div>
 </div>
 
 <!-- LAYOUT PRINCIPAL -->
@@ -643,6 +704,49 @@ async function cargarDatos() {
         }).join('');
     } else {
       recWrap.classList.remove('visible');
+    }
+
+    // Registros paradas PP
+    const regSP = await leerCSV('registros_pp.csv');
+    const regWrap = document.getElementById('registros-wrap');
+    const regScroll = document.getElementById('reg-scroll');
+    if (regSP && regSP.length) {
+      regWrap.classList.add('visible');
+      // Agrupar por lote
+      const porLote = {};
+      regSP.forEach(r => {
+        const lote = r.lote || '—';
+        if (!porLote[lote]) porLote[lote] = [];
+        porLote[lote].push(r);
+      });
+      regScroll.innerHTML = Object.entries(porLote).map(([lote, paradas]) => {
+        const paradasHtml = paradas
+          .sort((a,b) => parseFloat(a.num_parada||0) - parseFloat(b.num_parada||0))
+          .map(p => {
+            const esRep = p.repeticion && p.repeticion !== '' && p.repeticion !== 'false';
+            const campos = [
+              p.brix       ? `<span class="reg-campo">°Bx ${p.brix}</span>`       : '',
+              p.ph         ? `<span class="reg-campo">pH ${p.ph}</span>`           : '',
+              p.acidez     ? `<span class="reg-campo">Ac ${p.acidez}</span>`       : '',
+              p.recorrido  ? `<span class="reg-campo">Rec ${p.recorrido}</span>`   : '',
+              p.viscosidad ? `<span class="reg-campo">Vis ${p.viscosidad}</span>`  : '',
+              p.pct_fruta  ? `<span class="reg-campo">%F ${p.pct_fruta}</span>`   : '',
+              p.ratio      ? `<span class="reg-campo">R ${p.ratio}</span>`         : '',
+              p.observaciones ? `<span class="reg-campo obs">${p.observaciones}</span>` : '',
+            ].filter(Boolean).join('');
+            return `<div class="reg-parada">
+              <span class="reg-parada-num${esRep?' repeticion':''}">#${p.num_parada||'?'}</span>
+              <div class="reg-parada-campos">${campos || '<span style="color:#ccc;font-size:.58rem">Sin datos</span>'}</div>
+              ${p.responsable ? `<span class="reg-responsable">${p.responsable}</span>` : ''}
+            </div>`;
+          }).join('');
+        return `<div class="reg-lote-card">
+          <div class="reg-lote-nombre">🧪 ${lote} <span style="font-weight:400;color:#aaa;font-size:.6rem">${paradas.length} parada${paradas.length>1?'s':''}</span></div>
+          ${paradasHtml}
+        </div>`;
+      }).join('');
+    } else {
+      regWrap.classList.remove('visible');
     }
 
     const ahora = new Date().toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'});
