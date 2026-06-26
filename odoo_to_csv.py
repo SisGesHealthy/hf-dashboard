@@ -807,6 +807,7 @@ def extraer_recepciones_sp():
                     return "" if v is None else str(v)
                 filas_reg.append({
                     "lote":           nv("Title"),
+                    "producto":       nv("COD_Producto"),
                     "num_parada":     nv("field_1"),
                     "brix":           nv("field_2"),
                     "ph":             nv("field_3"),
@@ -821,7 +822,7 @@ def extraer_recepciones_sp():
                     "fecha_produccion": (f.get("Fecha_produccion","") or "")[:10],
                     "actualizado":    ahora(),
                 })
-            enc_reg = ["lote","num_parada","brix","ph","acidez","recorrido",
+            enc_reg = ["lote","producto","num_parada","brix","ph","acidez","recorrido",
                        "viscosidad","pct_fruta","ratio","responsable",
                        "repeticion","observaciones","fecha_produccion","actualizado"]
             escribir_csv("registros_pp.csv", filas_reg, enc_reg)

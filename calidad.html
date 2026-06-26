@@ -742,6 +742,7 @@ async function cargarDatos() {
           }).join('');
         return `<div class="reg-lote-card">
           <div class="reg-lote-nombre">🧪 ${lote} <span style="font-weight:400;color:#aaa;font-size:.6rem">${paradas.length} parada${paradas.length>1?'s':''}</span></div>
+          ${paradas[0]?.producto ? `<div style="font-size:.62rem;color:#00838f;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">📦 ${paradas[0].producto}</div>` : ''}
           ${paradasHtml}
         </div>`;
       }).join('');
