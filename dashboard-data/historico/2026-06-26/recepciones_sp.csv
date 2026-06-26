@@ -1,7 +1,8 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
 12606.0,2026-06-26 08:21,2026-06-26 08:25,LIMÓN MEYER - MP00030,771.0,Jimmy Flor,45 gavetas  de limón ,6.3,2.08,5.28,"Limón verde, se libera con parámetros cercanos a los mínimos
-",2026-06-26 20:30:19
-22606.0,2026-06-26 11:19,2026-06-26 11:30,MOTA GUANÁBANA-MP00028,1004.0,Pedro Díaz ,20 tachos  de guanábana ,14.5,3.8,0.96,,2026-06-26 20:30:19
-92606.0,2026-06-26 12:32,2026-06-26 12:39,MORA DE CASTILLA-MP00016,214.0,Sebastian Quisphe ,7 gavetas  de. Mora  de castilla ,8.3,2.67,1.98,"Se tiene que revisar, algunas moras presencia de moho",2026-06-26 20:30:19
-82606.0,2026-06-26 13:54,2026-06-26 13:58,MORA DE CASTILLA-MP00016,774.0,Luis Silva,25 gavetas  de mora  de castilla ,8.2,2.78,1.98,,2026-06-26 20:30:19
-42606.0,2026-06-26 15:17,2026-06-26 15:17,MORA TIPO B-MP00036,0.0,Braulio Ronquillo,,8.4,2.76,1.93,,2026-06-26 20:30:19
+",2026-06-26 21:00:22
+22606.0,2026-06-26 11:19,2026-06-26 11:30,MOTA GUANÁBANA-MP00028,1004.0,Pedro Díaz ,20 tachos  de guanábana ,14.5,3.8,0.96,,2026-06-26 21:00:22
+92606.0,2026-06-26 12:32,2026-06-26 12:39,MORA DE CASTILLA-MP00016,214.0,Sebastian Quisphe ,7 gavetas  de. Mora  de castilla ,8.3,2.67,1.98,"Se tiene que revisar, algunas moras presencia de moho",2026-06-26 21:00:22
+82606.0,2026-06-26 13:54,2026-06-26 13:58,MORA DE CASTILLA-MP00016,774.0,Luis Silva,25 gavetas  de mora  de castilla ,8.2,2.78,1.98,,2026-06-26 21:00:22
+42606.0,2026-06-26 15:17,2026-06-26 15:33,MORA TIPO B-MP00036,1500.0,Braulio Ronquillo,49 gavetas de mora ,8.4,2.76,1.93,,2026-06-26 21:00:22
+112606.0,2026-06-26 15:39,2026-06-26 15:53,MORA CATEGORIA 1-MP00242,264.0,Cesar Lisintuña ,88 gavetas de mora categoría 1,7.6,2.97,,,2026-06-26 21:00:22
