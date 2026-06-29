@@ -1005,9 +1005,18 @@ selModo.addEventListener('change', aplicarModoVista);
 aplicarModoVista();
 
 // Rotación cada 1 minuto (solo si el modo es 'auto')
+// Ciclo: dashboard → agenda → wcp.html → dashboard → ...
+const CICLO_AUTO = ['dashboard', 'agenda', 'wcp'];
+let cicloIdx = 0;
 setInterval(() => {
   if (document.getElementById('modo-vista').value !== 'auto') return;
-  mostrarVista(vistaActual === 'dashboard' ? 'agenda' : 'dashboard');
+  cicloIdx = (cicloIdx + 1) % CICLO_AUTO.length;
+  const siguiente = CICLO_AUTO[cicloIdx];
+  if (siguiente === 'wcp') {
+    window.location.href = 'wcp.html?retorno=1';
+  } else {
+    mostrarVista(siguiente);
+  }
 }, 60000);
 
 // ── Auto-scroll genérico ──────────────────────────────────────────────────
