@@ -52,11 +52,11 @@
       font-size: .68rem; color: #888; flex-shrink: 0;
     }
 
-    /* LAYOUT PRINCIPAL: dos columnas */
+    /* LAYOUT PRINCIPAL: recepciones angosta, paradas ancha */
     .sp-layout {
       flex: 1; min-height: 0;
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr 2fr;
       gap: 8px; padding: 6px 18px;
     }
 
@@ -125,37 +125,37 @@
 
     /* ── PARADAS PP ── */
     .lote-item {
-      padding: 8px 12px; border-bottom: 1px solid #e0f7fa;
+      padding: 10px 14px; border-bottom: 2px solid #e0f7fa;
     }
     .lote-item:last-child { border-bottom: none; }
     .lote-cabecera {
-      display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px;
+      display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px;
     }
     .lote-num {
-      font-size: .85rem; font-weight: 800; color: var(--teal);
+      font-size: 1rem; font-weight: 800; color: var(--teal);
     }
     .lote-prod {
-      font-size: .7rem; color: #555; font-weight: 600;
+      font-size: .78rem; color: #444; font-weight: 600;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-    .lote-count { font-size: .62rem; color: #aaa; margin-left: auto; white-space: nowrap; }
-    .paradas-lista { display: flex; flex-direction: column; gap: 2px; }
+    .lote-count { font-size: .68rem; color: #aaa; margin-left: auto; white-space: nowrap; }
+    .paradas-lista { display: flex; flex-direction: column; gap: 4px; }
     .parada-row {
-      display: flex; align-items: center; gap: 6px;
+      display: flex; align-items: center; gap: 8px;
     }
     .parada-num {
-      font-size: .62rem; font-weight: 800; color: white;
-      background: var(--teal); border-radius: 3px;
-      padding: 1px 5px; flex-shrink: 0; min-width: 26px; text-align: center;
+      font-size: .75rem; font-weight: 800; color: white;
+      background: var(--teal); border-radius: 4px;
+      padding: 3px 8px; flex-shrink: 0; min-width: 34px; text-align: center;
     }
     .parada-num.rep { background: #ff7043; }
-    .parada-campos { display: flex; flex-wrap: wrap; gap: 3px; flex: 1; }
+    .parada-campos { display: flex; flex-wrap: wrap; gap: 5px; flex: 1; }
     .p-campo {
-      font-size: .6rem; font-weight: 700; padding: 1px 6px;
-      border-radius: 6px; background: #e0f7fa; color: #006064;
+      font-size: .72rem; font-weight: 700; padding: 3px 9px;
+      border-radius: 8px; background: #e0f7fa; color: #006064;
     }
     .p-campo.obs { background: #fff8e1; color: #795548; font-weight: 400; font-style: italic; }
-    .parada-resp { font-size: .58rem; color: #aaa; flex-shrink: 0; }
+    .parada-resp { font-size: .68rem; color: #888; flex-shrink: 0; font-weight: 600; }
 
     footer {
       text-align: center; padding: 3px;
