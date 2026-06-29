@@ -502,6 +502,9 @@
   });
   const dotItems = [...dotsEl.children];
 
+  const KEY = 'wcp-last-slide';
+  const enRotacion = ['1','calidad'].includes(new URLSearchParams(location.search).get('retorno'));
+
   function goTo(n){
     slides[idx].classList.remove('active');
     idx = ((n % total) + total) % total;
@@ -512,6 +515,8 @@
     pbar.style.transition='none';
     if(rafId) cancelAnimationFrame(rafId);
     rafId = requestAnimationFrame(tick);
+    // Guardar posición para la próxima visita
+    if(enRotacion) localStorage.setItem(KEY, idx);
   }
 
   function tick(ts){
@@ -536,10 +541,16 @@
     goTo(idx+1);
   });
 
-  goTo(0);
+  // Arrancar desde donde quedó la última visita (en rotación) o desde el inicio (manual)
+  const retorno = new URLSearchParams(location.search).get('retorno');
+  if (enRotacion) {
+    const ultima = parseInt(localStorage.getItem(KEY) || '0', 10);
+    goTo((ultima + 1) % total); // siguiente a la última vista
+  } else {
+    goTo(0);
+  }
 
   // Retorno automático según origen
-  const retorno = new URLSearchParams(location.search).get('retorno');
   if (retorno === '1')       setTimeout(() => { window.location.href = 'index.html';  }, 60000);
   if (retorno === 'calidad') setTimeout(() => { window.location.href = 'taller.html'; }, 60000);
 })();
