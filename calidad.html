@@ -328,7 +328,7 @@
   </div>
   <a href="index.html" class="nav-link">📊 Dashboard operativo</a>
   <a href="taller.html" class="nav-link">🏭 Taller</a>
-  <span id="rotacion-chip" title="Click para cancelar rotación automática">↻ <span id="countdown">60</span>s → Taller</span>
+  <span id="rotacion-chip" title="Click para cancelar rotación automática">↻ <span id="countdown">60</span>s → WCP</span>
   <div id="reloj">
     <span id="fecha-hoy"></span>
     <span id="hora-ahora"></span>
@@ -432,7 +432,7 @@ function iniciarCountdown() {
     document.getElementById('countdown').textContent = segsRestantes;
     if (segsRestantes <= 0) {
       clearInterval(timerRotacion);
-      window.location.href = 'taller.html';
+      window.location.href = 'wcp.html?retorno=calidad';
     }
   }, 1000);
 }
@@ -444,7 +444,7 @@ document.getElementById('rotacion-chip').addEventListener('click', () => {
   if (rotacionActiva) {
     segsRestantes = 60;
     chip.textContent = '';
-    chip.innerHTML = '↻ <span id="countdown">60</span>s → Taller';
+    chip.innerHTML = '↻ <span id="countdown">60</span>s → WCP';
     iniciarCountdown();
   } else {
     chip.textContent = '⏸ Auto-rotación pausada';

@@ -538,10 +538,10 @@
 
   goTo(0);
 
-  // Si viene del modo rotación automática, regresa a index.html en 60 s
-  if (new URLSearchParams(location.search).get('retorno') === '1') {
-    setTimeout(() => { window.location.href = 'index.html'; }, 60000);
-  }
+  // Retorno automático según origen
+  const retorno = new URLSearchParams(location.search).get('retorno');
+  if (retorno === '1')       setTimeout(() => { window.location.href = 'index.html';  }, 60000);
+  if (retorno === 'calidad') setTimeout(() => { window.location.href = 'taller.html'; }, 60000);
 })();
 </script>
 </body>
