@@ -1,4 +1,4 @@
 ﻿lote,producto,num_parada,brix,ph,acidez,recorrido,viscosidad,pct_fruta,ratio,responsable,repeticion,observaciones,fecha_produccion,actualizado
-1242615,,1.0,12.0,3.0,,,,,,SF,False,,2026-06-29,2026-06-29 17:30:23
-1242615,,2.0,21.0,5.0,,,,,,SF,True,,2026-06-29,2026-06-29 17:30:23
-1242615,,3.0,18.0,4.0,,,,,,SF,False,Rango de brix y pH fuera de parametro ,2026-06-29,2026-06-29 17:30:23
+1242615,,1.0,12.0,3.0,,,,,,SF,False,,2026-06-29,2026-06-29 18:00:27
+1242615,,2.0,21.0,5.0,,,,,,SF,True,,2026-06-29,2026-06-29 18:00:27
+1242615,,3.0,18.0,4.0,,,,,,SF,False,Rango de brix y pH fuera de parametro ,2026-06-29,2026-06-29 18:00:27
