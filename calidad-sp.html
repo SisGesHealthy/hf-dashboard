@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Flujo Operativo — Healthy Food</title>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <style>
+    :root {
+      --verde:  #6a8f2f;
+      --teal:   #00838f;
+      --teal-c: #00acc1;
+      --naranja:#e07b2a;
+      --rojo:   #c62828;
+      --gris:   #f5f5f5;
+      --blanco: #ffffff;
+      --texto:  #2c2c2c;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--gris); color: var(--texto);
+      font-size: 13px; display: flex; flex-direction: column;
+    }
+
+    /* HEADER */
+    header {
+      background: var(--verde); color: white;
+      display: flex; align-items: center;
+      padding: 7px 18px; gap: 14px; flex-shrink: 0;
+    }
+    .header-title { flex: 1; }
+    .header-title h1 { font-size: 1.15rem; font-weight: 700; }
+    .header-title p  { font-size: .76rem; opacity: .85; }
+    #reloj { font-size: .95rem; font-weight: 600; text-align: right; white-space: nowrap; }
+    #reloj span { display: block; font-size: .68rem; font-weight: 400; opacity: .8; }
+    .nav-link {
+      color: white; opacity: .8; text-decoration: none;
+      font-size: .8rem; border: 1px solid rgba(255,255,255,.4);
+      padding: 4px 10px; border-radius: 5px; white-space: nowrap;
+    }
+    .nav-link:hover { opacity: 1; background: rgba(255,255,255,.15); }
+    #rotacion-chip {
+      font-size: .72rem; background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 5px; padding: 4px 10px; white-space: nowrap; cursor: pointer;
+    }
+
+    #ultima-act {
+      text-align: right; padding: 2px 18px 0;
+      font-size: .68rem; color: #888; flex-shrink: 0;
+    }
+
+    /* LAYOUT PRINCIPAL: dos columnas */
+    .sp-layout {
+      flex: 1; min-height: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px; padding: 6px 18px;
+    }
+
+    /* PANEL GENÉRICO */
+    .sp-panel {
+      background: var(--blanco); border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.1);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .sp-panel-header {
+      padding: 7px 12px 5px; border-bottom: 1px solid #eee;
+      flex-shrink: 0; display: flex; align-items: center;
+      justify-content: space-between;
+    }
+    .sp-panel-titulo {
+      font-size: .82rem; font-weight: 700;
+    }
+    .sp-panel.recepciones { border-top: 4px solid var(--verde); }
+    .sp-panel.recepciones .sp-panel-titulo { color: var(--verde); }
+    .sp-panel.paradas     { border-top: 4px solid var(--teal); }
+    .sp-panel.paradas     .sp-panel-titulo { color: var(--teal); }
+    .sp-panel-sub { font-size: .65rem; color: #aaa; }
+
+    .sp-lista-wrap { flex: 1; overflow: hidden; position: relative; }
+    .sp-lista-scroll { display: block; }
+    .sp-lista-scroll:hover { animation-play-state: paused !important; }
+    @keyframes scrollUpSP {
+      0%   { transform: translateY(0); }
+      100% { transform: translateY(var(--sp-dist,-50%)); }
+    }
+
+    /* ── RECEPCIONES ── */
+    .rec-item {
+      padding: 8px 12px; border-bottom: 1px solid #f0f0f0;
+      display: flex; gap: 12px; align-items: flex-start;
+    }
+    .rec-item:last-child { border-bottom: none; }
+    .rec-badge {
+      width: 38px; height: 38px; border-radius: 6px;
+      background: #e8f5e9; display: flex; align-items: center;
+      justify-content: center; font-size: 1.2rem; flex-shrink: 0;
+    }
+    .rec-main { flex: 1; min-width: 0; }
+    .rec-fruta {
+      font-size: .82rem; font-weight: 700; color: #2e7d32;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .rec-prov { font-size: .68rem; color: #888; margin-top: 1px; }
+    .rec-tiempo {
+      font-size: .65rem; color: #aaa; margin-top: 2px;
+    }
+    .rec-params { display: flex; gap: 5px; margin-top: 4px; flex-wrap: wrap; }
+    .rec-param {
+      font-size: .65rem; font-weight: 700; padding: 2px 8px;
+      border-radius: 8px; background: #e8f5e9; color: #2e7d32;
+    }
+    .rec-param.sin { background: #f5f5f5; color: #bbb; font-weight: 400; }
+    .rec-obs {
+      font-size: .62rem; color: #795548; font-style: italic;
+      margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .rec-kg {
+      font-size: .75rem; font-weight: 800; color: #555;
+      text-align: right; white-space: nowrap; flex-shrink: 0;
+    }
+
+    /* ── PARADAS PP ── */
+    .lote-item {
+      padding: 8px 12px; border-bottom: 1px solid #e0f7fa;
+    }
+    .lote-item:last-child { border-bottom: none; }
+    .lote-cabecera {
+      display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px;
+    }
+    .lote-num {
+      font-size: .85rem; font-weight: 800; color: var(--teal);
+    }
+    .lote-prod {
+      font-size: .7rem; color: #555; font-weight: 600;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .lote-count { font-size: .62rem; color: #aaa; margin-left: auto; white-space: nowrap; }
+    .paradas-lista { display: flex; flex-direction: column; gap: 2px; }
+    .parada-row {
+      display: flex; align-items: center; gap: 6px;
+    }
+    .parada-num {
+      font-size: .62rem; font-weight: 800; color: white;
+      background: var(--teal); border-radius: 3px;
+      padding: 1px 5px; flex-shrink: 0; min-width: 26px; text-align: center;
+    }
+    .parada-num.rep { background: #ff7043; }
+    .parada-campos { display: flex; flex-wrap: wrap; gap: 3px; flex: 1; }
+    .p-campo {
+      font-size: .6rem; font-weight: 700; padding: 1px 6px;
+      border-radius: 6px; background: #e0f7fa; color: #006064;
+    }
+    .p-campo.obs { background: #fff8e1; color: #795548; font-weight: 400; font-style: italic; }
+    .parada-resp { font-size: .58rem; color: #aaa; flex-shrink: 0; }
+
+    footer {
+      text-align: center; padding: 3px;
+      font-size: .62rem; color: #bbb; flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-title">
+    <h1>🚛 Flujo Operativo — Calidad</h1>
+    <p>Healthy Food Marcalman Ecuador S.A.</p>
+  </div>
+  <a href="index.html" class="nav-link">📊 Dashboard</a>
+  <a href="taller.html" class="nav-link">🏭 Taller</a>
+  <a href="calidad.html" class="nav-link">🔬 Control Calidad</a>
+  <span id="rotacion-chip">↻ <span id="countdown">60</span>s → Control</span>
+  <div id="reloj">
+    <span id="fecha-hoy"></span>
+    <span id="hora-ahora"></span>
+  </div>
+</header>
+
+<div id="ultima-act">Cargando...</div>
+
+<div class="sp-layout">
+
+  <!-- PANEL RECEPCIONES -->
+  <div class="sp-panel recepciones">
+    <div class="sp-panel-header">
+      <div class="sp-panel-titulo">🍊 Recepciones de fruta del día</div>
+      <div class="sp-panel-sub" id="rec-sub"></div>
+    </div>
+    <div class="sp-lista-wrap">
+      <div class="sp-lista-scroll" id="rec-lista">
+        <div style="padding:20px;color:#bbb;font-style:italic;text-align:center">Cargando...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL PARADAS PP -->
+  <div class="sp-panel paradas">
+    <div class="sp-panel-header">
+      <div class="sp-panel-titulo">🧪 Paradas de control — Producto en proceso</div>
+      <div class="sp-panel-sub" id="par-sub"></div>
+    </div>
+    <div class="sp-lista-wrap">
+      <div class="sp-lista-scroll" id="par-lista">
+        <div style="padding:20px;color:#bbb;font-style:italic;text-align:center">Cargando...</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>Datos en tiempo real · SharePoint · Healthy Food © 2026</footer>
+
+<script>
+const REPO   = 'SisGesHealthy/hf-dashboard';
+const BRANCH = 'data';
+
+// Reloj
+function actualizarReloj() {
+  const a = new Date();
+  const dias  = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio',
+                 'agosto','septiembre','octubre','noviembre','diciembre'];
+  document.getElementById('fecha-hoy').textContent =
+    `${dias[a.getDay()]}, ${a.getDate()} de ${meses[a.getMonth()]} de ${a.getFullYear()}`;
+  document.getElementById('hora-ahora').textContent =
+    a.toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+setInterval(actualizarReloj, 1000);
+actualizarReloj();
+
+// CSV reader
+async function leerCSV(nombre) {
+  const url = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/dashboard-data/${nombre}?t=${Date.now()}`;
+  const res  = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) return null;
+  const txt  = await res.text();
+  return new Promise(r => Papa.parse(txt, { header:true, skipEmptyLines:true, complete: d => r(d.data) }));
+}
+
+// Rotación automática → calidad.html
+let rotActiva = true, segsRest = 60;
+const timerRot = setInterval(() => {
+  if (!rotActiva) return;
+  segsRest--;
+  const el = document.getElementById('countdown');
+  if (el) el.textContent = segsRest;
+  if (segsRest <= 0) { clearInterval(timerRot); window.location.href = 'calidad.html'; }
+}, 1000);
+
+document.getElementById('rotacion-chip').addEventListener('click', () => {
+  rotActiva = !rotActiva;
+  document.getElementById('rotacion-chip').textContent =
+    rotActiva ? `↻ ${segsRest}s → Control` : '⏸ Pausado';
+  if (rotActiva) document.getElementById('rotacion-chip').innerHTML =
+    `↻ <span id="countdown">${segsRest}</span>s → Control`;
+});
+
+// Auto-scroll
+function activarScroll(wrap, scroll) {
+  if (!wrap || !scroll) return;
+  setTimeout(() => {
+    if (scroll.scrollHeight <= wrap.clientHeight) return;
+    scroll.innerHTML += scroll.innerHTML;
+    const dist = scroll.scrollHeight / 2;
+    scroll.style.setProperty('--sp-dist', `-${dist}px`);
+    scroll.style.animation = `scrollUpSP ${Math.max(10, dist/25)}s linear infinite`;
+  }, 300);
+}
+
+// Render recepciones
+function renderRecepciones(filas) {
+  const lista = document.getElementById('rec-lista');
+  const sub   = document.getElementById('rec-sub');
+  if (!filas || !filas.length) {
+    lista.innerHTML = '<div style="padding:20px;color:#bbb;font-style:italic;text-align:center">Sin recepciones hoy</div>';
+    sub.textContent = '';
+    return;
+  }
+  sub.textContent = `${filas.length} recepción${filas.length>1?'es':''}`;
+  lista.innerHTML = filas
+    .sort((a,b) => (a.hora_llegada||'') > (b.hora_llegada||'') ? 1 : -1)
+    .map(r => {
+      const dur = (() => {
+        const [,hL,mL] = (r.hora_llegada||'').match(/(\d+):(\d+)/) || [];
+        const [,hC,mC] = (r.hora_cierre||'').match(/(\d+):(\d+)/)  || [];
+        if (!hL || !hC) return '';
+        const d = (parseInt(hC)*60+parseInt(mC)) - (parseInt(hL)*60+parseInt(mL));
+        return d > 0 ? ` · ${d} min` : '';
+      })();
+      const hL = (r.hora_llegada||'').split(' ')[1] || '';
+      const hC = (r.hora_cierre||'').split(' ')[1] || 'en curso';
+      return `<div class="rec-item">
+        <div class="rec-badge">🍊</div>
+        <div class="rec-main">
+          <div class="rec-fruta">${r.fruta || '—'}</div>
+          <div class="rec-prov">🏭 ${r.proveedor || '—'}</div>
+          <div class="rec-tiempo">⏱ ${hL} → ${hC}${dur}</div>
+          <div class="rec-params">
+            ${r.brix   ? `<span class="rec-param">°Bx ${r.brix}</span>`  : '<span class="rec-param sin">°Bx —</span>'}
+            ${r.ph     ? `<span class="rec-param">pH ${r.ph}</span>`     : '<span class="rec-param sin">pH —</span>'}
+            ${r.acidez ? `<span class="rec-param">Ac ${r.acidez}</span>` : '<span class="rec-param sin">Ac —</span>'}
+          </div>
+          ${r.observaciones ? `<div class="rec-obs">💬 ${r.observaciones}</div>` : ''}
+        </div>
+        <div class="rec-kg">${r.total_neto_kg ? parseFloat(r.total_neto_kg).toLocaleString('es-EC') + ' kg' : ''}</div>
+      </div>`;
+    }).join('');
+  const wrap = document.querySelector('.sp-panel.recepciones .sp-lista-wrap');
+  activarScroll(wrap, lista);
+}
+
+// Render paradas PP
+function renderParadas(filas) {
+  const lista = document.getElementById('par-lista');
+  const sub   = document.getElementById('par-sub');
+  if (!filas || !filas.length) {
+    lista.innerHTML = '<div style="padding:20px;color:#bbb;font-style:italic;text-align:center">Sin registros hoy</div>';
+    sub.textContent = '';
+    return;
+  }
+  // Agrupar por lote
+  const porLote = {};
+  filas.forEach(r => {
+    const l = r.lote || '—';
+    if (!porLote[l]) porLote[l] = [];
+    porLote[l].push(r);
+  });
+  sub.textContent = `${Object.keys(porLote).length} lote${Object.keys(porLote).length>1?'s':''}  · ${filas.length} parada${filas.length>1?'s':''}`;
+  lista.innerHTML = Object.entries(porLote).map(([lote, paradas]) => {
+    const prod = paradas[0]?.producto || '';
+    const paradasHtml = paradas
+      .sort((a,b) => parseFloat(a.num_parada||0) - parseFloat(b.num_parada||0))
+      .map(p => {
+        const rep = p.repeticion && p.repeticion !== '' && p.repeticion.toLowerCase() !== 'false';
+        const campos = [
+          p.brix       ? `<span class="p-campo">°Bx ${p.brix}</span>`      : '',
+          p.ph         ? `<span class="p-campo">pH ${p.ph}</span>`          : '',
+          p.acidez     ? `<span class="p-campo">Ac ${p.acidez}</span>`      : '',
+          p.recorrido  ? `<span class="p-campo">Rec ${p.recorrido}</span>`  : '',
+          p.viscosidad ? `<span class="p-campo">Vis ${p.viscosidad}</span>` : '',
+          p.pct_fruta  ? `<span class="p-campo">%F ${p.pct_fruta}</span>`  : '',
+          p.ratio      ? `<span class="p-campo">R ${p.ratio}</span>`        : '',
+          p.observaciones ? `<span class="p-campo obs">💬 ${p.observaciones}</span>` : '',
+        ].filter(Boolean).join('');
+        return `<div class="parada-row">
+          <span class="parada-num${rep?' rep':''}">#${p.num_parada||'?'}</span>
+          <div class="parada-campos">${campos || '<span style="color:#ccc;font-size:.58rem">Sin datos</span>'}</div>
+          ${p.responsable ? `<span class="parada-resp">${p.responsable}</span>` : ''}
+        </div>`;
+      }).join('');
+    return `<div class="lote-item">
+      <div class="lote-cabecera">
+        <span class="lote-num">${lote}</span>
+        ${prod ? `<span class="lote-prod">📦 ${prod}</span>` : ''}
+        <span class="lote-count">${paradas.length} parada${paradas.length>1?'s':''}</span>
+      </div>
+      <div class="paradas-lista">${paradasHtml}</div>
+    </div>`;
+  }).join('');
+  const wrap = document.querySelector('.sp-panel.paradas .sp-lista-wrap');
+  activarScroll(wrap, lista);
+}
+
+// Carga
+async function cargarDatos() {
+  document.getElementById('ultima-act').textContent = 'Actualizando...';
+  const [rec, par] = await Promise.all([
+    leerCSV('recepciones_sp.csv'),
+    leerCSV('registros_pp.csv'),
+  ]);
+  renderRecepciones(rec);
+  renderParadas(par);
+  const t = new Date().toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('ultima-act').textContent =
+    `Última actualización: ${t} · próxima en ~30 min`;
+}
+
+cargarDatos();
+function programarSiguiente() {
+  const a = new Date(), min = a.getMinutes(), seg = a.getSeconds(), ms = a.getMilliseconds();
+  let t = min < 5 ? 5 : min < 35 ? 35 : 65;
+  setTimeout(() => { cargarDatos(); programarSiguiente(); }, ((t-min)*60-seg)*1000-ms);
+}
+programarSiguiente();
+</script>
+</body>
+</html>
