@@ -779,6 +779,7 @@ function renderProduccion(produccion, hoy) {
     const key = r.orden_produccion;
     if (vistos.has(key)) return;
     vistos.add(key);
+    if (r.estado_produccion === 'Borrador') return; // solo en agenda, no en la tarjeta
     const esHoy   = (r.fecha_produccion || '').startsWith(hoy);
     const activa  = ['En progreso','Por cerrar'].includes(r.estado_produccion);
     if (esHoy)              filasHoy.push(r);

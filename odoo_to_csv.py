@@ -358,7 +358,7 @@ def extraer_produccion(models, uid):
     log.info("Extrayendo producción (mrp.production + mrp.workorder)...")
 
     ordenes = odoo_get(models, uid, "mrp.production",
-        [["state", "not in", ["cancel", "draft"]]],
+        [["state", "not in", ["cancel"]]],  # incluye draft (Borrador) para agenda
         ["id", "name", "product_id", "product_qty", "qty_produced",
          "product_uom_id", "lot_producing_id",
          "state", "date_start", "date_finished", "production_date",
