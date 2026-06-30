@@ -641,12 +641,16 @@ function construirLineaTiempo(recepciones, despachos, traslados, hoy, esHoy) {
 
   function itemsRecepciones() {
     return recepciones
-      .filter(r => (r.fecha_planificada || '').startsWith(hoy))
-      .map(r => ({
-        pos: pct(r.fecha_planificada),
-        completo: (r.estado_recepcion || '').toLowerCase().includes('recibida completa'),
-        titulo: `${r.orden_compra || ''} · ${r.proveedor || ''} (${horaDeStr(r.fecha_planificada)})`,
-      }));
+      .filter(r => (r.fecha_planificada || '').startsWith(hoy) || (r.fecha_recepcion_real || '').startsWith(hoy))
+      .map(r => {
+        const recibidaHoy = (r.fecha_recepcion_real || '').startsWith(hoy);
+        const fecha = recibidaHoy ? r.fecha_recepcion_real : r.fecha_planificada;
+        return {
+          pos: pct(fecha),
+          completo: (r.estado_recepcion || '').toLowerCase().includes('recibida completa'),
+          titulo: `${r.orden_compra || ''} · ${r.proveedor || ''} (${horaDeStr(fecha)})`,
+        };
+      });
   }
 
   function itemsDespachos() {
@@ -711,9 +715,15 @@ function construirLineaTiempo(recepciones, despachos, traslados, hoy, esHoy) {
 
 // ── Tablas ─────────────────────────────────────────────────────────────────
 function renderRecepciones(compras, hoy) {
+  // Incluye órdenes planificadas para hoy Y órdenes recibidas hoy
+  // (aunque su fecha planificada original sea de otro día)
   const filas = compras
-    .filter(r => (r.fecha_planificada || '').startsWith(hoy))
-    .sort((a, b) => (a.fecha_planificada || '').localeCompare(b.fecha_planificada || ''));
+    .filter(r => (r.fecha_planificada || '').startsWith(hoy) || (r.fecha_recepcion_real || '').startsWith(hoy))
+    .sort((a, b) => {
+      const fa = (a.fecha_recepcion_real || '').startsWith(hoy) ? a.fecha_recepcion_real : a.fecha_planificada;
+      const fb = (b.fecha_recepcion_real || '').startsWith(hoy) ? b.fecha_recepcion_real : b.fecha_planificada;
+      return (fa || '').localeCompare(fb || '');
+    });
   const tbody = document.getElementById('tbody-recepciones');
   if (!filas.length) {
     tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999">Sin recepciones programadas para este día</td></tr>';
@@ -733,10 +743,12 @@ function renderRecepciones(compras, hoy) {
   ordenKeys.forEach(k => {
     const lineas = ordenes[k];
     const completa = (lineas[0].estado_recepcion || '').toLowerCase().includes('recibida completa');
+    const recibidaHoy = (lineas[0].fecha_recepcion_real || '').startsWith(hoy);
+    const hora = recibidaHoy ? lineas[0].fecha_recepcion_real : lineas[0].fecha_planificada;
     lineas.forEach((r, i) => {
       rows.push(`<tr class="${completa ? 'fila-completa' : ''}">
         ${i === 0 ? `<td rowspan="${lineas.length}"><b>${r.orden_compra}</b></td>
-                     <td rowspan="${lineas.length}">${horaDeStr(r.fecha_planificada)}</td>
+                     <td rowspan="${lineas.length}">${horaDeStr(hora)}</td>
                      <td rowspan="${lineas.length}">${r.proveedor || '—'}</td>` : ''}
         <td>${r.producto || '—'}</td>
         <td>${r.cantidad || '—'} ${r.unidad_medida || ''}</td>

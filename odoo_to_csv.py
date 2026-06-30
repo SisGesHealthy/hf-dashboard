@@ -233,13 +233,19 @@ def extraer_compras_lineas(models, uid):
     picking_ids = [pid for c in compras for pid in (c.get("picking_ids") or [])]
     pickings_raw = odoo_get(models, uid, "stock.picking",
         [["id", "in", picking_ids], ["picking_type_code", "=", "incoming"]],
-        ["id", "state", "purchase_id"]
+        ["id", "state", "purchase_id", "date_done"]
     ) if picking_ids else []
 
     pick_por_compra = {}
+    fecha_recep_por_compra = {}
     for p in pickings_raw:
         if p.get("purchase_id"):
-            pick_por_compra.setdefault(p["purchase_id"][0], []).append(p["state"])
+            cid_p = p["purchase_id"][0]
+            pick_por_compra.setdefault(cid_p, []).append(p["state"])
+            if p.get("state") == "done" and p.get("date_done"):
+                actual = fecha_recep_por_compra.get(cid_p)
+                if not actual or p["date_done"] > actual:
+                    fecha_recep_por_compra[cid_p] = p["date_done"]
 
     # Índice de cabeceras por id
     compras_idx = {c["id"]: c for c in compras}
@@ -286,6 +292,7 @@ def extraer_compras_lineas(models, uid):
             "subtotal":          round(float(l.get("price_subtotal") or 0), 2),
             "fecha_orden":       utc_a_local(val(cab.get("date_order")), "%Y-%m-%d %H:%M"),
             "fecha_planificada": utc_a_local(date_planned, "%Y-%m-%d %H:%M"),
+            "fecha_recepcion_real": utc_a_local(fecha_recep_por_compra.get(cid), "%Y-%m-%d %H:%M"),
             "vencida":           vencida,
             "monto_total_orden": round(float(cab.get("amount_total") or 0), 2),
             "actualizado":       ahora(),
@@ -293,7 +300,8 @@ def extraer_compras_lineas(models, uid):
 
     encabezados = ["orden_compra","proveedor","responsable","estado_compra","estado_recepcion",
                    "producto","cantidad","unidad_medida","precio_unitario","subtotal",
-                   "fecha_orden","fecha_planificada","vencida","monto_total_orden","actualizado"]
+                   "fecha_orden","fecha_planificada","fecha_recepcion_real","vencida",
+                   "monto_total_orden","actualizado"]
     escribir_csv("compras_lineas.csv", filas, encabezados)
 
 # ── TRASLADOS INTERNOS A ECLA (Emergen Cold) ──────────────────────────────────
