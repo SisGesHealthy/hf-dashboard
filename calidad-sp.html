@@ -220,7 +220,7 @@
   <a href="index.html" class="nav-link">📊 Dashboard</a>
   <a href="taller.html" class="nav-link">🏭 Taller</a>
   <a href="calidad.html" class="nav-link">🔬 Control Calidad</a>
-  <span id="rotacion-chip">↻ <span id="countdown">60</span>s → Control</span>
+  <span id="rotacion-chip">↻ <span id="countdown">60</span>s → WCP</span>
   <div id="reloj">
     <span id="fecha-hoy"></span>
     <span id="hora-ahora"></span>
@@ -294,22 +294,22 @@ async function leerCSV(nombre) {
   return new Promise(r => Papa.parse(txt, { header:true, skipEmptyLines:true, complete: d => r(d.data) }));
 }
 
-// Rotación automática → calidad.html
+// Rotación automática → wcp.html (retorno=1 cierra el ciclo de vuelta a index.html)
 let rotActiva = true, segsRest = 60;
 const timerRot = setInterval(() => {
   if (!rotActiva) return;
   segsRest--;
   const el = document.getElementById('countdown');
   if (el) el.textContent = segsRest;
-  if (segsRest <= 0) { clearInterval(timerRot); window.location.href = 'calidad.html'; }
+  if (segsRest <= 0) { clearInterval(timerRot); window.location.href = 'wcp.html?retorno=1'; }
 }, 1000);
 
 document.getElementById('rotacion-chip').addEventListener('click', () => {
   rotActiva = !rotActiva;
   document.getElementById('rotacion-chip').textContent =
-    rotActiva ? `↻ ${segsRest}s → Control` : '⏸ Pausado';
+    rotActiva ? `↻ ${segsRest}s → WCP` : '⏸ Pausado';
   if (rotActiva) document.getElementById('rotacion-chip').innerHTML =
-    `↻ <span id="countdown">${segsRest}</span>s → Control`;
+    `↻ <span id="countdown">${segsRest}</span>s → WCP`;
 });
 
 // Auto-scroll

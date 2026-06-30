@@ -1015,15 +1015,16 @@ selModo.addEventListener('change', aplicarModoVista);
 aplicarModoVista();
 
 // Rotación cada 1 minuto (solo si el modo es 'auto')
-// Ciclo: dashboard → agenda → wcp.html → dashboard → ...
-const CICLO_AUTO = ['dashboard', 'agenda', 'wcp'];
+// Ciclo completo del flujo operativo:
+// dashboard → agenda → taller.html → calidad-sp.html → wcp.html → dashboard → ...
+const CICLO_AUTO = ['dashboard', 'agenda', 'taller'];
 let cicloIdx = 0;
 setInterval(() => {
   if (document.getElementById('modo-vista').value !== 'auto') return;
   cicloIdx = (cicloIdx + 1) % CICLO_AUTO.length;
   const siguiente = CICLO_AUTO[cicloIdx];
-  if (siguiente === 'wcp') {
-    window.location.href = 'wcp.html?retorno=1';
+  if (siguiente === 'taller') {
+    window.location.href = 'taller.html';
   } else {
     mostrarVista(siguiente);
   }
