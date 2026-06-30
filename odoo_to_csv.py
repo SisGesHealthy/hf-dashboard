@@ -837,30 +837,64 @@ def extraer_recepciones_sp():
         except Exception as e:
             log.warning(f"  ⚠ Error leyendo Registros: {e}")
 
-    # ── Exploración: Catalogo-Parametros-Liberacion ───────────────────────────
-    log.info("Explorando Catalogo-Parametros-Liberacion...")
+    # ── Catalogo-Parametros-Liberacion (tabla de referencia, sin filtro fecha) ─
+    log.info("Extrayendo Catalogo-Parametros-Liberacion...")
     try:
         cat_guid = "ea1233bd-7345-47ba-80d6-ace5031e046a"
         cat_items = sp_items(cat_guid)
-        log.info(f"  Catalogo: {len(cat_items)} ítems totales")
-        if cat_items:
-            campos = {k: v for k, v in cat_items[0].get("fields",{}).items()
-                      if v not in (None, "", False) and not k.startswith("@")}
-            log.info(f"  Campos (1er ítem): {campos}")
+        filas_cat = []
+        for i in cat_items:
+            f = i.get("fields", {})
+            def nvc(campo):
+                v = f.get(campo)
+                return "" if v is None else str(v)
+            filas_cat.append({
+                "codigo":       nvc("Title"),
+                "descripcion":  nvc("field_1"),
+                "cliente":      nvc("field_2"),
+                "brix_min":     nvc("field_3"),
+                "brix_max":     nvc("field_4"),
+                "ph_min":       nvc("field_5"),
+                "ph_max":       nvc("field_6"),
+            })
+        escribir_csv("catalogo_parametros.csv", filas_cat,
+                     ["codigo","descripcion","cliente","brix_min","brix_max","ph_min","ph_max"])
     except Exception as e:
         log.warning(f"  ⚠ Error leyendo Catalogo: {e}")
 
-    # ── Exploración: ÓRDENES DE RECEPCIÓN (lista interna RECEPCIONES) ─────────
-    log.info("Explorando ÓRDENES DE RECEPCIÓN...")
+    # ── ÓRDENES DE RECEPCIÓN — programadas para hoy ────────────────────────────
+    log.info("Extrayendo Órdenes de Recepción programadas...")
     try:
         ord_guid = lista_ids.get("RECEPCIONES")
         if ord_guid:
             ord_items = sp_items(ord_guid)
-            log.info(f"  Órdenes de recepción: {len(ord_items)} ítems totales")
-            if ord_items:
-                campos = {k: v for k, v in ord_items[0].get("fields",{}).items()
-                          if v not in (None, "", False) and not k.startswith("@")}
-                log.info(f"  Campos (1er ítem): {campos}")
+            hoy_ec = ahora_quito.strftime("%Y-%m-%d")
+            ord_hoy = [i for i in ord_items
+                       if utc_a_local(i.get("fields",{}).get("FechaProgramada",""),
+                                      "%Y-%m-%d") == hoy_ec
+                       and (i.get("fields",{}).get("Estado","") or "").strip().lower() == "programado"]
+            log.info(f"  Órdenes programadas hoy: {len(ord_hoy)} de {len(ord_items)} totales")
+            filas_ord = []
+            for i in sorted(ord_hoy,
+                            key=lambda x: x.get("fields",{}).get("FechaProgramada","")):
+                f = i.get("fields", {})
+                def nvo(campo):
+                    v = f.get(campo)
+                    return "" if v is None else str(v)
+                filas_ord.append({
+                    "id":               nvo("Title"),
+                    "proveedor":        nvo("Proveedor"),
+                    "fruta":            nvo("Fruta"),
+                    "cantidad_prog":    nvo("CantidadProgramada"),
+                    "unidad":           nvo("Unidad"),
+                    "fecha_programada": utc_a_local(f.get("FechaProgramada",""), "%Y-%m-%d %H:%M"),
+                    "observaciones":    nvo("ObservacionesCompras"),
+                    "estado":           nvo("Estado"),
+                    "actualizado":      ahora(),
+                })
+            enc_ord = ["id","proveedor","fruta","cantidad_prog","unidad",
+                       "fecha_programada","observaciones","estado","actualizado"]
+            escribir_csv("recepciones_programadas.csv", filas_ord, enc_ord)
         else:
             log.warning("  ⚠ Lista RECEPCIONES no encontrada")
     except Exception as e:
