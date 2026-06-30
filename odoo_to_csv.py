@@ -837,6 +837,35 @@ def extraer_recepciones_sp():
         except Exception as e:
             log.warning(f"  ⚠ Error leyendo Registros: {e}")
 
+    # ── Exploración: Catalogo-Parametros-Liberacion ───────────────────────────
+    log.info("Explorando Catalogo-Parametros-Liberacion...")
+    try:
+        cat_guid = "ea1233bd-7345-47ba-80d6-ace5031e046a"
+        cat_items = sp_items(cat_guid)
+        log.info(f"  Catalogo: {len(cat_items)} ítems totales")
+        if cat_items:
+            campos = {k: v for k, v in cat_items[0].get("fields",{}).items()
+                      if v not in (None, "", False) and not k.startswith("@")}
+            log.info(f"  Campos (1er ítem): {campos}")
+    except Exception as e:
+        log.warning(f"  ⚠ Error leyendo Catalogo: {e}")
+
+    # ── Exploración: ÓRDENES DE RECEPCIÓN (lista interna RECEPCIONES) ─────────
+    log.info("Explorando ÓRDENES DE RECEPCIÓN...")
+    try:
+        ord_guid = lista_ids.get("RECEPCIONES")
+        if ord_guid:
+            ord_items = sp_items(ord_guid)
+            log.info(f"  Órdenes de recepción: {len(ord_items)} ítems totales")
+            if ord_items:
+                campos = {k: v for k, v in ord_items[0].get("fields",{}).items()
+                          if v not in (None, "", False) and not k.startswith("@")}
+                log.info(f"  Campos (1er ítem): {campos}")
+        else:
+            log.warning("  ⚠ Lista RECEPCIONES no encontrada")
+    except Exception as e:
+        log.warning(f"  ⚠ Error leyendo Órdenes de Recepción: {e}")
+
 # ── Main ───────────────────────────────────────────────────────────────────────
 
 def main():
