@@ -52,6 +52,38 @@
       font-size: .68rem; color: #888; flex-shrink: 0;
     }
 
+    /* FRANJA PRODUCCIÓN DEL DÍA (parámetros de liberación) */
+    #prod-wrap {
+      flex-shrink: 0; padding: 4px 18px 0; display: none;
+    }
+    #prod-wrap.visible { display: block; }
+    .prod-titulo {
+      font-size: .68rem; font-weight: 700; color: #6a1b9a;
+      margin-bottom: 3px;
+    }
+    .prod-scroll {
+      display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px;
+    }
+    .prod-scroll::-webkit-scrollbar { height: 3px; }
+    .prod-scroll::-webkit-scrollbar-thumb { background: #ce93d8; border-radius: 2px; }
+    .prod-card {
+      background: white; border-radius: 6px;
+      border-left: 4px solid #8e24aa;
+      box-shadow: 0 1px 3px rgba(0,0,0,.08);
+      padding: 6px 10px; min-width: 200px; max-width: 240px; flex-shrink: 0;
+    }
+    .prod-nombre {
+      font-size: .7rem; font-weight: 700; color: #4a148c;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .prod-meta { font-size: .6rem; color: #999; margin-top: 1px; }
+    .prod-rangos { display: flex; gap: 5px; margin-top: 4px; flex-wrap: wrap; }
+    .prod-rango {
+      font-size: .62rem; font-weight: 700; padding: 2px 7px;
+      border-radius: 8px; background: #f3e5f5; color: #6a1b9a;
+    }
+    .prod-rango.sin { background: #f5f5f5; color: #bbb; font-weight: 400; }
+
     /* LAYOUT PRINCIPAL: recepciones angosta, paradas ancha */
     .sp-layout {
       flex: 1; min-height: 0;
@@ -59,6 +91,21 @@
       grid-template-columns: 1fr 2fr;
       gap: 8px; padding: 6px 18px;
     }
+
+    /* Recepciones programadas (sub-bloque dentro del panel recepciones) */
+    .rec-prog-header {
+      font-size: .62rem; font-weight: 700; color: #ff8f00;
+      background: #fff8e1; padding: 4px 12px;
+      border-top: 1px dashed #ffcc80; border-bottom: 1px dashed #ffcc80;
+    }
+    .rec-prog-item {
+      padding: 6px 12px; border-bottom: 1px solid #fff3e0;
+      display: flex; gap: 10px; align-items: flex-start;
+      background: #fffdf7;
+    }
+    .rec-prog-fruta { font-size: .74rem; font-weight: 700; color: #e65100; }
+    .rec-prog-meta  { font-size: .62rem; color: #aaa; }
+    .rec-prog-cant  { font-size: .68rem; font-weight: 700; color: #888; margin-left: auto; white-space: nowrap; }
 
     /* PANEL GENÉRICO */
     .sp-panel {
@@ -182,6 +229,12 @@
 
 <div id="ultima-act">Cargando...</div>
 
+<!-- FRANJA PRODUCCIÓN DEL DÍA -->
+<div id="prod-wrap">
+  <div class="prod-titulo">🎯 Producción de hoy — Parámetros de liberación</div>
+  <div class="prod-scroll" id="prod-scroll"></div>
+</div>
+
 <div class="sp-layout">
 
   <!-- PANEL RECEPCIONES -->
@@ -271,17 +324,21 @@ function activarScroll(wrap, scroll) {
   }, 300);
 }
 
-// Render recepciones
-function renderRecepciones(filas) {
+// Render recepciones (recibidas + programadas)
+function renderRecepciones(filas, programadas) {
   const lista = document.getElementById('rec-lista');
   const sub   = document.getElementById('rec-sub');
-  if (!filas || !filas.length) {
+  const nRec  = (filas || []).length;
+  const nProg = (programadas || []).length;
+
+  if (!nRec && !nProg) {
     lista.innerHTML = '<div style="padding:20px;color:#bbb;font-style:italic;text-align:center">Sin recepciones hoy</div>';
     sub.textContent = '';
     return;
   }
-  sub.textContent = `${filas.length} recepción${filas.length>1?'es':''}`;
-  lista.innerHTML = filas
+  sub.textContent = `${nRec} recibida${nRec!==1?'s':''}` + (nProg ? ` · ${nProg} programada${nProg!==1?'s':''}` : '');
+
+  const recibidasHtml = (filas || [])
     .sort((a,b) => (a.hora_llegada||'') > (b.hora_llegada||'') ? 1 : -1)
     .map(r => {
       const dur = (() => {
@@ -309,8 +366,66 @@ function renderRecepciones(filas) {
         <div class="rec-kg">${r.total_neto_kg ? parseFloat(r.total_neto_kg).toLocaleString('es-EC') + ' kg' : ''}</div>
       </div>`;
     }).join('');
+
+  const programadasHtml = !nProg ? '' :
+    `<div class="rec-prog-header">📋 Programadas — aún no llegan (${nProg})</div>` +
+    (programadas || [])
+      .sort((a,b) => (a.fecha_programada||'') > (b.fecha_programada||'') ? 1 : -1)
+      .map(p => {
+        const hora = (p.fecha_programada||'').split(' ')[1] || '';
+        return `<div class="rec-prog-item">
+          <div class="rec-badge" style="background:#fff3e0">⏳</div>
+          <div class="rec-main">
+            <div class="rec-prog-fruta">${p.fruta || '—'}</div>
+            <div class="rec-prov">🏭 ${p.proveedor || '—'}</div>
+            <div class="rec-prog-meta">⏱ Programada ${hora}${p.observaciones ? ' · ' + p.observaciones : ''}</div>
+          </div>
+          <div class="rec-prog-cant">${p.cantidad_prog ? parseFloat(p.cantidad_prog).toLocaleString('es-EC') + ' ' + (p.unidad||'') : ''}</div>
+        </div>`;
+      }).join('');
+
+  lista.innerHTML = recibidasHtml + programadasHtml;
   const wrap = document.querySelector('.sp-panel.recepciones .sp-lista-wrap');
   activarScroll(wrap, lista);
+}
+
+// Render producción del día con parámetros de liberación (cruce Odoo + catálogo SP)
+function renderProduccion(produccion, catalogo) {
+  const wrap = document.getElementById('prod-wrap');
+  const scroll = document.getElementById('prod-scroll');
+  if (!produccion || !produccion.length) { wrap.classList.remove('visible'); return; }
+
+  const hoyLocal = new Date().toLocaleDateString('en-CA');
+  // Índice catálogo por código de producto (Title de SharePoint)
+  const catIdx = {};
+  (catalogo || []).forEach(c => { if (c.codigo) catIdx[c.codigo.trim().toUpperCase()] = c; });
+
+  // Productos únicos planificados hoy (de produccion.csv)
+  const vistos = new Set();
+  const items = (produccion || []).filter(p => (p.fecha_produccion||'') === hoyLocal).filter(p => {
+    const key = p.producto || '';
+    if (vistos.has(key)) return false;
+    vistos.add(key);
+    return true;
+  });
+
+  if (!items.length) { wrap.classList.remove('visible'); return; }
+  wrap.classList.add('visible');
+
+  scroll.innerHTML = items.map(p => {
+    const codMatch = (p.producto || '').match(/^\[([^\]]+)\]/);
+    const cod = codMatch ? codMatch[1] : '';
+    const cat = catIdx[cod.toUpperCase()] || null;
+    const nombre = (p.producto || '').replace(/^\[[^\]]+\]\s*/, '');
+    return `<div class="prod-card">
+      <div class="prod-nombre">${nombre || p.producto || '—'}</div>
+      <div class="prod-meta">${p.orden_produccion || ''}${cod ? ' · ' + cod : ''}</div>
+      <div class="prod-rangos">
+        ${cat && cat.brix_min ? `<span class="prod-rango">°Bx ${cat.brix_min}–${cat.brix_max}</span>` : '<span class="prod-rango sin">°Bx —</span>'}
+        ${cat && cat.ph_min   ? `<span class="prod-rango">pH ${cat.ph_min}–${cat.ph_max}</span>`     : '<span class="prod-rango sin">pH —</span>'}
+      </div>
+    </div>`;
+  }).join('');
 }
 
 // Render paradas PP
@@ -368,11 +483,15 @@ function renderParadas(filas) {
 // Carga
 async function cargarDatos() {
   document.getElementById('ultima-act').textContent = 'Actualizando...';
-  const [rec, par] = await Promise.all([
+  const [rec, par, prog, produccion, catalogo] = await Promise.all([
     leerCSV('recepciones_sp.csv'),
     leerCSV('registros_pp.csv'),
+    leerCSV('recepciones_programadas.csv'),
+    leerCSV('produccion.csv'),
+    leerCSV('catalogo_parametros.csv'),
   ]);
-  renderRecepciones(rec);
+  renderProduccion(produccion, catalogo);
+  renderRecepciones(rec, prog);
   renderParadas(par);
   const t = new Date().toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'});
   document.getElementById('ultima-act').textContent =
