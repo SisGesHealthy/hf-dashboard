@@ -872,7 +872,7 @@ def extraer_recepciones_sp():
             ord_hoy = [i for i in ord_items
                        if utc_a_local(i.get("fields",{}).get("FechaProgramada",""),
                                       "%Y-%m-%d") == hoy_ec
-                       and (i.get("fields",{}).get("Estado","") or "").strip().lower() == "programado"]
+                       and (i.get("fields",{}).get("Estado","") or "").strip().lower().startswith("programad")]
             log.info(f"  Órdenes programadas hoy: {len(ord_hoy)} de {len(ord_items)} totales")
             filas_ord = []
             for i in sorted(ord_hoy,
