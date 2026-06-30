@@ -444,8 +444,8 @@
       <div id="scroll-recepciones" class="auto-scroller">
         <table>
           <colgroup>
-            <col style="width:11%"><col style="width:10%"><col style="width:19%">
-            <col><col style="width:11%"><col style="width:13%">
+            <col style="width:12%"><col style="width:11%"><col style="width:22%">
+            <col><col style="width:13%">
           </colgroup>
           <thead>
             <tr>
@@ -454,10 +454,9 @@
               <th>Proveedor</th>
               <th>Producto</th>
               <th>Cant.</th>
-              <th>Estado</th>
             </tr>
           </thead>
-          <tbody id="tbody-recepciones"><tr><td colspan="6">Cargando...</td></tr></tbody>
+          <tbody id="tbody-recepciones"><tr><td colspan="5">Cargando...</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -717,7 +716,7 @@ function renderRecepciones(compras, hoy) {
     .sort((a, b) => (a.fecha_planificada || '').localeCompare(b.fecha_planificada || ''));
   const tbody = document.getElementById('tbody-recepciones');
   if (!filas.length) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999">Sin recepciones programadas para este día</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999">Sin recepciones programadas para este día</td></tr>';
     return 0;
   }
 
@@ -741,7 +740,6 @@ function renderRecepciones(compras, hoy) {
                      <td rowspan="${lineas.length}">${r.proveedor || '—'}</td>` : ''}
         <td>${r.producto || '—'}</td>
         <td>${r.cantidad || '—'} ${r.unidad_medida || ''}</td>
-        ${i === 0 ? `<td rowspan="${lineas.length}">${estadoBadge(r.estado_recepcion)}</td>` : ''}
       </tr>`);
     });
   });
@@ -1087,9 +1085,9 @@ async function cargarDatos() {
     ]);
 
     if (!esHoy && (compras === null || produccion === null || despachos === null || lineas === null)) {
-      ['tbody-recepciones','tbody-produccion','tbody-despachos'].forEach(id => {
+      [['tbody-recepciones',5],['tbody-produccion',6],['tbody-despachos',7]].forEach(([id, cols]) => {
         document.getElementById(id).innerHTML =
-          '<tr><td colspan="6" style="text-align:center;color:#999;font-style:italic">Aún no hay datos guardados para esta fecha</td></tr>';
+          `<tr><td colspan="${cols}" style="text-align:center;color:#999;font-style:italic">Aún no hay datos guardados para esta fecha</td></tr>`;
       });
       document.getElementById('kpi-recepciones').textContent = '—';
       document.getElementById('kpi-produccion').textContent  = '—';
