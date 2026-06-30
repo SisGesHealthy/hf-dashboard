@@ -383,6 +383,8 @@
     <option value="auto">🔄 Rotar (1 min)</option>
     <option value="dashboard">📊 Solo Dashboard</option>
     <option value="agenda">🗓 Solo Agenda</option>
+    <option value="taller">🏭 Taller</option>
+    <option value="calidad-sp">🔬 Calidad operativa</option>
   </select>
   <input type="date" id="fecha-selector" title="Ver otro día (semana en curso)">
   <div id="reloj">
@@ -1005,6 +1007,9 @@ function mostrarVista(v) {
 
 function aplicarModoVista() {
   const modo = document.getElementById('modo-vista').value;
+  // Accesos directos a otras páginas del flujo: no se persisten como modo fijo
+  if (modo === 'taller')     { window.location.href = 'taller.html';     return; }
+  if (modo === 'calidad-sp') { window.location.href = 'calidad-sp.html'; return; }
   localStorage.setItem('hf-modo-vista', modo);
   mostrarVista(modo === 'auto' ? 'dashboard' : modo);
 }
