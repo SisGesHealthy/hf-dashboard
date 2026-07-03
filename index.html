@@ -302,53 +302,68 @@
       gap: 6px;
     }
     .agenda-titulo {
-      font-size: .85rem; font-weight: 700; color: var(--verde);
-      flex-shrink: 0;
+      font-size: .85rem; font-weight: 700; color: var(--verde); flex-shrink: 0;
     }
     .agenda-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 6px;
-      flex: 1;
-      min-height: 0;
+      display: grid; grid-template-columns: repeat(7, 1fr);
+      gap: 5px; flex: 1; min-height: 0;
     }
     .agenda-dia {
-      background: var(--blanco);
-      border-radius: 8px;
+      background: var(--blanco); border-radius: 7px;
       box-shadow: 0 1px 4px rgba(0,0,0,.08);
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
-      overflow: hidden;
+      display: flex; flex-direction: column; min-height: 0; overflow: hidden;
     }
     .agenda-dia.hoy { box-shadow: 0 0 0 2px var(--verde); }
     .agenda-dia-header {
-      padding: 5px 4px; text-align: center; flex-shrink: 0;
-      font-size: .7rem; font-weight: 700; color: white;
-      background: #aab582; text-transform: capitalize;
+      padding: 4px 6px; text-align: center; flex-shrink: 0;
+      font-size: .72rem; font-weight: 700; color: white;
+      background: #8fa860; text-transform: capitalize; letter-spacing: .02em;
     }
     .agenda-dia.hoy .agenda-dia-header { background: var(--verde); }
-    .agenda-secciones {
-      flex: 1; min-height: 0; display: flex; flex-direction: column;
+    .agenda-secciones { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+
+    /* Sección Recepciones */
+    .agenda-seccion { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+    .agenda-sec-header {
+      display: flex; align-items: center; gap: 4px;
+      padding: 3px 6px; flex-shrink: 0; font-size: .58rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .04em;
     }
-    .agenda-seccion {
-      flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column;
-      border-top: 1px solid #eee; padding: 3px 5px;
+    .agenda-sec-badge {
+      margin-left: auto; font-size: .56rem; font-weight: 800;
+      border-radius: 8px; padding: 0 5px; line-height: 1.5;
     }
-    .agenda-seccion:first-child { border-top: none; }
-    .agenda-seccion-titulo {
-      font-size: .6rem; font-weight: 700; color: #999;
-      text-transform: uppercase; letter-spacing: .03em;
-      flex-shrink: 0; margin-bottom: 1px;
-    }
+    .agenda-seccion.rec .agenda-sec-header { background: #e3f2fd; color: #1565c0; border-top: 2px solid #90caf9; }
+    .agenda-seccion.rec .agenda-sec-badge  { background: #bbdefb; color: #1565c0; }
+    .agenda-seccion.pro .agenda-sec-header { background: #e8f5e9; color: #2e7d32; border-top: 2px solid #a5d6a7; }
+    .agenda-seccion.pro .agenda-sec-badge  { background: #c8e6c9; color: #2e7d32; }
+    .agenda-seccion.des .agenda-sec-header { background: #fff3e0; color: #e65100; border-top: 2px solid #ffcc80; }
+    .agenda-seccion.des .agenda-sec-badge  { background: #ffe0b2; color: #e65100; }
+
     .agenda-lista { flex: 1; min-height: 0; overflow-y: auto; }
+    .agenda-lista::-webkit-scrollbar { width: 3px; }
+    .agenda-lista::-webkit-scrollbar-thumb { border-radius: 2px; }
+    .agenda-seccion.rec .agenda-lista::-webkit-scrollbar-thumb { background: #90caf9; }
+    .agenda-seccion.pro .agenda-lista::-webkit-scrollbar-thumb { background: #a5d6a7; }
+    .agenda-seccion.des .agenda-lista::-webkit-scrollbar-thumb { background: #ffcc80; }
+
     .agenda-item {
-      font-size: .62rem; line-height: 1.3; padding: 1px 0;
+      font-size: .59rem; line-height: 1.25; padding: 2px 6px;
       border-bottom: 1px solid #f5f5f5;
       overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
-    .agenda-item b { color: var(--texto); }
-    .agenda-vacio { font-size: .6rem; color: #ccc; font-style: italic; }
+    .agenda-item .ai-cant {
+      font-weight: 800; margin-right: 3px;
+    }
+    .agenda-seccion.rec .agenda-item .ai-cant { color: #1565c0; }
+    .agenda-seccion.pro .agenda-item .ai-cant { color: #2e7d32; }
+    .agenda-seccion.des .agenda-item .ai-cant { color: #e65100; }
+    .agenda-item .ai-ref  { color: #888; font-size: .55rem; }
+    .agenda-item .ai-borrador {
+      font-size: .52rem; background: #fff9c4; color: #f57f17;
+      border-radius: 3px; padding: 0 3px; margin-left: 2px; font-weight: 700;
+    }
+    .agenda-vacio { font-size: .58rem; color: #ccc; font-style: italic; padding: 3px 6px; }
   </style>
 </head>
 <body>
@@ -933,48 +948,58 @@ function construirAgenda(compras, despachos, lineas, produccion) {
     const esHoy = i === 0;
     const label = esHoy ? 'Hoy' : `${DIAS[d.getDay()].substring(0,3)} ${d.getDate()}`;
 
-    const recepciones = (compras || [])
+    // ── Recepciones ──────────────────────────────────────────────────────
+    const recItems = (compras || [])
       .filter(r => (r.fecha_planificada || '').startsWith(dateStr) && r.estado_recepcion !== 'Recibida completa')
-      .map(r => `<div class="agenda-item" title="${r.producto || ''} · ${r.proveedor || ''}"><b>${r.producto || '—'}</b> · ${r.proveedor || '—'}</div>`);
+      .map(r => {
+        const cant = r.cantidad ? `<span class="ai-cant">${parseFloat(r.cantidad).toLocaleString('es')} ${r.unidad_medida || ''}</span>` : '';
+        const prov = r.proveedor ? `<span class="ai-ref"> · ${r.proveedor}</span>` : '';
+        return `<div class="agenda-item" title="${r.producto || ''} · ${r.proveedor || ''} · ${r.cantidad || ''} ${r.unidad_medida || ''}">${cant}${r.producto || '—'}${prov}</div>`;
+      });
 
-    const despachosItems = [];
+    // ── Producción ───────────────────────────────────────────────────────
+    const vistos = new Set();
+    const proItems = [];
+    (produccion || []).forEach(p => {
+      if ((p.fecha_produccion || '') !== dateStr) return;
+      if (vistos.has(p.orden_produccion)) return;
+      vistos.add(p.orden_produccion);
+      const cant = p.qty_planificada ? `<span class="ai-cant">${parseFloat(p.qty_planificada).toLocaleString('es')} ${p.unidad || ''}</span>` : '';
+      const borra = p.estado_produccion === 'Borrador' ? '<span class="ai-borrador">BORR</span>' : '';
+      proItems.push(`<div class="agenda-item" title="${p.producto || ''} · ${p.qty_planificada || ''} ${p.unidad || ''}">${cant}${p.producto || '—'}${borra}</div>`);
+    });
+
+    // ── Despachos ────────────────────────────────────────────────────────
+    const desItems = [];
     (despachos || [])
       .filter(d2 => (d2.fecha_compromiso || '').startsWith(dateStr))
       .forEach(d2 => {
         const lineasOV = lineasIdx[d2.orden_venta] || [];
         if (lineasOV.length) {
           lineasOV.forEach(l => {
-            despachosItems.push(`<div class="agenda-item" title="${l.producto || ''} · ${d2.cliente || ''} · ${l.cantidad || ''} ${l.unidad_medida || ''}"><b>${l.producto || '—'}</b> · ${d2.cliente || '—'} · ${l.cantidad || '—'}${l.unidad_medida || ''}</div>`);
+            const cant = l.cantidad ? `<span class="ai-cant">${parseFloat(l.cantidad).toLocaleString('es')} ${l.unidad_medida || ''}</span>` : '';
+            const cli  = d2.cliente ? `<span class="ai-ref"> · ${d2.cliente}</span>` : '';
+            desItems.push(`<div class="agenda-item" title="${l.producto || ''} · ${d2.cliente || ''} · ${l.cantidad || ''} ${l.unidad_medida || ''}">${cant}${l.producto || '—'}${cli}</div>`);
           });
         } else {
-          despachosItems.push(`<div class="agenda-item"><b>${d2.orden_venta || '—'}</b> · ${d2.cliente || '—'}</div>`);
+          desItems.push(`<div class="agenda-item"><span class="ai-ref">${d2.orden_venta || '—'}</span> · ${d2.cliente || '—'}</div>`);
         }
       });
 
-    const vistos = new Set();
-    const produccionItems = [];
-    (produccion || []).forEach(p => {
-      if ((p.fecha_produccion || '') !== dateStr) return;
-      if (vistos.has(p.orden_produccion)) return;
-      vistos.add(p.orden_produccion);
-      produccionItems.push(`<div class="agenda-item" title="${p.producto || ''}"><b>${p.producto || '—'}</b> · ${p.qty_planificada || ''} ${p.unidad || ''}</div>`);
-    });
+    const seccion = (cls, ico, label2, items) => `
+      <div class="agenda-seccion ${cls}">
+        <div class="agenda-sec-header">${ico} ${label2}
+          ${items.length ? `<span class="agenda-sec-badge">${items.length}</span>` : ''}
+        </div>
+        <div class="agenda-lista">${items.length ? items.join('') : '<div class="agenda-vacio">Sin registros</div>'}</div>
+      </div>`;
 
     html += `<div class="agenda-dia ${esHoy ? 'hoy' : ''}">
       <div class="agenda-dia-header">${label}</div>
       <div class="agenda-secciones">
-        <div class="agenda-seccion">
-          <div class="agenda-seccion-titulo">🚚 Recepciones</div>
-          <div class="agenda-lista">${recepciones.length ? recepciones.join('') : '<div class="agenda-vacio">Sin registros</div>'}</div>
-        </div>
-        <div class="agenda-seccion">
-          <div class="agenda-seccion-titulo">⚙️ Producción</div>
-          <div class="agenda-lista">${produccionItems.length ? produccionItems.join('') : '<div class="agenda-vacio">Sin registros</div>'}</div>
-        </div>
-        <div class="agenda-seccion">
-          <div class="agenda-seccion-titulo">📦 Despachos</div>
-          <div class="agenda-lista">${despachosItems.length ? despachosItems.join('') : '<div class="agenda-vacio">Sin registros</div>'}</div>
-        </div>
+        ${seccion('rec','🚚','Recepciones', recItems)}
+        ${seccion('pro','⚙️','Producción',  proItems)}
+        ${seccion('des','📦','Despachos',   desItems)}
       </div>
     </div>`;
   }
