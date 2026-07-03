@@ -83,6 +83,9 @@
     .kpi.naranja .kpi-num { color: var(--naranja); }
     .kpi.azul    .kpi-num { color: var(--azul); }
     .kpi-label { font-size: .72rem; color: #666; margin-top: 2px; }
+    .kpi-sub   { font-size: .65rem; margin-top: 2px; font-weight: 600; }
+    .kpi-sub .sub-ok  { color: #4caf50; }
+    .kpi-sub .sub-pen { color: #e07b2a; }
 
     /* ── MAIN GRID (tablas) ── */
     .main {
@@ -419,6 +422,7 @@
       <div>
         <div class="kpi-num" id="kpi-recepciones">—</div>
         <div class="kpi-label">Recepciones hoy</div>
+        <div class="kpi-sub" id="kpi-rec-sub"></div>
       </div>
     </div>
     <div class="kpi">
@@ -426,6 +430,7 @@
       <div>
         <div class="kpi-num" id="kpi-produccion">—</div>
         <div class="kpi-label">Producción hoy</div>
+        <div class="kpi-sub" id="kpi-pro-sub"></div>
       </div>
     </div>
     <div class="kpi naranja">
@@ -433,6 +438,7 @@
       <div>
         <div class="kpi-num" id="kpi-despachos">—</div>
         <div class="kpi-label">Despachos hoy</div>
+        <div class="kpi-sub" id="kpi-des-sub"></div>
       </div>
     </div>
   </div>
@@ -773,7 +779,8 @@ function renderRecepciones(compras, hoy) {
     });
   });
   tbody.innerHTML = rows.join('');
-  return ordenKeys.length;
+  const hechas = ordenKeys.filter(k => (ordenes[k][0].estado_recepcion || '').includes('Recibida completa')).length;
+  return { total: ordenKeys.length, hechas };
 }
 
 function barAvance(avance) {
@@ -848,7 +855,8 @@ function renderProduccion(produccion, hoy) {
   }
 
   tbody.innerHTML = html;
-  return filasHoy.length;
+  const terminadas = filasHoy.filter(r => ['Terminada','Por cerrar'].includes(r.estado_produccion)).length;
+  return { total: filasHoy.length, hechas: terminadas };
 }
 
 function renderDespachos(despachos, lineas, traslados, hoy) {
@@ -924,7 +932,9 @@ function renderDespachos(despachos, lineas, traslados, hoy) {
   }
 
   tbody.innerHTML = rows.join('');
-  return filas.length + filasEcla.length;
+  const despachadas = filas.filter(d => (d.estado_entrega||'').toLowerCase().includes('despach') || (d.estado_entrega||'').toLowerCase().includes('hecho')).length;
+  const eclaHechas  = filasEcla.filter(t => t.estado === 'Hecho').length;
+  return { total: filas.length + filasEcla.length, hechas: despachadas + eclaHechas };
 }
 
 // ── Agenda: próximos 7 días (recepciones / producción / despachos) ─────────
@@ -1158,9 +1168,13 @@ async function cargarDatos() {
     });
     setTimeout(ajustarTodosLosScrolls, 150);
 
-    document.getElementById('kpi-recepciones').textContent = nRec;
-    document.getElementById('kpi-produccion').textContent  = nProd;
-    document.getElementById('kpi-despachos').textContent   = nDes;
+    document.getElementById('kpi-recepciones').textContent = nRec.total;
+    document.getElementById('kpi-produccion').textContent  = nProd.total;
+    document.getElementById('kpi-despachos').textContent   = nDes.total;
+    const fmtSub = (r) => `<span class="sub-ok">${r.hechas} ✓</span> · <span class="sub-pen">${r.total - r.hechas} pendientes</span>`;
+    document.getElementById('kpi-rec-sub').innerHTML = fmtSub(nRec);
+    document.getElementById('kpi-pro-sub').innerHTML = fmtSub(nProd);
+    document.getElementById('kpi-des-sub').innerHTML = fmtSub(nDes);
 
     construirLineaTiempo(compras, despachos, traslados || [], fechaSel, esHoy);
 
