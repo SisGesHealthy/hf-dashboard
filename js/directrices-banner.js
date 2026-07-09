@@ -184,6 +184,7 @@
       .join('') || '<tr><td colspan="5" style="text-align:center;color:#888">Sin directrices pendientes 🎉</td></tr>';
     document.getElementById('tabla-directrices-modal').innerHTML = filas;
     ultimosPendientes = pendientes;
+    actualizarToastPorVista();
 
     const kpiNum = document.getElementById('kpi-directrices');
     const kpiSub = document.getElementById('kpi-dir-sub');
@@ -213,13 +214,36 @@
     }
   }
 
-  function mostrarAvisoPeriodico() {
-    if (ultimosPendientes.length === 0) return;
+  // Qué área mostrar en el aviso emergente según la pantalla actual. En
+  // index.html depende de si está activa la vista Agenda (Bodega) — la vista
+  // Dashboard no tiene aviso propio, se queda con el banner/KPI genéricos.
+  const AREA_TOAST_POR_PAGINA = {
+    'taller.html': ['Producción'],
+    'calidad-sp.html': ['Calidad'],
+    'wcp.html': ['Producción'],
+  };
 
-    const lista = ultimosPendientes.slice(0, 4);
-    const extra = ultimosPendientes.length - lista.length;
+  function areasParaToast() {
+    if (pagina === 'index.html' || pagina === '') {
+      const vistaAgenda = document.getElementById('vista-agenda');
+      return (vistaAgenda && vistaAgenda.style.display === 'flex') ? ['Bodega'] : null;
+    }
+    return AREA_TOAST_POR_PAGINA[pagina] || null;
+  }
+
+  function actualizarToastPorVista() {
+    const areas = areasParaToast();
+    const relevantes = areas ? ultimosPendientes.filter((d) => areas.includes(d.area)) : [];
+
+    if (relevantes.length === 0) {
+      toast.classList.remove('visible');
+      return;
+    }
+
+    const lista = relevantes.slice(0, 4);
+    const extra = relevantes.length - lista.length;
     toast.innerHTML = `
-      <div class="toast-header">📋 ${ultimosPendientes.length} directriz${ultimosPendientes.length > 1 ? 'es' : ''} pendiente${ultimosPendientes.length > 1 ? 's' : ''}</div>
+      <div class="toast-header">📋 ${relevantes.length} directriz${relevantes.length > 1 ? 'es' : ''} pendiente${relevantes.length > 1 ? 's' : ''} — ${areas.join('/')}</div>
       <ul>
         ${lista.map((d) => `
           <li><strong>${escaparHtml(d.area)}</strong> — ${escaparHtml(d.texto)}
@@ -227,15 +251,14 @@
         ${extra > 0 ? `<li class="toast-extra">y ${extra} más...</li>` : ''}
       </ul>`;
     toast.classList.add('visible');
-    setTimeout(() => toast.classList.remove('visible'), 10000);
   }
 
   actualizar();
   setInterval(actualizar, 60000);
 
-  // Aviso que aparece y desaparece solo: una vez poco después de cargar
-  // (para poder verlo sin esperar) y luego cada 30 min mientras haya algo
-  // pendiente — para que no dependa de que alguien entre a revisar el KPI.
-  setTimeout(mostrarAvisoPeriodico, 20000);
-  setInterval(mostrarAvisoPeriodico, 30 * 60 * 1000);
+  // Sin click para cerrarlo y sin duración fija: se muestra mientras esa
+  // pantalla/vista siga activa y haya algo pendiente para su área; se oculta
+  // solo si cambia la vista (dashboard↔agenda) o ya no hay nada pendiente.
+  actualizarToastPorVista();
+  setInterval(actualizarToastPorVista, 2000);
 })();
