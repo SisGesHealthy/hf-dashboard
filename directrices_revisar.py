@@ -33,6 +33,14 @@ log = logging.getLogger(__name__)
 UTC_OFFSET_HORAS = -5  # Ecuador
 
 
+def ahora_ecuador():
+    """Hora actual en Ecuador (UTC-5). Los runners de GitHub Actions corren en
+    UTC, así que datetime.now() NO sirve aquí — hay que restarle el offset a
+    datetime.utcnow() para que sea comparable con fecha_envio (que se guarda
+    en hora local Ecuador, ver detectar_directrices_nuevas)."""
+    return datetime.utcnow() + timedelta(hours=UTC_OFFSET_HORAS)
+
+
 def limpiar_texto(contenido_html):
     """Quita las etiquetas HTML (incluida la del <at>mención</at>) y decodifica
     entidades (&nbsp;, &amp;, etc.) del cuerpo del mensaje."""
@@ -147,11 +155,11 @@ def main():
     nuevas = detectar_directrices_nuevas(token, areas, aad_por_area, ids_conocidos)
     directrices.extend(nuevas)
 
+    ahora = ahora_ecuador()
     pendientes = [d for d in directrices if d["estado"] == "pendiente"]
     if not pendientes:
         log.info("No hay directrices pendientes por revisar.")
     else:
-        ahora = datetime.now()
         for d in pendientes:
             if d.get("message_id") and tiene_actividad(token, d["message_id"]):
                 d["estado"] = "atendido"
@@ -168,7 +176,7 @@ def main():
                 d["escalado"] = True
                 log.warning(f"  ⚠ {d['id']} ({d['area']}) ESCALADA — {horas_transcurridas:.1f}h sin respuesta")
 
-    estado["actualizado"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    estado["actualizado"] = ahora.strftime("%Y-%m-%d %H:%M:%S")
     estado["directrices"] = directrices
     guardar_estado(estado)
     log.info(f"Estado guardado: {len(directrices)} directriz(ces) en total ({len(nuevas)} nuevas).")
