@@ -17,6 +17,7 @@ Reescribe dashboard-data/directrices_estado.json (correos nunca se incluyen
 en ese JSON público — ver area_responsables.json / directrices_config.py).
 """
 
+import html
 import logging
 import re
 from datetime import datetime, timedelta
@@ -33,9 +34,11 @@ UTC_OFFSET_HORAS = -5  # Ecuador
 
 
 def limpiar_texto(contenido_html):
-    """Quita las etiquetas HTML (incluida la del <at>mención</at>) del cuerpo del mensaje."""
+    """Quita las etiquetas HTML (incluida la del <at>mención</at>) y decodifica
+    entidades (&nbsp;, &amp;, etc.) del cuerpo del mensaje."""
     texto = re.sub(r"<at[^>]*>.*?</at>", "", contenido_html or "", flags=re.IGNORECASE | re.DOTALL)
     texto = re.sub(r"<[^>]+>", " ", texto)
+    texto = html.unescape(texto)
     return re.sub(r"\s+", " ", texto).strip()
 
 
