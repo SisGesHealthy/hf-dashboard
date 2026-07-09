@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-09 14:58:40",
+  "actualizado": "2026-07-09 16:06:48",
   "directrices": [
     {
       "id": "d-20260709-194237-157676",
@@ -9,6 +9,19 @@
       "prioridad": "Normal",
       "fecha_envio": "2026-07-09 14:42:37",
       "message_id": "1783626157676",
+      "estado": "atendido",
+      "escalado": false,
+      "fecha_atencion": "2026-07-09 16:06:48",
+      "horas_pendiente": 0.3
+    },
+    {
+      "id": "d-20260709-204620-980830",
+      "texto": "prueba de flujo 2",
+      "area": "Calidad",
+      "responsable_nombre": "Jefe de Calidad",
+      "prioridad": "Normal",
+      "fecha_envio": "2026-07-09 15:46:20",
+      "message_id": "1783629980830",
       "estado": "pendiente",
       "escalado": false,
       "fecha_atencion": "",
