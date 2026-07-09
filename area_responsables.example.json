@@ -1,0 +1,8 @@
+{
+  "_comentario": "PLANTILLA — no contiene datos reales. El repo es público, así que el mapeo área→correo real NUNCA se commitea aquí. En su lugar, guarda el JSON real (con los correos verdaderos) como el secret de GitHub Actions AREA_RESPONSABLES_JSON. Los workflows lo materializan como area_responsables.json (gitignored) solo durante la ejecución.",
+  "Bodega": { "nombre": "", "correo": "" },
+  "Fabricación": { "nombre": "", "correo": "" },
+  "Calidad": { "nombre": "", "correo": "" },
+  "Producción": { "nombre": "", "correo": "" },
+  "Logística": { "nombre": "", "correo": "" }
+}
