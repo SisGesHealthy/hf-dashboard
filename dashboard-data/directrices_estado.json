@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-09 16:36:33",
+  "actualizado": "2026-07-09 16:38:44",
   "directrices": [
     {
       "id": "d-20260709-194237-157676",
@@ -25,7 +25,20 @@
       "estado": "pendiente",
       "escalado": false,
       "fecha_atencion": "",
-      "horas_pendiente": 0.8
+      "horas_pendiente": 0.9
+    },
+    {
+      "id": "d-20260709-213700-020926",
+      "texto": "prueba 2",
+      "area": "Bodega",
+      "responsable_nombre": "Jefe de Bodega",
+      "prioridad": "Normal",
+      "fecha_envio": "2026-07-09 16:37:00",
+      "message_id": "1783633020926",
+      "estado": "pendiente",
+      "escalado": false,
+      "fecha_atencion": "",
+      "horas_pendiente": 0.0
     }
   ]
 }
