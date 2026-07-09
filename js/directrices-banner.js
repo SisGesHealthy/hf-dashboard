@@ -73,6 +73,32 @@
 
     .kpi.rojo { border-left-color: #d63b3b; }
     .kpi.rojo .kpi-num { color: #d63b3b; }
+
+    #toast-directrices {
+      position: fixed;
+      top: 88px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-16px);
+      min-width: 320px;
+      max-width: 90vw;
+      background: #2a7be0;
+      color: #fff;
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      box-shadow: 0 8px 24px rgba(0,0,0,.35);
+      z-index: 10000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .4s ease, transform .4s ease;
+    }
+    #toast-directrices.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+    #toast-directrices .toast-header { font-weight: 800; font-size: .9rem; margin-bottom: 6px; }
+    #toast-directrices ul { list-style: none; padding: 0; margin: 0; }
+    #toast-directrices li { font-size: .8rem; padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,.2); }
+    #toast-directrices li:last-child { border-bottom: none; }
+    #toast-directrices .toast-tiempo { opacity: .8; font-size: .72rem; margin-left: 6px; }
+    #toast-directrices .toast-extra { font-style: italic; opacity: .85; }
   `;
   const styleTag = document.createElement('style');
   styleTag.textContent = estilos;
@@ -94,6 +120,11 @@
       <button class="cerrar-btn" id="cerrar-modal-directrices">Cerrar</button>
     </div>`;
   document.body.appendChild(modal);
+
+  const toast = document.createElement('div');
+  toast.id = 'toast-directrices';
+  document.body.appendChild(toast);
+  let ultimosPendientes = [];
 
   function cerrarModal() { modal.style.display = 'none'; }
   function abrirModal() { modal.style.display = 'flex'; }
@@ -152,6 +183,7 @@
         </tr>`)
       .join('') || '<tr><td colspan="5" style="text-align:center;color:#888">Sin directrices pendientes 🎉</td></tr>';
     document.getElementById('tabla-directrices-modal').innerHTML = filas;
+    ultimosPendientes = pendientes;
 
     const kpiNum = document.getElementById('kpi-directrices');
     const kpiSub = document.getElementById('kpi-dir-sub');
@@ -181,6 +213,29 @@
     }
   }
 
+  function mostrarAvisoPeriodico() {
+    if (ultimosPendientes.length === 0) return;
+
+    const lista = ultimosPendientes.slice(0, 4);
+    const extra = ultimosPendientes.length - lista.length;
+    toast.innerHTML = `
+      <div class="toast-header">📋 ${ultimosPendientes.length} directriz${ultimosPendientes.length > 1 ? 'es' : ''} pendiente${ultimosPendientes.length > 1 ? 's' : ''}</div>
+      <ul>
+        ${lista.map((d) => `
+          <li><strong>${escaparHtml(d.area)}</strong> — ${escaparHtml(d.texto)}
+            <span class="toast-tiempo">(${horasTexto(d.horas_pendiente)})</span></li>`).join('')}
+        ${extra > 0 ? `<li class="toast-extra">y ${extra} más...</li>` : ''}
+      </ul>`;
+    toast.classList.add('visible');
+    setTimeout(() => toast.classList.remove('visible'), 10000);
+  }
+
   actualizar();
   setInterval(actualizar, 60000);
+
+  // Aviso que aparece y desaparece solo: una vez poco después de cargar
+  // (para poder verlo sin esperar) y luego cada 30 min mientras haya algo
+  // pendiente — para que no dependa de que alguien entre a revisar el KPI.
+  setTimeout(mostrarAvisoPeriodico, 20000);
+  setInterval(mostrarAvisoPeriodico, 30 * 60 * 1000);
 })();
