@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-09 16:38:44",
+  "actualizado": "2026-07-09 17:42:52",
   "directrices": [
     {
       "id": "d-20260709-194237-157676",
@@ -22,9 +22,9 @@
       "prioridad": "Normal",
       "fecha_envio": "2026-07-09 15:46:20",
       "message_id": "1783629980830",
-      "estado": "pendiente",
+      "estado": "atendido",
       "escalado": false,
-      "fecha_atencion": "",
+      "fecha_atencion": "2026-07-09 17:42:52",
       "horas_pendiente": 0.9
     },
     {
@@ -38,7 +38,20 @@
       "estado": "pendiente",
       "escalado": false,
       "fecha_atencion": "",
-      "horas_pendiente": 0.0
+      "horas_pendiente": 1.1
+    },
+    {
+      "id": "d-20260709-214615-575637",
+      "texto": "esto es un mensaje de notificación de prueba",
+      "area": "Producción",
+      "responsable_nombre": "Jefe de Producción",
+      "prioridad": "Normal",
+      "fecha_envio": "2026-07-09 16:46:15",
+      "message_id": "1783633575637",
+      "estado": "pendiente",
+      "escalado": false,
+      "fecha_atencion": "",
+      "horas_pendiente": 0.9
     }
   ]
 }
