@@ -217,10 +217,10 @@
   // Qué área mostrar en el aviso emergente según la pantalla actual. En
   // index.html depende de si está activa la vista Agenda (Bodega) — la vista
   // Dashboard no tiene aviso propio, se queda con el banner/KPI genéricos.
+  // wcp.html es una pantalla informativa/cultura, sin aviso de directrices.
   const AREA_TOAST_POR_PAGINA = {
     'taller.html': ['Producción'],
     'calidad-sp.html': ['Calidad'],
-    'wcp.html': ['Producción'],
   };
 
   function areasParaToast() {
