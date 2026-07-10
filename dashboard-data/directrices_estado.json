@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-10 07:37:00",
+  "actualizado": "2026-07-10 10:19:52",
   "directrices": [
     {
       "id": "d-20260709-194237-157676",
@@ -48,9 +48,9 @@
       "prioridad": "Normal",
       "fecha_envio": "2026-07-09 16:46:15",
       "message_id": "1783633575637",
-      "estado": "pendiente",
+      "estado": "atendido",
       "escalado": true,
-      "fecha_atencion": "",
+      "fecha_atencion": "2026-07-10 10:19:52",
       "horas_pendiente": 14.8
     }
   ]
