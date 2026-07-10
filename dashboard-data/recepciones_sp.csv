@@ -1,3 +1,6 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-11007.0,2026-07-10 10:22,2026-07-10 10:48,MOTA GUANÁBANA-MP00028,2987.0,Guanabana Big,60 tachos  de. Guanábana  Big ,13.5,3.52,0.8,,2026-07-10 21:00:33
-21007.0,2026-07-10 13:28,2026-07-10 14:04,MOTA GUANÁBANA-MP00028,2991.0,Fripa ,60 tachos  de guanábana   fripa  ,,3.59,0.92,,2026-07-10 21:00:33
+11007.0,2026-07-10 10:22,2026-07-10 10:48,MOTA GUANÁBANA-MP00028,2987.0,Guanabana Big,60 tachos  de. Guanábana  Big ,13.5,3.52,0.8,,2026-07-10 21:30:37
+21007.0,2026-07-10 13:28,2026-07-10 14:04,MOTA GUANÁBANA-MP00028,2991.0,Fripa ,60 tachos  de guanábana   fripa  ,,3.59,0.92,,2026-07-10 21:30:37
+81007.0,2026-07-10 16:10,2026-07-10 16:16,MORA CATEGORIA 1-MP00242,111.0,Cesar Lisintuña ,37 gavetas de mora categoría 1,,2.72,0.0,,2026-07-10 21:30:37
+61007.0,2026-07-10 16:16,2026-07-10 16:21,MORA DE CASTILLA-MP00016,579.0,Cesar Lisintuña ,19 gavetas ,,2.93,2.17,,2026-07-10 21:30:37
+71006.0,2026-07-10 16:22,2026-07-10 16:28,MORA DE CASTILLA-MP00016,368.0,Edision  Lisintuña ,12 gavetas,,2.82,1.83,,2026-07-10 21:30:37
