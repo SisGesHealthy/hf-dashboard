@@ -76,28 +76,29 @@
 
     #toast-directrices {
       position: fixed;
-      top: 88px;
+      top: 10px;
       left: 50%;
-      transform: translateX(-50%) translateY(-16px);
+      transform: translateX(-50%) translateY(-16px) scale(.92);
       min-width: 320px;
       max-width: 90vw;
-      background: #2a7be0;
+      background: #e07b2a;
       color: #fff;
       border-radius: 10px;
+      border: 2px solid #ffcf99;
       padding: 12px 18px;
       font-family: 'Segoe UI', Arial, sans-serif;
-      box-shadow: 0 8px 24px rgba(0,0,0,.35);
+      box-shadow: 0 8px 28px rgba(0,0,0,.45), 0 0 0 4px rgba(224,123,42,.25);
       z-index: 10000;
       opacity: 0;
       pointer-events: none;
-      transition: opacity .4s ease, transform .4s ease;
+      transition: opacity .35s ease, transform .35s cubic-bezier(.34,1.56,.64,1);
     }
-    #toast-directrices.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
-    #toast-directrices .toast-header { font-weight: 800; font-size: .9rem; margin-bottom: 6px; }
+    #toast-directrices.visible { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+    #toast-directrices .toast-header { font-weight: 800; font-size: .95rem; margin-bottom: 6px; }
     #toast-directrices ul { list-style: none; padding: 0; margin: 0; }
-    #toast-directrices li { font-size: .8rem; padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,.2); }
+    #toast-directrices li { font-size: .8rem; padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,.25); }
     #toast-directrices li:last-child { border-bottom: none; }
-    #toast-directrices .toast-tiempo { opacity: .8; font-size: .72rem; margin-left: 6px; }
+    #toast-directrices .toast-tiempo { opacity: .85; font-size: .72rem; margin-left: 6px; }
     #toast-directrices .toast-extra { font-style: italic; opacity: .85; }
   `;
   const styleTag = document.createElement('style');
@@ -243,7 +244,7 @@
     const lista = relevantes.slice(0, 4);
     const extra = relevantes.length - lista.length;
     toast.innerHTML = `
-      <div class="toast-header">📋 ${relevantes.length} directriz${relevantes.length > 1 ? 'es' : ''} pendiente${relevantes.length > 1 ? 's' : ''} — ${areas.join('/')}</div>
+      <div class="toast-header">🔔 ${relevantes.length} directriz${relevantes.length > 1 ? 'es' : ''} pendiente${relevantes.length > 1 ? 's' : ''} — ${areas.join('/')}</div>
       <ul>
         ${lista.map((d) => `
           <li><strong>${escaparHtml(d.area)}</strong> — ${escaparHtml(d.texto)}
