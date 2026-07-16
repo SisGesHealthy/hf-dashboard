@@ -34,10 +34,27 @@
   .pbar{position:fixed;top:50px;left:0;height:3px;z-index:49;background:var(--lima);box-shadow:0 0 10px var(--lima)}
 
   /* STAGE & SLIDES */
-  .stage{position:fixed;inset:0;padding:53px 0 0;display:flex;align-items:center;justify-content:center}
-  .slide{display:none;position:absolute;inset:53px 0 0;overflow:hidden}
-  .slide.active{display:flex;animation:fadeUp .55s cubic-bezier(.16,.84,.3,1)}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+  .stage{position:fixed;inset:0;padding:53px 0 0}
+  /* Todas las slides son position:absolute y siempre renderizan su layout.
+     La visibilidad se controla con opacity+visibility para evitar conflictos
+     entre display:none y los layouts display:grid de las slides de pilares. */
+  .slide{
+    position:absolute;inset:53px 0 0;overflow:hidden;
+    opacity:0;visibility:hidden;pointer-events:none;
+    /* cada slide declara su propio display según su layout */
+  }
+  .slide.active{
+    opacity:1;visibility:visible;pointer-events:auto;
+    animation:fadeUp .45s cubic-bezier(.16,.84,.3,1) both;
+    z-index:2;
+  }
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+  /* layouts — declaran display directamente sobre .slide */
+  .l-full  {display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 64px}
+  .l-left  {display:flex;flex-direction:column;justify-content:center;padding:44px 64px}
+  .l-split {display:grid;grid-template-columns:1fr 1fr}
+  .l-pilar {display:grid;grid-template-columns:1fr 1fr}
 
   /* ── PALETA DE PILARES ── */
   --p1:#1f7aa8; /* gente · azul */
@@ -58,12 +75,8 @@
   .bg-split-gv .left{background:#f3fbf4}
   .bg-split-gv .right{background:linear-gradient(160deg,#0f5c30,#07260f)}
 
-  /* ── LAYOUTS ── */
-  .l-full{flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 64px}
-  .l-left{flex-direction:column;justify-content:center;padding:44px 64px}
-  .l-split{display:grid;grid-template-columns:1fr 1fr}
+  /* ── LAYOUTS — cols internas ── */
   .l-split .col{display:flex;flex-direction:column;justify-content:center;padding:48px 52px;overflow:hidden}
-  .l-pilar{display:grid;grid-template-columns:1fr 1fr}
   .l-pilar .col-icon{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 36px}
   .l-pilar .col-text{display:flex;flex-direction:column;justify-content:center;padding:48px 52px 48px 32px;overflow:hidden}
 
