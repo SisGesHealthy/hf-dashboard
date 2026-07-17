@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-17 16:48:15",
+  "actualizado": "2026-07-17 16:58:53",
   "directrices": [
     {
       "id": "d-20260709-194237-157676",
@@ -74,6 +74,19 @@
       "prioridad": "Normal",
       "fecha_envio": "2026-07-17 16:47:37",
       "message_id": "1784324857400",
+      "estado": "pendiente",
+      "escalado": false,
+      "fecha_atencion": "",
+      "horas_pendiente": 0.2
+    },
+    {
+      "id": "d-20260717-215816-496978",
+      "texto": "Enviar el reproceso para el topping de piña",
+      "area": "Producción",
+      "responsable_nombre": "Jefe de Producción",
+      "prioridad": "Normal",
+      "fecha_envio": "2026-07-17 16:58:16",
+      "message_id": "1784325496978",
       "estado": "pendiente",
       "escalado": false,
       "fecha_atencion": "",
