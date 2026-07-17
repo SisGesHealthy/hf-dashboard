@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-17 16:32:29",
+  "actualizado": "2026-07-17 16:48:15",
   "directrices": [
     {
       "id": "d-20260709-194237-157676",
@@ -65,6 +65,19 @@
       "escalado": false,
       "fecha_atencion": "2026-07-17 01:36:50",
       "horas_pendiente": 6.2
+    },
+    {
+      "id": "d-20260717-214737-857400",
+      "texto": "Para el topping de piña, el personal no ejerza presión al momento de picado, revisar corte de piña y que no tenga presencia de hilachas",
+      "area": "Calidad",
+      "responsable_nombre": "Jefe de Calidad",
+      "prioridad": "Normal",
+      "fecha_envio": "2026-07-17 16:47:37",
+      "message_id": "1784324857400",
+      "estado": "pendiente",
+      "escalado": false,
+      "fecha_atencion": "",
+      "horas_pendiente": 0.0
     }
   ]
 }
