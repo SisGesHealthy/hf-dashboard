@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-17 20:05:25",
+  "actualizado": "2026-07-17 23:13:58",
   "directrices": [
     {
       "id": "d-20260709-194237-157676",
@@ -74,9 +74,9 @@
       "prioridad": "Normal",
       "fecha_envio": "2026-07-17 16:47:37",
       "message_id": "1784324857400",
-      "estado": "pendiente",
+      "estado": "atendido",
       "escalado": false,
-      "fecha_atencion": "",
+      "fecha_atencion": "2026-07-17 23:13:58",
       "horas_pendiente": 3.3
     },
     {
@@ -87,9 +87,9 @@
       "prioridad": "Normal",
       "fecha_envio": "2026-07-17 16:58:16",
       "message_id": "1784325496978",
-      "estado": "pendiente",
+      "estado": "atendido",
       "escalado": false,
-      "fecha_atencion": "",
+      "fecha_atencion": "2026-07-17 23:13:58",
       "horas_pendiente": 3.1
     }
   ]
