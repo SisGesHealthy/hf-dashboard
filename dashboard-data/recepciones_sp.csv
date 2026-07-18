@@ -1,3 +1,6 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-11707.0,2026-07-17 07:22,2026-07-17 08:53,PIÑA-MP00022,2032.0,Clara Ruiz ,Falto 168 kg,12.2,3.57,0.58,,2026-07-17 23:30:29
-217078.0,2026-07-17 15:10,2026-07-17 15:25,MORA DE CASTILLA-MP00016,1641.0,Braulio Ronquillo,Deja 53 gavetas ,8.4,2.93,1.94,,2026-07-17 23:30:29
+11707.0,2026-07-17 07:22,2026-07-17 08:53,PIÑA-MP00022,2032.0,Clara Ruiz ,Falto 168 kg,12.2,3.57,0.58,,2026-07-18 00:00:30
+217078.0,2026-07-17 15:10,2026-07-17 15:25,MORA DE CASTILLA-MP00016,1641.0,Braulio Ronquillo,Deja 53 gavetas ,8.4,2.93,1.94,,2026-07-18 00:00:30
+61707.0,2026-07-17 18:31,2026-07-17 18:36,MORA CATEGORIA 1-MP00242,221.0,Cesar Lisintuña ,74 gavetas  de. Mora. Categoría  1,8.4,3.01,0.0,,2026-07-18 00:00:30
+41707.0,2026-07-17 18:48,2026-07-17 18:52,MORA DE CASTILLA-MP00016,908.0,Cesar Lisintuña ,30 gavetas  de. Mora  de castilla ,8.0,2.9,1.98,,2026-07-18 00:00:30
+51707.0,2026-07-17 18:59,2026-07-17 18:59,MORA DE CASTILLA-MP00016,0.0,Edision  Lisintuña ,,8.6,2.98,1.95,,2026-07-18 00:00:30
