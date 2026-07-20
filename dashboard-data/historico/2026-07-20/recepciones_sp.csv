@@ -1,8 +1,8 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
 22007.0,2026-07-20 06:38,2026-07-20 06:53,FRUTILLA-MP00007,1076.0,Patricio Caisalitin ,"se cambia 937 neto por 1076
-",9.5,3.46,0.91,,2026-07-20 22:30:45
-12007.0,2026-07-20 07:02,2026-07-20 07:06,FRUTILLA-MP00007,363.0,Sergio Laguaquiza ,24 gavetas,9.5,3.4,0.81,,2026-07-20 22:30:45
+",9.5,3.46,0.91,,2026-07-20 22:56:54
+12007.0,2026-07-20 07:02,2026-07-20 07:06,FRUTILLA-MP00007,363.0,Sergio Laguaquiza ,24 gavetas,9.5,3.4,0.81,,2026-07-20 22:56:54
 32007.0,2026-07-20 07:41,2026-07-20 09:12,PAPAYA-MP00020,2139.0,Carmen Izquierdo,"Se recibe 39 kl más 
-Se reciben 138 gavetas de papaya ",9.4,5.7,0.064,Acidez baja,2026-07-20 22:30:45
-42007.0,2026-07-20 10:56,2026-07-20 12:21,MARACUYA-MP00014,7436.0,Yoffre Noguera ,Llegaron 436 kg de más ,15.8,2.93,3.2,,2026-07-20 22:30:45
-52007.0,2026-07-20 17:07,2026-07-20 17:22,MOTA GUANÁBANA-MP00028,2000.0,Fripa ,40 tachos  de guanábana ,16.3,3.5,0.86,,2026-07-20 22:30:45
+Se reciben 138 gavetas de papaya ",9.4,5.7,0.064,Acidez baja,2026-07-20 22:56:54
+42007.0,2026-07-20 10:56,2026-07-20 12:21,MARACUYA-MP00014,7436.0,Yoffre Noguera ,Llegaron 436 kg de más ,15.8,2.93,3.2,,2026-07-20 22:56:54
+52007.0,2026-07-20 17:07,2026-07-20 17:22,MOTA GUANÁBANA-MP00028,2000.0,Fripa ,40 tachos  de guanábana ,16.3,3.5,0.86,,2026-07-20 22:56:54
