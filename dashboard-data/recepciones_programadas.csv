@@ -1,4 +1,4 @@
 ﻿id,proveedor,fruta,cantidad_prog,unidad,fecha_programada,observaciones,estado,actualizado
-,Cristofer Aguilar ,GUAYABA-MP00003,4200.0,KG,2026-08-06 06:30,,Programada,2026-08-06 09:30:45
-,Manuel Ayala ,MORA TIPO B-MP00036,900.0,KG,2026-08-06 10:30,,Programada,2026-08-06 09:30:45
-,Pedro Diaz,MOTA GUANÁBANA-MP00028,1000.0,KG,2026-08-06 15:00,,Programada,2026-08-06 09:30:45
+,Cristofer Aguilar ,GUAYABA-MP00003,4200.0,KG,2026-08-06 06:30,,Programada,2026-08-06 10:00:38
+,Manuel Ayala ,MORA TIPO B-MP00036,900.0,KG,2026-08-06 10:30,,Programada,2026-08-06 10:00:38
+,Pedro Diaz,MOTA GUANÁBANA-MP00028,1000.0,KG,2026-08-06 15:00,,Programada,2026-08-06 10:00:38
