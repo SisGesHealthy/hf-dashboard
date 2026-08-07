@@ -1,8 +1,10 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-10708.0,2026-08-07 06:40,2026-08-07 06:47,FRUTILLA DESPITONADA PARA TOPPING-MP00154,1301.0,Laura  Enriquez,65 gavetas  de frutilla  despistonada  para topping ,9.4,3.57,0.0,,2026-08-07 21:30:32
-20708.0,2026-08-07 06:58,2026-08-07 07:04,FRUTILLA-MP00007,1304.0,José Miguel Lluglluna,56 gavetas de frutilla  ,9.8,3.65,0.0,,2026-08-07 21:30:32
-30708.0,2026-08-07 08:37,2026-08-07 11:43,PIÑA-MP00022,9730.0,Clara  Ruiz,456 gavetas  de piña  ,15.7,3.84,0.44,,2026-08-07 21:30:32
-50708.0,2026-08-07 13:57,2026-08-07 14:01,MORA DE CASTILLA-MP00016,1605.0,Braulio Ronquillo,53 gavetas de mora  de castilla ,8.3,2.94,1.9,,2026-08-07 21:30:32
-60708.0,2026-08-07 15:54,2026-08-07 15:56,MORA DE CASTILLA-MP00016,909.0,Carmen Lisintuña,Se reciben 30 gavetas de mora de castilla ,7.9,2.89,1.96,,2026-08-07 21:30:32
-90708.0,2026-08-07 16:06,2026-08-07 16:09,MORA DE CASTILLA-MP00016,1125.0,Luis Silva,Envio por error de sistema,8.1,2.93,1.92,,2026-08-07 21:30:32
-120708.0,2026-08-07 16:07,2026-08-07 16:12,MORA DE CASTILLA-MP00016,335.0,Sebastian Quisphe,Se reciben 11 gavetas de mora de  castilla ,8.1,2.93,1.92,,2026-08-07 21:30:32
+10708.0,2026-08-07 06:40,2026-08-07 06:47,FRUTILLA DESPITONADA PARA TOPPING-MP00154,1301.0,Laura  Enriquez,65 gavetas  de frutilla  despistonada  para topping ,9.4,3.57,0.0,,2026-08-07 22:00:39
+20708.0,2026-08-07 06:58,2026-08-07 07:04,FRUTILLA-MP00007,1304.0,José Miguel Lluglluna,56 gavetas de frutilla  ,9.8,3.65,0.0,,2026-08-07 22:00:39
+30708.0,2026-08-07 08:37,2026-08-07 11:43,PIÑA-MP00022,9730.0,Clara  Ruiz,456 gavetas  de piña  ,15.7,3.84,0.44,,2026-08-07 22:00:39
+50708.0,2026-08-07 13:57,2026-08-07 14:01,MORA DE CASTILLA-MP00016,1605.0,Braulio Ronquillo,53 gavetas de mora  de castilla ,8.3,2.94,1.9,,2026-08-07 22:00:39
+60708.0,2026-08-07 15:54,2026-08-07 15:56,MORA DE CASTILLA-MP00016,909.0,Carmen Lisintuña,Se reciben 30 gavetas de mora de castilla ,7.9,2.89,1.96,,2026-08-07 22:00:39
+90708.0,2026-08-07 16:06,2026-08-07 16:09,MORA DE CASTILLA-MP00016,1125.0,Luis Silva,Envio por error de sistema,8.1,2.93,1.92,,2026-08-07 22:00:39
+120708.0,2026-08-07 16:07,2026-08-07 16:12,MORA DE CASTILLA-MP00016,335.0,Sebastian Quisphe,Se reciben 11 gavetas de mora de  castilla ,8.1,2.93,1.92,,2026-08-07 22:00:39
+70708.0,2026-08-07 16:34,2026-08-07 16:44,MORA CATEGORIA 1-MP00242,279.0,Cesar Lisintuña ,Se reciben 94 gavetas mora categoría 1,8.9,2.92,,,2026-08-07 22:00:39
+80708.0,2026-08-07 16:48,2026-08-07 16:57,MORA DE CASTILLA-MP00016,572.0,Cesar Lisintuña ,Se reciben 19 gavetas de mora de castilla ,7.8,2.94,1.92,,2026-08-07 22:00:39
