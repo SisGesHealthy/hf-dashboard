@@ -1,3 +1,4 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-11108.0,2026-08-11 07:02,2026-08-11 07:25,PAPAYA-MP00020,454.0,Carmen Izquierdo,Se reciben 27 de papaya ,8.7,5.62,0.11,,2026-08-11 17:00:47
-21108.0,2026-08-11 08:05,2026-08-11 08:14,MORA TIPO B-MP00036,948.0,Oscar Jimenez,Se reciben 31 gavetas de mora ,8.4,2.9,2.04,,2026-08-11 17:00:47
+11108.0,2026-08-11 07:02,2026-08-11 07:25,PAPAYA-MP00020,454.0,Carmen Izquierdo,Se reciben 27 de papaya ,8.7,5.62,0.11,,2026-08-11 17:25:48
+21108.0,2026-08-11 08:05,2026-08-11 08:14,MORA TIPO B-MP00036,948.0,Oscar Jimenez,Se reciben 31 gavetas de mora ,8.4,2.9,2.04,,2026-08-11 17:25:48
+41108.0,2026-08-11 12:25,2026-08-11 12:25,LULO ENTERO-MP00243,0.0,Marlene Chavez,,7.4,3.34,0.0,,2026-08-11 17:25:48
