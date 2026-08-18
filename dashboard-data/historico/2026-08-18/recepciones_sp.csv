@@ -1,5 +1,6 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-11808.0,2026-08-18 06:58,2026-08-18 07:02,FRUTILLA DESPITONADA PARA TOPPING-MP00154,225.0,Sergio Laguaquiza,Se reciben 15 gavetas  de frutilla despistonada para topping ,9.5,3.56,0.0,,2026-08-18 17:00:37
-21808.0,2026-08-18 07:13,2026-08-18 07:28,FRUTILLA DESPITONADA PARA TOPPING-MP00154,1007.0,Laura  Enriquez,Se reciben 50 gavetas de frutilla despistonada para topping ,8.1,3.69,0.0,,2026-08-18 17:00:37
-31808.0,2026-08-18 09:56,2026-08-18 10:29,MORA TIPO B-MP00036,944.0,Oscar Jimenez,Se reciben 31gavetas de mora tipo B ,7.6,3.03,1.83,,2026-08-18 17:00:37
-51808.0,2026-08-18 11:49,2026-08-18 11:49,LULO ENTERO-MP00243,0.0,Marlene Chavez,,6.9,3.14,0.0,,2026-08-18 17:00:37
+11808.0,2026-08-18 06:58,2026-08-18 07:02,FRUTILLA DESPITONADA PARA TOPPING-MP00154,225.0,Sergio Laguaquiza,Se reciben 15 gavetas  de frutilla despistonada para topping ,9.5,3.56,0.0,,2026-08-18 17:30:32
+21808.0,2026-08-18 07:13,2026-08-18 07:28,FRUTILLA DESPITONADA PARA TOPPING-MP00154,1007.0,Laura  Enriquez,Se reciben 50 gavetas de frutilla despistonada para topping ,8.1,3.69,0.0,,2026-08-18 17:30:32
+31808.0,2026-08-18 09:56,2026-08-18 10:29,MORA TIPO B-MP00036,944.0,Oscar Jimenez,Se reciben 31gavetas de mora tipo B ,7.6,3.03,1.83,,2026-08-18 17:30:32
+51808.0,2026-08-18 11:49,2026-08-18 12:24,LULO ENTERO-MP00243,714.0,Marlene Chavez,Se reciben 31gavetas  de lulo entero ,6.9,3.14,0.0,,2026-08-18 17:30:32
+81808.0,2026-08-18 12:24,2026-08-18 12:24,NARANJILLA-MP00019,0.0,Marlene Chavez,,7.3,3.15,1.54,,2026-08-18 17:30:32
