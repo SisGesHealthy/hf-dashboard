@@ -1,9 +1,9 @@
 ﻿id,proveedor,fruta,cantidad_prog,unidad,fecha_programada,observaciones,estado,actualizado
-,Clara  Ruiz,PIÑA-MP00022,6900.0,KG,2026-08-21 06:15,300kg  proveedor entrega piña verde- pintona ,Programada,2026-08-21 14:31:25
-,Braulio Ronquillo,MORA CATEGORIA 1-MP00242,200.0,KG,2026-08-21 13:00,,Programada,2026-08-21 14:31:25
-,Braulio Ronquillo,MORA DE CASTILLA-MP00016,1400.0,KG,2026-08-21 13:03,,Programada,2026-08-21 14:31:25
-,Cesar Lisintuña ,MORA CATEGORIA 1-MP00242,200.0,KG,2026-08-21 14:00,,Programada,2026-08-21 14:31:25
-,Cesar Lisintuña ,MORA DE CASTILLA-MP00016,600.0,KG,2026-08-21 14:00,,Programada,2026-08-21 14:31:25
-,Edison Lisintuña ,MORA DE CASTILLA-MP00016,600.0,KG,2026-08-21 14:00,,Programada,2026-08-21 14:31:25
-,Carmen Lisintuña,MORA DE CASTILLA-MP00016,600.0,KG,2026-08-21 15:30,,Programada,2026-08-21 14:31:25
-,Luis Silva ,MORA DE CASTILLA-MP00016,600.0,KG,2026-08-21 15:30,,Programada,2026-08-21 14:31:25
+,Clara  Ruiz,PIÑA-MP00022,6900.0,KG,2026-08-21 06:15,300kg  proveedor entrega piña verde- pintona ,Programada,2026-08-21 15:00:36
+,Braulio Ronquillo,MORA CATEGORIA 1-MP00242,200.0,KG,2026-08-21 13:00,,Programada,2026-08-21 15:00:36
+,Braulio Ronquillo,MORA DE CASTILLA-MP00016,1400.0,KG,2026-08-21 13:03,,Programada,2026-08-21 15:00:36
+,Cesar Lisintuña ,MORA CATEGORIA 1-MP00242,200.0,KG,2026-08-21 14:00,,Programada,2026-08-21 15:00:36
+,Cesar Lisintuña ,MORA DE CASTILLA-MP00016,600.0,KG,2026-08-21 14:00,,Programada,2026-08-21 15:00:36
+,Edison Lisintuña ,MORA DE CASTILLA-MP00016,600.0,KG,2026-08-21 14:00,,Programada,2026-08-21 15:00:36
+,Carmen Lisintuña,MORA DE CASTILLA-MP00016,600.0,KG,2026-08-21 15:30,,Programada,2026-08-21 15:00:36
+,Luis Silva ,MORA DE CASTILLA-MP00016,600.0,KG,2026-08-21 15:30,,Programada,2026-08-21 15:00:36
