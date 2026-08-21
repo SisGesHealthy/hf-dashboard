@@ -1,6 +1,6 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-22008.0,2026-08-20 06:45,2026-08-20 06:59,FRUTILLA-MP00007,1020.0,Patricio Caisalitin,Se reciben 70 gavetas de frutilla ,9.5,3.54,0.0,,2026-08-21 02:00:39
-12008.0,2026-08-20 07:05,2026-08-20 07:17,FRUTILLA-MP00007,405.0,Sergio Laguaquiza,Se reciben 28 gavetas  de Sergio  laguaquiza ,10.7,3.72,0.0,,2026-08-21 02:00:39
-42008.0,2026-08-20 08:17,2026-08-20 10:46,GUAYABA-MP00003,4858.0,Cristofer Aguilar  ,Se reciben 216 gavetas de guayaba ,7.2,3.85,0.28,,2026-08-21 02:00:39
-32008.0,2026-08-20 14:12,2026-08-20 14:19,FRUTILLA-MP00007,1053.0,José Miguel Lluglluna,Se reciben 44 gavetas de frutilla ,7.6,3.85,0.0,Brix bajo,2026-08-21 02:00:39
-82008.0,2026-08-20 19:00,2026-08-20 19:03,ARANDANO-MP00034,510.0,Santiago  Chiriboga ,25 gavetas de arándano ,12.9,2.84,0.0,,2026-08-21 02:00:39
+22008.0,2026-08-20 06:45,2026-08-20 06:59,FRUTILLA-MP00007,1020.0,Patricio Caisalitin,Se reciben 70 gavetas de frutilla ,9.5,3.54,0.0,,2026-08-21 02:30:31
+12008.0,2026-08-20 07:05,2026-08-20 07:17,FRUTILLA-MP00007,405.0,Sergio Laguaquiza,Se reciben 28 gavetas  de Sergio  laguaquiza ,10.7,3.72,0.0,,2026-08-21 02:30:31
+42008.0,2026-08-20 08:17,2026-08-20 10:46,GUAYABA-MP00003,4858.0,Cristofer Aguilar  ,Se reciben 216 gavetas de guayaba ,7.2,3.85,0.28,,2026-08-21 02:30:31
+32008.0,2026-08-20 14:12,2026-08-20 14:19,FRUTILLA-MP00007,1053.0,José Miguel Lluglluna,Se reciben 44 gavetas de frutilla ,7.6,3.85,0.0,Brix bajo,2026-08-21 02:30:31
+82008.0,2026-08-20 19:00,2026-08-20 19:03,ARANDANO-MP00034,510.0,Santiago  Chiriboga ,25 gavetas de arándano ,12.9,2.84,0.0,,2026-08-21 02:30:31
