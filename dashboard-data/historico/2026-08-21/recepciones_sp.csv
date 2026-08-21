@@ -1,13 +1,13 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-82008.0,2026-08-20 19:00,2026-08-20 19:03,ARANDANO-MP00034,510.0,Santiago  Chiriboga ,25 gavetas de arándano ,12.9,2.84,0.0,,2026-08-21 23:30:38
-12108.0,2026-08-21 06:27,2026-08-21 06:34,FRUTILLA-MP00007,590.0,José Miguel Lluglluna,Se reciben 26 gavetas de frutilla ,9.3,3.48,0.0,,2026-08-21 23:30:38
-22108.0,2026-08-21 07:07,2026-08-21 10:27,PIÑA-MP00022,7098.0,Clara  Ruiz,Se reciben  346 gavetas de piña ,13.8,3.8,0.28,,2026-08-21 23:30:38
-32108.0,2026-08-21 14:57,2026-08-21 15:11,MORA CATEGORIA 1-MP00242,149.0,Braulio Ronquillo,Se reciben 50 gavetas de mora categoría 1,9.7,2.41,0.0,,2026-08-21 23:30:38
-42108.0,2026-08-21 15:16,2026-08-21 15:45,MORA DE CASTILLA-MP00016,1265.0,Braulio Ronquillo,Se reciben 41 gavetas de mora castilla ,8.7,2.85,2.34,,2026-08-21 23:30:38
-52108.0,2026-08-21 15:57,2026-08-21 16:09,MORA CATEGORIA 1-MP00242,179.0,Cesar Lisintuña ,Se recibe 62 gavetas de mora categoría 1,8.7,2.64,0.0,,2026-08-21 23:30:38
-72108.0,2026-08-21 16:15,2026-08-21 16:37,MORA DE CASTILLA-MP00016,267.0,Edison Lisintuña ,Se reciben 9 gavetas  de mora castilla ,8.4,2.71,2.4,,2026-08-21 23:30:38
-62108.0,2026-08-21 16:50,2026-08-21 16:53,MORA DE CASTILLA-MP00016,533.0,Cesar Lisintuña ,18 gavetas  de mora  de castilla ,8.3,2.79,2.3,,2026-08-21 23:30:38
-112108.0,2026-08-21 17:15,2026-08-21 17:18,MORA CATEGORIA 1-MP00242,98.0,Luis Silva ,25 g de mora  categoría 1,8.7,2.68,0.0,,2026-08-21 23:30:38
-102108.0,2026-08-21 17:21,2026-08-21 17:24,MORA CATEGORIA 1-MP00242,97.0,Carmen Lisintuña ,25 gavetas  de mora  categoría 1,8.8,2.8,0.0,,2026-08-21 23:30:38
-82108.0,2026-08-21 17:48,2026-08-21 17:54,MORA DE CASTILLA-MP00016,1108.0,Carmen Lisintuña,36 gavetas de mora castilla ,7.8,2.85,2.34,,2026-08-21 23:30:38
-92108.0,2026-08-21 18:06,2026-08-21 18:09,MORA DE CASTILLA-MP00016,833.0,Luis Silva ,26 gavetas  de mora   de castilla ,8.0,2.76,2.35,,2026-08-21 23:30:38
+82008.0,2026-08-20 19:00,2026-08-20 19:03,ARANDANO-MP00034,510.0,Santiago  Chiriboga ,25 gavetas de arándano ,12.9,2.84,0.0,,2026-08-21 23:47:44
+12108.0,2026-08-21 06:27,2026-08-21 06:34,FRUTILLA-MP00007,590.0,José Miguel Lluglluna,Se reciben 26 gavetas de frutilla ,9.3,3.48,0.0,,2026-08-21 23:47:44
+22108.0,2026-08-21 07:07,2026-08-21 10:27,PIÑA-MP00022,7098.0,Clara  Ruiz,Se reciben  346 gavetas de piña ,13.8,3.8,0.28,,2026-08-21 23:47:44
+32108.0,2026-08-21 14:57,2026-08-21 15:11,MORA CATEGORIA 1-MP00242,149.0,Braulio Ronquillo,Se reciben 50 gavetas de mora categoría 1,9.7,2.41,0.0,,2026-08-21 23:47:44
+42108.0,2026-08-21 15:16,2026-08-21 15:45,MORA DE CASTILLA-MP00016,1265.0,Braulio Ronquillo,Se reciben 41 gavetas de mora castilla ,8.7,2.85,2.34,,2026-08-21 23:47:44
+52108.0,2026-08-21 15:57,2026-08-21 16:09,MORA CATEGORIA 1-MP00242,179.0,Cesar Lisintuña ,Se recibe 62 gavetas de mora categoría 1,8.7,2.64,0.0,,2026-08-21 23:47:44
+72108.0,2026-08-21 16:15,2026-08-21 16:37,MORA DE CASTILLA-MP00016,267.0,Edison Lisintuña ,Se reciben 9 gavetas  de mora castilla ,8.4,2.71,2.4,,2026-08-21 23:47:44
+62108.0,2026-08-21 16:50,2026-08-21 16:53,MORA DE CASTILLA-MP00016,533.0,Cesar Lisintuña ,18 gavetas  de mora  de castilla ,8.3,2.79,2.3,,2026-08-21 23:47:44
+112108.0,2026-08-21 17:15,2026-08-21 17:18,MORA CATEGORIA 1-MP00242,98.0,Luis Silva ,25 g de mora  categoría 1,8.7,2.68,0.0,,2026-08-21 23:47:44
+102108.0,2026-08-21 17:21,2026-08-21 17:24,MORA CATEGORIA 1-MP00242,97.0,Carmen Lisintuña ,25 gavetas  de mora  categoría 1,8.8,2.8,0.0,,2026-08-21 23:47:44
+82108.0,2026-08-21 17:48,2026-08-21 17:54,MORA DE CASTILLA-MP00016,1108.0,Carmen Lisintuña,36 gavetas de mora castilla ,7.8,2.85,2.34,,2026-08-21 23:47:44
+92108.0,2026-08-21 18:06,2026-08-21 18:09,MORA DE CASTILLA-MP00016,833.0,Luis Silva ,26 gavetas  de mora   de castilla ,8.0,2.76,2.35,,2026-08-21 23:47:44
