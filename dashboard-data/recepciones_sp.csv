@@ -1,7 +1,7 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-12508.0,2026-08-25 06:37,2026-08-25 06:45,FRUTILLA-MP00007,967.0,José Miguel Lluglluna,Se reciben 42 gavetas de frutilla ,9.3,3.65,0.8,,2026-08-26 00:30:34
-22508.0,2026-08-25 08:52,2026-08-25 08:57,MORA TIPO B-MP00036,415.0,Oscar Jimenez,Se reciben 14 gavetas de mora ,7.7,2.96,1.87,,2026-08-26 00:30:34
-32508.0,2026-08-25 11:55,2026-08-25 12:03,LULO ENTERO-MP00243,722.0,Marlene Chavez,Se reciben 36 gavetas de lulo enteró ,7.9,3.15,0.0,,2026-08-26 00:30:34
-42508.0,2026-08-25 12:14,2026-08-25 14:53,NARANJILLA-MP00019,6003.0,Marlene Chavez,293 gavetas  de lulo ,7.8,3.15,1.8,,2026-08-26 00:30:34
-52508.0,2026-08-25 15:40,2026-08-25 15:52,ARANDANO-MP00034,795.0,Santiago Chiriboga ,15 gabetas de proveedor y 25 de hf,12.8,3.37,,,2026-08-26 00:30:34
-62508.0,2026-08-25 16:00,2026-08-25 16:02,MOTA GUANÁBANA-MP00028,103.0,Minfarms ,3 gavetas,16.8,3.72,0.93,,2026-08-26 00:30:34
+12508.0,2026-08-25 06:37,2026-08-25 06:45,FRUTILLA-MP00007,967.0,José Miguel Lluglluna,Se reciben 42 gavetas de frutilla ,9.3,3.65,0.8,,2026-08-26 01:00:33
+22508.0,2026-08-25 08:52,2026-08-25 08:57,MORA TIPO B-MP00036,415.0,Oscar Jimenez,Se reciben 14 gavetas de mora ,7.7,2.96,1.87,,2026-08-26 01:00:33
+32508.0,2026-08-25 11:55,2026-08-25 12:03,LULO ENTERO-MP00243,722.0,Marlene Chavez,Se reciben 36 gavetas de lulo enteró ,7.9,3.15,0.0,,2026-08-26 01:00:33
+42508.0,2026-08-25 12:14,2026-08-25 14:53,NARANJILLA-MP00019,6003.0,Marlene Chavez,293 gavetas  de lulo ,7.8,3.15,1.8,,2026-08-26 01:00:33
+52508.0,2026-08-25 15:40,2026-08-25 15:52,ARANDANO-MP00034,795.0,Santiago Chiriboga ,15 gabetas de proveedor y 25 de hf,12.8,3.37,,,2026-08-26 01:00:33
+62508.0,2026-08-25 16:00,2026-08-25 16:02,MOTA GUANÁBANA-MP00028,103.0,Minfarms ,3 gavetas,16.8,3.72,0.93,,2026-08-26 01:00:33
