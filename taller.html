@@ -483,20 +483,24 @@ function renderGantt(filas, prodIdx, esHoy) {
   let tbody = '<tbody>';
   Object.entries(porEmpleado).forEach(([emp, bloques]) => {
     const bars = bloques.map(b => {
-      // Prioridad: tiempos de productividad (captura automática/manual por empleado)
-      // Fallback: tiempos de la OT (date_start/finished editados manualmente en Odoo)
-      const iniStr = (b.emp_fecha_inicio && b.emp_fecha_inicio.trim())
-        ? b.emp_fecha_inicio : (b.ot_fecha_inicio || '');
-      const finStr = (b.emp_fecha_fin && b.emp_fecha_fin.trim() && !b.emp_fecha_fin.toLowerCase().includes('curso'))
-        ? b.emp_fecha_fin : (b.ot_fecha_fin || '');
-      const fuente = (b.emp_fecha_inicio && b.emp_fecha_inicio.trim()) ? '' : ' [OT]';
+      // Si hay registro de empleado (productividad): usar emp_fecha_inicio/fin.
+      //   "En curso" → barra se extiende hasta ahora, nunca cae a ot_fecha_fin.
+      // Si NO hay registro de empleado: fallback a tiempos de la OT (editados en Odoo).
+      const hasEmp = b.emp_fecha_inicio && b.emp_fecha_inicio.trim();
+      const iniStr = hasEmp ? b.emp_fecha_inicio : (b.ot_fecha_inicio || '');
+      const fuente = hasEmp ? '' : ' [OT]';
 
       const ini = pct(iniStr);
-      const finRaw = finStr.trim();
       let fin;
-      if (finRaw && !finRaw.toLowerCase().includes('curso')) fin = pct(finRaw);
-      else if (esHoy) fin = pctAhoraReal;
-      else fin = 100;
+      if (hasEmp) {
+        const empFin = (b.emp_fecha_fin || '').trim();
+        if (empFin && !empFin.toLowerCase().includes('curso')) fin = pct(empFin);
+        else fin = esHoy ? pctAhoraReal : 100;
+      } else {
+        const otFin = (b.ot_fecha_fin || '').trim();
+        if (otFin) fin = pct(otFin);
+        else fin = esHoy ? pctAhoraReal : 100;
+      }
       if (ini === null || fin === null || fin <= ini) return '';
       const left  = ini.toFixed(2);
       const width = Math.max(0.5, fin - ini).toFixed(2);
