@@ -406,9 +406,14 @@ function renderGantt(filas, prodIdx, esHoy) {
   const TOTAL_H  = HORA_FIN - HORA_INI;
 
   // Hoy: solo OT activas (En progreso). Días pasados: todo registro con inicio.
+  // Acepta emp_fecha_inicio (productividad) o ot_fecha_inicio (OT editada manualmente).
+  const tieneInicio = f =>
+    (f.emp_fecha_inicio && f.emp_fecha_inicio.trim()) ||
+    (f.ot_fecha_inicio  && f.ot_fecha_inicio.trim());
+
   const activos = filas.filter(f => {
     if (!f.empleado || f.empleado === 'Sin registro hoy') return false;
-    if (!f.emp_fecha_inicio || !f.emp_fecha_inicio.trim()) return false;
+    if (!tieneInicio(f)) return false;
     if (esHoy) return (f.estado_ot || '').toLowerCase().includes('progreso');
     return true;
   });
@@ -478,8 +483,16 @@ function renderGantt(filas, prodIdx, esHoy) {
   let tbody = '<tbody>';
   Object.entries(porEmpleado).forEach(([emp, bloques]) => {
     const bars = bloques.map(b => {
-      const ini = pct(b.emp_fecha_inicio);
-      const finRaw = (b.emp_fecha_fin || '').trim();
+      // Prioridad: tiempos de productividad (captura automática/manual por empleado)
+      // Fallback: tiempos de la OT (date_start/finished editados manualmente en Odoo)
+      const iniStr = (b.emp_fecha_inicio && b.emp_fecha_inicio.trim())
+        ? b.emp_fecha_inicio : (b.ot_fecha_inicio || '');
+      const finStr = (b.emp_fecha_fin && b.emp_fecha_fin.trim() && !b.emp_fecha_fin.toLowerCase().includes('curso'))
+        ? b.emp_fecha_fin : (b.ot_fecha_fin || '');
+      const fuente = (b.emp_fecha_inicio && b.emp_fecha_inicio.trim()) ? '' : ' [OT]';
+
+      const ini = pct(iniStr);
+      const finRaw = finStr.trim();
       let fin;
       if (finRaw && !finRaw.toLowerCase().includes('curso')) fin = pct(finRaw);
       else if (esHoy) fin = pctAhoraReal;
@@ -489,9 +502,9 @@ function renderGantt(filas, prodIdx, esHoy) {
       const width = Math.max(0.5, fin - ini).toFixed(2);
       const ot    = (b.orden_trabajo || '').split(' - ')[0].trim();
       const op    = (b.orden_trabajo || '').split(' - ')[1]?.trim() || ot;
-      const colorCls = getColorArea(ot); // color propio según la orden de ESTE bloque
-      return `<div class="gantt-bar ${colorCls}" style="left:${left}%;width:${width}%" title="${ot} · ${op}">
-        <span style="font-size:.63rem">${op}</span>
+      const colorCls = getColorArea(ot);
+      return `<div class="gantt-bar ${colorCls}" style="left:${left}%;width:${width}%" title="${ot} · ${op}${fuente}">
+        <span style="font-size:.63rem">${op}${fuente}</span>
       </div>`;
     }).join('');
 
