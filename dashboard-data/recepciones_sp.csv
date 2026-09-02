@@ -1,5 +1,5 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-10109.0,2026-09-01 06:53,2026-09-01 07:08,COCO-MP00005,1417.0,Pedro Díaz ,Se reciben  48 gavetas grandes de coco y 10 pequeñas ,8.2,5.66,0.0,,2026-09-02 00:30:41
-20109.0,2026-09-01 07:21,2026-09-01 07:53,TAMARINDO-MP00027,1820.0,Eder Díaz ,Se reciben 40 sacos de tamarindo ,61.0,2.1,0.0,,2026-09-02 00:30:41
-30109.0,2026-09-01 12:25,2026-09-01 12:27,LULO ENTERO-MP00243,733.0,Marlene Chavez,Se reciben 35 gavetas  de lulo entero,8.2,3.04,0.0,,2026-09-02 00:30:41
-40109.0,2026-09-01 12:30,2026-09-01 14:35,NARANJILLA-MP00019,5426.0,Marlene Chavez,Se reciben 265 gavetas de naranjilla ,8.4,3.09,2.04,,2026-09-02 00:30:41
+10109.0,2026-09-01 06:53,2026-09-01 07:08,COCO-MP00005,1417.0,Pedro Díaz ,Se reciben  48 gavetas grandes de coco y 10 pequeñas ,8.2,5.66,0.0,,2026-09-02 01:00:44
+20109.0,2026-09-01 07:21,2026-09-01 07:53,TAMARINDO-MP00027,1820.0,Eder Díaz ,Se reciben 40 sacos de tamarindo ,61.0,2.1,0.0,,2026-09-02 01:00:44
+30109.0,2026-09-01 12:25,2026-09-01 12:27,LULO ENTERO-MP00243,733.0,Marlene Chavez,Se reciben 35 gavetas  de lulo entero,8.2,3.04,0.0,,2026-09-02 01:00:44
+40109.0,2026-09-01 12:30,2026-09-01 14:35,NARANJILLA-MP00019,5426.0,Marlene Chavez,Se reciben 265 gavetas de naranjilla ,8.4,3.09,2.04,,2026-09-02 01:00:44
