@@ -1,5 +1,5 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-30209.0,2026-09-02 07:44,2026-09-02 08:40,TOMATE DE ÁRBOL 4CM-MP00241,1016.0,Esteban Israel Garces,Se reciben 44 gavetas  de tomate de arbol 4cm,10.2,3.62,0.0,,2026-09-03 01:00:36
-20209.0,2026-09-02 08:40,2026-09-02 10:05,TOMATE DE ARBOL-MP00012,1754.0,Esteban Israel Garces,Se reciben 79 gavetas de tómate de árbol ,10.0,3.98,0.0,Recorrido1 cm ,2026-09-03 01:00:36
-10209.0,2026-09-02 10:20,2026-09-02 10:33,DURAZNO GRADO 8-MP00213,391.0,Cindy  Hernandez,Se reciben 20 gavetas de durazno ,15.8,3.3,0.0,,2026-09-03 01:00:36
-40309.0,2026-09-02 15:40,2026-09-02 15:43,MOTA GUANÁBANA-MP00028,606.0,Pedro  Diaz,12 tachos  de guanábana ,15.8,3.7,0.71,,2026-09-03 01:00:36
+30209.0,2026-09-02 07:44,2026-09-02 08:40,TOMATE DE ÁRBOL 4CM-MP00241,1016.0,Esteban Israel Garces,Se reciben 44 gavetas  de tomate de arbol 4cm,10.2,3.62,0.0,,2026-09-03 01:30:39
+20209.0,2026-09-02 08:40,2026-09-02 10:05,TOMATE DE ARBOL-MP00012,1754.0,Esteban Israel Garces,Se reciben 79 gavetas de tómate de árbol ,10.0,3.98,0.0,Recorrido1 cm ,2026-09-03 01:30:39
+10209.0,2026-09-02 10:20,2026-09-02 10:33,DURAZNO GRADO 8-MP00213,391.0,Cindy  Hernandez,Se reciben 20 gavetas de durazno ,15.8,3.3,0.0,,2026-09-03 01:30:39
+40309.0,2026-09-02 15:40,2026-09-02 15:43,MOTA GUANÁBANA-MP00028,606.0,Pedro  Diaz,12 tachos  de guanábana ,15.8,3.7,0.71,,2026-09-03 01:30:39
