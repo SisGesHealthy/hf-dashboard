@@ -1,3 +1,6 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-10409.0,2026-09-04 06:48,2026-09-04 07:01,TAMARINDO-MP00027,1018.0,Eder  Díaz ,Se reciben 22 sacos de tamarindo  ,60.0,2.16,0.0,,2026-09-04 18:30:37
-20409.0,2026-09-04 10:03,2026-09-04 10:42,MOTA GUANÁBANA-MP00028,4028.0,Guanabana Big,Se reciben  80 tachos de guanábana big,14.4,3.4,0.81,,2026-09-04 18:30:37
+10409.0,2026-09-04 06:48,2026-09-04 07:01,TAMARINDO-MP00027,1018.0,Eder  Díaz ,Se reciben 22 sacos de tamarindo  ,60.0,2.16,0.0,,2026-09-04 19:00:43
+20409.0,2026-09-04 10:03,2026-09-04 10:42,MOTA GUANÁBANA-MP00028,4028.0,Guanabana Big,Se reciben  80 tachos de guanábana big,14.4,3.4,0.81,,2026-09-04 19:00:43
+50409.0,2026-09-04 13:42,2026-09-04 13:49,MORA CATEGORIA 1-MP00242,160.0,Braulio Ronquillo,Se reciben 52 gavetas de mora categoría 1,7.8,2.78,0.0,"El color de madurez tiende de 3 a 6 
+La mayoría se encuentran medias rojas, no púrpura oscuro",2026-09-04 19:00:43
+30409.0,2026-09-04 13:57,2026-09-04 13:57,MORA DE CASTILLA-MP00016,0.0,Braulio Ronquillo,,7.4,2.81,1.94,,2026-09-04 19:00:43
