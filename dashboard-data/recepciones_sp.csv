@@ -1,14 +1,14 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-10409.0,2026-09-04 06:48,2026-09-04 07:01,TAMARINDO-MP00027,1018.0,Eder  Díaz ,Se reciben 22 sacos de tamarindo  ,60.0,2.16,0.0,,2026-09-05 02:30:32
-20409.0,2026-09-04 10:03,2026-09-04 10:42,MOTA GUANÁBANA-MP00028,4028.0,Guanabana Big,Se reciben  80 tachos de guanábana big,14.4,3.4,0.81,,2026-09-05 02:30:32
+10409.0,2026-09-04 06:48,2026-09-04 07:01,TAMARINDO-MP00027,1018.0,Eder  Díaz ,Se reciben 22 sacos de tamarindo  ,60.0,2.16,0.0,,2026-09-05 03:00:35
+20409.0,2026-09-04 10:03,2026-09-04 10:42,MOTA GUANÁBANA-MP00028,4028.0,Guanabana Big,Se reciben  80 tachos de guanábana big,14.4,3.4,0.81,,2026-09-05 03:00:35
 50409.0,2026-09-04 13:42,2026-09-04 13:49,MORA CATEGORIA 1-MP00242,160.0,Braulio Ronquillo,Se reciben 52 gavetas de mora categoría 1,7.8,2.78,0.0,"El color de madurez tiende de 3 a 6 
-La mayoría se encuentran medias rojas, no púrpura oscuro",2026-09-05 02:30:32
-30409.0,2026-09-04 13:57,2026-09-04 14:23,MORA DE CASTILLA-MP00016,1224.0,Braulio Ronquillo,Se reciben 41 gavetas de mora de castilla ,7.4,2.81,1.94,,2026-09-05 02:30:32
-90409.0,2026-09-04 16:20,2026-09-04 16:23,MORA CATEGORIA 1-MP00242,136.0,Cesar Lisintuña ,45 gavetas  de mora categoría. 1,8.6,2.76,0.0,,2026-09-05 02:30:32
-100409.0,2026-09-04 16:45,2026-09-04 16:49,MORA CATEGORIA 1-MP00242,51.0,Carmen Lisintuña ,13 gavetas  de mora  categoría 1,8.5,2.81,0.0,,2026-09-05 02:30:32
-110409.0,2026-09-04 16:50,2026-09-04 16:51,MORA CATEGORIA 1-MP00242,51.0,Luis Silva,13 gavetas  de mora  categoría 1,8.4,2.86,0.0,,2026-09-05 02:30:32
-120409.0,2026-09-04 16:53,2026-09-04 16:57,MORA DE CASTILLA-MP00016,213.0,Luis  Silva ,7 gavetas  de mora  de castilla ,8.7,2.82,1.8,,2026-09-05 02:30:32
-70409.0,2026-09-04 17:00,2026-09-04 17:02,MORA DE CASTILLA-MP00016,184.0,Carmen Lisintuña,6 gavetas  de mora  de castilla ,7.6,2.79,1.83,,2026-09-05 02:30:32
-60409.0,2026-09-04 17:02,2026-09-04 17:31,MORA DE CASTILLA-MP00016,411.0,Cesar Lisintuña ,14 gavetas  de mora de castilla ,8.2,3.16,1.82,,2026-09-05 02:30:32
-40409.0,2026-09-04 17:05,2026-09-04 17:09,MORA DE CASTILLA-MP00016,334.0,Edison Lisintuña ,11 gavetas  de mora de castilla ,8.5,2.72,1.85,,2026-09-05 02:30:32
-130409.0,2026-09-04 20:09,2026-09-04 20:09,MARACUYA-MP00014,0.0,CampoViVo ,,12.9,2.83,2.94,Rendimiento de 35.21%,2026-09-05 02:30:32
+La mayoría se encuentran medias rojas, no púrpura oscuro",2026-09-05 03:00:35
+30409.0,2026-09-04 13:57,2026-09-04 14:23,MORA DE CASTILLA-MP00016,1224.0,Braulio Ronquillo,Se reciben 41 gavetas de mora de castilla ,7.4,2.81,1.94,,2026-09-05 03:00:35
+90409.0,2026-09-04 16:20,2026-09-04 16:23,MORA CATEGORIA 1-MP00242,136.0,Cesar Lisintuña ,45 gavetas  de mora categoría. 1,8.6,2.76,0.0,,2026-09-05 03:00:35
+100409.0,2026-09-04 16:45,2026-09-04 16:49,MORA CATEGORIA 1-MP00242,51.0,Carmen Lisintuña ,13 gavetas  de mora  categoría 1,8.5,2.81,0.0,,2026-09-05 03:00:35
+110409.0,2026-09-04 16:50,2026-09-04 16:51,MORA CATEGORIA 1-MP00242,51.0,Luis Silva,13 gavetas  de mora  categoría 1,8.4,2.86,0.0,,2026-09-05 03:00:35
+120409.0,2026-09-04 16:53,2026-09-04 16:57,MORA DE CASTILLA-MP00016,213.0,Luis  Silva ,7 gavetas  de mora  de castilla ,8.7,2.82,1.8,,2026-09-05 03:00:35
+70409.0,2026-09-04 17:00,2026-09-04 17:02,MORA DE CASTILLA-MP00016,184.0,Carmen Lisintuña,6 gavetas  de mora  de castilla ,7.6,2.79,1.83,,2026-09-05 03:00:35
+60409.0,2026-09-04 17:02,2026-09-04 17:31,MORA DE CASTILLA-MP00016,411.0,Cesar Lisintuña ,14 gavetas  de mora de castilla ,8.2,3.16,1.82,,2026-09-05 03:00:35
+40409.0,2026-09-04 17:05,2026-09-04 17:09,MORA DE CASTILLA-MP00016,334.0,Edison Lisintuña ,11 gavetas  de mora de castilla ,8.5,2.72,1.85,,2026-09-05 03:00:35
+130409.0,2026-09-04 20:09,2026-09-04 20:09,MARACUYA-MP00014,0.0,CampoViVo ,,12.9,2.83,2.94,Rendimiento de 35.21%,2026-09-05 03:00:35
