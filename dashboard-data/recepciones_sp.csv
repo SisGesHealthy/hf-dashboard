@@ -1,8 +1,8 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-30809.0,2026-09-08 08:50,2026-09-08 11:49,GUAYABA-MP00003,6890.0,Karla Villavicencio,331 gavetas de guayaba ,9.7,4.44,0.26,,2026-09-08 23:30:36
-40809.0,2026-09-08 12:04,2026-09-08 12:11,LULO ENTERO-MP00243,712.0,Marlene Chavez,35 gavetas  de lulo entero ,8.2,3.01,0.0,,2026-09-08 23:30:36
-50809.0,2026-09-08 12:17,2026-09-08 14:26,NARANJILLA-MP00019,5406.0,Marlene Chavez,264 gavetas  de Naranjilla ,7.7,3.14,1.99,,2026-09-08 23:30:36
-80809.0,2026-09-08 15:09,2026-09-08 15:16,ARANDANO-MP00034,629.0,Santiago  Chiriboga ,Se reciben 31gavetas  de arándano ,,344.0,0.0,,2026-09-08 23:30:36
-70809.0,2026-09-08 15:32,2026-09-08 16:38,MOTA GUANÁBANA-MP00028,300.0,Minfarms ,Se reciben 7 gavetas de  Mota de guanábana ,15.5,3.79,0.86,,2026-09-08 23:30:36
-10809.0,2026-09-08 17:22,2026-09-08 17:27,FRUTILLA DESPITONADA PARA TOPPING-MP00154,673.0,José Miguel Lluglluna,Se reciben 30 gavetas de frutilla despistonada ,10.9,3.44,0.0,,2026-09-08 23:30:36
-20809.0,2026-09-08 17:27,2026-09-08 17:32,FRUTILLA DESPITONADA PARA PICAR-MP00221,53.0,José Miguel Lluglluna,Se reciben  2 gavetas de frutilla despistonada para picar,10.9,3.44,0.0,,2026-09-08 23:30:36
+30809.0,2026-09-08 08:50,2026-09-08 11:49,GUAYABA-MP00003,6890.0,Karla Villavicencio,331 gavetas de guayaba ,9.7,4.44,0.26,,2026-09-09 00:00:43
+40809.0,2026-09-08 12:04,2026-09-08 12:11,LULO ENTERO-MP00243,712.0,Marlene Chavez,35 gavetas  de lulo entero ,8.2,3.01,0.0,,2026-09-09 00:00:43
+50809.0,2026-09-08 12:17,2026-09-08 14:26,NARANJILLA-MP00019,5406.0,Marlene Chavez,264 gavetas  de Naranjilla ,7.7,3.14,1.99,,2026-09-09 00:00:43
+80809.0,2026-09-08 15:09,2026-09-08 15:16,ARANDANO-MP00034,629.0,Santiago  Chiriboga ,Se reciben 31gavetas  de arándano ,,344.0,0.0,,2026-09-09 00:00:43
+70809.0,2026-09-08 15:32,2026-09-08 16:38,MOTA GUANÁBANA-MP00028,300.0,Minfarms ,Se reciben 7 gavetas de  Mota de guanábana ,15.5,3.79,0.86,,2026-09-09 00:00:43
+10809.0,2026-09-08 17:22,2026-09-08 17:27,FRUTILLA DESPITONADA PARA TOPPING-MP00154,673.0,José Miguel Lluglluna,Se reciben 30 gavetas de frutilla despistonada ,10.9,3.44,0.0,,2026-09-09 00:00:43
+20809.0,2026-09-08 17:27,2026-09-08 17:32,FRUTILLA DESPITONADA PARA PICAR-MP00221,53.0,José Miguel Lluglluna,Se reciben  2 gavetas de frutilla despistonada para picar,10.9,3.44,0.0,,2026-09-09 00:00:43
