@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-10 09:05:00",
+  "actualizado": "2026-09-10 12:41:42",
   "directrices": [
     {
       "id": "d-20260709-194237-157676",
@@ -90,6 +90,19 @@
       "estado": "atendido",
       "escalado": false,
       "fecha_atencion": "2026-07-17 23:13:58",
+      "horas_pendiente": 3.1
+    },
+    {
+      "id": "d-20260910-143251-771401",
+      "texto": "Este es un mensaje de prueba, MPG",
+      "area": "Calidad",
+      "responsable_nombre": "Jefe de Calidad",
+      "prioridad": "Normal",
+      "fecha_envio": "2026-09-10 09:32:51",
+      "message_id": "1789050771401",
+      "estado": "pendiente",
+      "escalado": false,
+      "fecha_atencion": "",
       "horas_pendiente": 3.1
     }
   ]
