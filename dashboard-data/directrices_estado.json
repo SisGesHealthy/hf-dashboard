@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-10 12:41:42",
+  "actualizado": "2026-09-10 15:02:00",
   "directrices": [
     {
       "id": "d-20260709-194237-157676",
@@ -103,7 +103,7 @@
       "estado": "pendiente",
       "escalado": false,
       "fecha_atencion": "",
-      "horas_pendiente": 3.1
+      "horas_pendiente": 5.5
     }
   ]
 }
