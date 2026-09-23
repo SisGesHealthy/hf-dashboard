@@ -1,8 +1,8 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-22209.0,2026-09-22 11:18,2026-09-22 11:21,TOMATE DE ÁRBOL 4CM-MP00241,718.0,Esteban Israel Garces,31 gavetas  de tomate de arbol  de 4cm ,9.5,3.71,0.0,Se recibe tomate con mayor tamaño ,2026-09-23 03:00:50
-12209.0,2026-09-22 11:49,2026-09-22 12:52,TOMATE DE ARBOL-MP00012,2547.0,Esteban Israel Garces,106 gavetas  de tomate de arbol ,9.5,3.71,0.0,Recorrido 0.7 cm,2026-09-23 03:00:50
-42209.0,2026-09-22 13:15,2026-09-22 13:18,LULO ENTERO-MP00243,724.0,Marlene Chavez,35 gavetas de lulo  Entero ,7.7,3.01,0.0,,2026-09-23 03:00:50
-52209.0,2026-09-22 13:27,2026-09-22 14:33,NARANJILLA-MP00019,3179.0,Marlene Chavez,157 gavetas de naranjilla ,7.8,3.0,2.1,,2026-09-23 03:00:50
-32208.0,2026-09-22 15:02,2026-09-22 15:05,MORA TIPO B-MP00036,296.0,Oscar Jimenez,Se reciben 10 gavetas de Mora tipo B,12.5,2.79,1.83,,2026-09-23 03:00:50
-62209.0,2026-09-22 15:05,2026-09-22 15:15,ARANDANO-MP00034,510.0,Santiago Chiriboga ,Se reciben 25 gavetas de Arándano ,13.9,3.07,0.0,,2026-09-23 03:00:50
-72209.0,2026-09-22 15:58,2026-09-22 16:01,MOTA GUANÁBANA-MP00028,112.0,Minfarms ,Se reciben 3gavetas de Mota de Guanábana ,17.5,3.76,0.75,,2026-09-23 03:00:50
+22209.0,2026-09-22 11:18,2026-09-22 11:21,TOMATE DE ÁRBOL 4CM-MP00241,718.0,Esteban Israel Garces,31 gavetas  de tomate de arbol  de 4cm ,9.5,3.71,0.0,Se recibe tomate con mayor tamaño ,2026-09-23 03:30:44
+12209.0,2026-09-22 11:49,2026-09-22 12:52,TOMATE DE ARBOL-MP00012,2547.0,Esteban Israel Garces,106 gavetas  de tomate de arbol ,9.5,3.71,0.0,Recorrido 0.7 cm,2026-09-23 03:30:44
+42209.0,2026-09-22 13:15,2026-09-22 13:18,LULO ENTERO-MP00243,724.0,Marlene Chavez,35 gavetas de lulo  Entero ,7.7,3.01,0.0,,2026-09-23 03:30:44
+52209.0,2026-09-22 13:27,2026-09-22 14:33,NARANJILLA-MP00019,3179.0,Marlene Chavez,157 gavetas de naranjilla ,7.8,3.0,2.1,,2026-09-23 03:30:44
+32208.0,2026-09-22 15:02,2026-09-22 15:05,MORA TIPO B-MP00036,296.0,Oscar Jimenez,Se reciben 10 gavetas de Mora tipo B,12.5,2.79,1.83,,2026-09-23 03:30:44
+62209.0,2026-09-22 15:05,2026-09-22 15:15,ARANDANO-MP00034,510.0,Santiago Chiriboga ,Se reciben 25 gavetas de Arándano ,13.9,3.07,0.0,,2026-09-23 03:30:44
+72209.0,2026-09-22 15:58,2026-09-22 16:01,MOTA GUANÁBANA-MP00028,112.0,Minfarms ,Se reciben 3gavetas de Mota de Guanábana ,17.5,3.76,0.75,,2026-09-23 03:30:44
