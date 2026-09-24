@@ -1,3 +1,4 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-12409.0,2026-09-24 07:56,2026-09-24 11:09,GUAYABA-MP00003,8493.0,Cristofer Aguilar  ,367 gavetas  de guayaba ,8.0,4.15,0.34,,2026-09-24 20:30:48
-22409.0,2026-09-24 12:31,2026-09-24 12:42,MORA DE CASTILLA-MP00016,264.0,Jaime  Lisintuña ,10 gavetas de mora de castilla ,8.6,2.87,1.96,,2026-09-24 20:30:48
+12409.0,2026-09-24 07:56,2026-09-24 11:09,GUAYABA-MP00003,8493.0,Cristofer Aguilar  ,367 gavetas  de guayaba ,8.0,4.15,0.34,,2026-09-24 21:00:41
+22409.0,2026-09-24 12:31,2026-09-24 12:42,MORA DE CASTILLA-MP00016,264.0,Jaime  Lisintuña ,10 gavetas de mora de castilla ,8.6,2.87,1.96,,2026-09-24 21:00:41
+32409.0,2026-09-24 15:31,2026-09-24 15:36,TAMARINDO-MP00027,786.0,Eder  Díaz ,Se reciben 17 costales de Tamarindo ,62.4,2.78,0.0,,2026-09-24 21:00:41
