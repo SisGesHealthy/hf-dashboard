@@ -1,3 +1,4 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-13009.0,2026-09-30 06:55,2026-09-30 07:16,COCO-MP00005,885.0,Pedro Díaz,35 gavetas de coco ,11.8,6.7,0.0,,2026-09-30 12:30:40
-23009.0,2026-09-30 07:23,2026-09-30 07:23,FRUTILLA DESPITONADA PARA PICAR-MP00221,0.0,Patricio Caisalitin,,10.3,3.36,0.0,,2026-09-30 12:30:40
+13009.0,2026-09-30 06:55,2026-09-30 07:16,COCO-MP00005,885.0,Pedro Díaz,35 gavetas de coco ,11.8,6.7,0.0,,2026-09-30 13:00:54
+23009.0,2026-09-30 07:23,2026-09-30 07:35,FRUTILLA DESPITONADA PARA PICAR-MP00221,1520.0,Patricio Caisalitin,101 gavetas  de frutilla ,10.3,3.36,0.0,,2026-09-30 13:00:54
+33009.0,2026-09-30 07:45,2026-09-30 07:48,FRUTILLA DESPITONADA PARA PICAR-MP00221,200.0,Sergio Laguaquiza,14 gavetas  de frutilla 🍓 ,11.7,3.47,0.0,,2026-09-30 13:00:54
