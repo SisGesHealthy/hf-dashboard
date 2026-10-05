@@ -1,2 +1,3 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-10510.0,2026-10-05 07:12,2026-10-05 07:12,MARACUYA-MP00014,0.0,Yoffre Noguera ,,13.8,3.11,3.3,,2026-10-05 14:30:42
+10510.0,2026-10-05 07:12,2026-10-05 09:48,MARACUYA-MP00014,13364.0,Yoffre Noguera ,Se reciben 406 costales de maracuya ,13.8,3.11,3.3,,2026-10-05 15:00:42
+20510.0,2026-10-05 09:57,2026-10-05 09:57,MARACUYA-MP00014,0.0,CampoVivo ,,13.8,2.91,3.41,,2026-10-05 15:00:42
