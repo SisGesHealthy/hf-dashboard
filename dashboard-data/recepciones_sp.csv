@@ -1,3 +1,5 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-20810.0,2026-10-08 12:26,2026-10-08 12:37,MOTA GUANÁBANA-MP00028,1099.0,Pedro Diaz,Se reciben 22 envases de mota guanábana.,14.2,3.76,0.79,,2026-10-08 18:30:40
-10810.0,2026-10-08 12:40,2026-10-08 12:51,GUAYABA-MP00003,7294.0,Cristofer Aguilar  ,Se reciben 315 envases de guayaba.,7.9,4.35,0.25,,2026-10-08 18:30:40
+20810.0,2026-10-08 12:26,2026-10-08 12:37,MOTA GUANÁBANA-MP00028,1099.0,Pedro Diaz,Se reciben 22 envases de mota guanábana.,14.2,3.76,0.79,,2026-10-08 19:00:50
+10810.0,2026-10-08 12:40,2026-10-08 12:51,GUAYABA-MP00003,7294.0,Cristofer Aguilar  ,Se reciben 315 envases de guayaba.,7.9,4.35,0.25,,2026-10-08 19:00:50
+70810.0,2026-10-08 13:41,2026-10-08 13:46,MORA DE CASTILLA-MP00016,360.0,Carmen Lisintuña,Se reciben 12 envases de mora de castilla.,7.5,2.93,1.86,,2026-10-08 19:00:50
+80810.0,2026-10-08 13:52,2026-10-08 13:53,MORA DE CASTILLA-MP00016,366.0,Luis Silva,Se reciben 12 envases de mora de castilla.,8.9,3.13,1.94,,2026-10-08 19:00:50
