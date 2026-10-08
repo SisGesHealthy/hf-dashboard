@@ -1,2 +1,3 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-20810.0,2026-10-08 12:26,2026-10-08 12:26,MOTA GUANÁBANA-MP00028,,Pedro Diaz,,14.2,3.76,0.79,,2026-10-08 17:30:45
+20810.0,2026-10-08 12:26,2026-10-08 12:37,MOTA GUANÁBANA-MP00028,1099.0,Pedro Diaz,Se reciben 22 envases de mota guanábana.,14.2,3.76,0.79,,2026-10-08 18:00:42
+10810.0,2026-10-08 12:40,2026-10-08 12:51,GUAYABA-MP00003,7294.0,Cristofer Aguilar  ,Se reciben 315 envases de guayaba.,7.9,4.35,0.25,,2026-10-08 18:00:42
