@@ -1,9 +1,9 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-20810.0,2026-10-08 12:26,2026-10-08 12:37,MOTA GUANÁBANA-MP00028,1099.0,Pedro Diaz,Se reciben 22 envases de mota guanábana.,14.2,3.76,0.79,,2026-10-09 04:00:50
-10810.0,2026-10-08 12:40,2026-10-08 12:51,GUAYABA-MP00003,7294.0,Cristofer Aguilar  ,Se reciben 315 envases de guayaba.,7.9,4.35,0.25,,2026-10-09 04:00:50
-70810.0,2026-10-08 13:41,2026-10-08 13:46,MORA DE CASTILLA-MP00016,360.0,Carmen Lisintuña,Se reciben 12 envases de mora de castilla.,7.5,2.93,1.86,,2026-10-09 04:00:50
-80810.0,2026-10-08 13:52,2026-10-08 13:53,MORA DE CASTILLA-MP00016,366.0,Luis Silva,Se reciben 12 envases de mora de castilla.,8.9,3.13,1.94,,2026-10-09 04:00:50
-60810.0,2026-10-08 18:03,2026-10-08 18:08,MORA DE CASTILLA-MP00016,226.0,Cesar Lisintuña ,Se reciben 8 envases de mora de castilla.,9.7,3.15,2.2,,2026-10-09 04:00:50
-81026.0,2026-10-08 18:09,2026-10-08 18:10,MORA DE CASTILLA-MP00016,195.0,Edison Lisintuña,Se reciben 7 envases de mora de castilla.,8.1,2.96,2.13,,2026-10-09 04:00:50
-50810.0,2026-10-08 18:13,2026-10-08 18:14,MORA DE CASTILLA-MP00016,222.0,Jaime  Lisintuña ,Se reciben 9 envases de mora de castilla.,9.0,2.93,2.15,,2026-10-09 04:00:50
-30810.0,2026-10-08 18:34,2026-10-08 19:19,MOTA GUANÁBANA-MP00028,5077.0,Katherine Lopez ,Se reciben 84 envases de mota guanábana.,17.0,3.66,0.89,,2026-10-09 04:00:50
+20810.0,2026-10-08 12:26,2026-10-08 12:37,MOTA GUANÁBANA-MP00028,1099.0,Pedro Diaz,Se reciben 22 envases de mota guanábana.,14.2,3.76,0.79,,2026-10-09 04:30:59
+10810.0,2026-10-08 12:40,2026-10-08 12:51,GUAYABA-MP00003,7294.0,Cristofer Aguilar  ,Se reciben 315 envases de guayaba.,7.9,4.35,0.25,,2026-10-09 04:30:59
+70810.0,2026-10-08 13:41,2026-10-08 13:46,MORA DE CASTILLA-MP00016,360.0,Carmen Lisintuña,Se reciben 12 envases de mora de castilla.,7.5,2.93,1.86,,2026-10-09 04:30:59
+80810.0,2026-10-08 13:52,2026-10-08 13:53,MORA DE CASTILLA-MP00016,366.0,Luis Silva,Se reciben 12 envases de mora de castilla.,8.9,3.13,1.94,,2026-10-09 04:30:59
+60810.0,2026-10-08 18:03,2026-10-08 18:08,MORA DE CASTILLA-MP00016,226.0,Cesar Lisintuña ,Se reciben 8 envases de mora de castilla.,9.7,3.15,2.2,,2026-10-09 04:30:59
+81026.0,2026-10-08 18:09,2026-10-08 18:10,MORA DE CASTILLA-MP00016,195.0,Edison Lisintuña,Se reciben 7 envases de mora de castilla.,8.1,2.96,2.13,,2026-10-09 04:30:59
+50810.0,2026-10-08 18:13,2026-10-08 18:14,MORA DE CASTILLA-MP00016,222.0,Jaime  Lisintuña ,Se reciben 9 envases de mora de castilla.,9.0,2.93,2.15,,2026-10-09 04:30:59
+30810.0,2026-10-08 18:34,2026-10-08 19:19,MOTA GUANÁBANA-MP00028,5077.0,Katherine Lopez ,Se reciben 84 envases de mota guanábana.,17.0,3.66,0.89,,2026-10-09 04:30:59
