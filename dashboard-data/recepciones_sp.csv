@@ -1,7 +1,7 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-21310.0,2026-10-13 06:59,2026-10-13 07:03,TAMARINDO-MP00027,1158.0,Eder  Díaz ,Se reciben 25 envases de tamarindo.,64.3,2.31,0.0,,2026-10-13 22:00:51
-11310.0,2026-10-13 07:21,2026-10-13 07:49,FRUTILLA DESPITONADA PARA TOPPING-MP00154,348.0,Sergio Laguaquiza ,Se reciben 24 envases de frutilla despitonada para topping.,9.6,3.64,0.0,,2026-10-13 22:00:51
-31310.0,2026-10-13 08:16,2026-10-13 11:37,MANGO-MP00232,10715.0,Marcel Espinosa,Se reciben 480 envases de mango.,12.8,3.9,0.41,,2026-10-13 22:00:51
-41310.0,2026-10-13 08:46,2026-10-13 08:52,MORA TIPO B-MP00036,505.0,Oscar Jimenez,Se reciben 17 envases de mora tipo b.,8.2,2.9,1.82,,2026-10-13 22:00:51
-51310.0,2026-10-13 11:56,2026-10-13 12:48,NARANJILLA-MP00019,2311.0,Marlene Chavez ,Se reciben 113 envases de naranjilla.,7.8,3.21,1.47,,2026-10-13 22:00:51
-61310.0,2026-10-13 12:55,2026-10-13 13:07,ARANDANO-MP00034,590.0,Santiago  Chiriboga ,Se reciben 29 envases de arandano.,11.8,3.46,0.0,,2026-10-13 22:00:51
+21310.0,2026-10-13 06:59,2026-10-13 07:03,TAMARINDO-MP00027,1158.0,Eder  Díaz ,Se reciben 25 envases de tamarindo.,64.3,2.31,0.0,,2026-10-13 22:30:50
+11310.0,2026-10-13 07:21,2026-10-13 07:49,FRUTILLA DESPITONADA PARA TOPPING-MP00154,348.0,Sergio Laguaquiza ,Se reciben 24 envases de frutilla despitonada para topping.,9.6,3.64,0.0,,2026-10-13 22:30:50
+31310.0,2026-10-13 08:16,2026-10-13 11:37,MANGO-MP00232,10715.0,Marcel Espinosa,Se reciben 480 envases de mango.,12.8,3.9,0.41,,2026-10-13 22:30:50
+41310.0,2026-10-13 08:46,2026-10-13 08:52,MORA TIPO B-MP00036,505.0,Oscar Jimenez,Se reciben 17 envases de mora tipo b.,8.2,2.9,1.82,,2026-10-13 22:30:50
+51310.0,2026-10-13 11:56,2026-10-13 12:48,NARANJILLA-MP00019,2311.0,Marlene Chavez ,Se reciben 113 envases de naranjilla.,7.8,3.21,1.47,,2026-10-13 22:30:50
+61310.0,2026-10-13 12:55,2026-10-13 13:07,ARANDANO-MP00034,590.0,Santiago  Chiriboga ,Se reciben 29 envases de arandano.,11.8,3.46,0.0,,2026-10-13 22:30:50
