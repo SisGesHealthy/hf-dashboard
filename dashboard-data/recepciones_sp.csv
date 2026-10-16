@@ -1,6 +1,6 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-41510.0,2026-10-15 07:59,2026-10-15 08:00,PIÑA-MP00022,606.0,Clara Ruiz ,Se reciben 28 envases de piña.,14.8,3.7,0.47,,2026-10-16 01:30:50
-31510.0,2026-10-15 08:26,2026-10-15 08:33,MOTA GUANÁBANA-MP00028,1142.0,Pedro Diaz,Se reciben 23 envases de mota guanábana.,15.6,4.09,0.74,pH alto,2026-10-16 01:30:50
-21510.0,2026-10-15 09:10,2026-10-15 09:12,FRUTILLA-MP00007,733.0,Danilo  Guaman ,Se reciben 45 envases de frutilla.,8.6,3.6,0.74,,2026-10-16 01:30:50
-61510.0,2026-10-15 17:09,2026-10-15 17:11,MORA TIPO B-MP00036,464.0,Luis  Silva ,Se reciben 15 envases de mora tipo b.,8.5,3.19,0.0,,2026-10-16 01:30:50
-51510.0,2026-10-15 17:12,2026-10-15 17:23,MORA DE CASTILLA-MP00016,1093.0,Carmen Lisintuña,Se reciben 36 envases de mora de castilla.,9.6,3.19,0.0,,2026-10-16 01:30:50
+41510.0,2026-10-15 07:59,2026-10-15 08:00,PIÑA-MP00022,606.0,Clara Ruiz ,Se reciben 28 envases de piña.,14.8,3.7,0.47,,2026-10-16 02:00:49
+31510.0,2026-10-15 08:26,2026-10-15 08:33,MOTA GUANÁBANA-MP00028,1142.0,Pedro Diaz,Se reciben 23 envases de mota guanábana.,15.6,4.09,0.74,pH alto,2026-10-16 02:00:49
+21510.0,2026-10-15 09:10,2026-10-15 09:12,FRUTILLA-MP00007,733.0,Danilo  Guaman ,Se reciben 45 envases de frutilla.,8.6,3.6,0.74,,2026-10-16 02:00:49
+61510.0,2026-10-15 17:09,2026-10-15 17:11,MORA TIPO B-MP00036,464.0,Luis  Silva ,Se reciben 15 envases de mora tipo b.,8.5,3.19,0.0,,2026-10-16 02:00:49
+51510.0,2026-10-15 17:12,2026-10-15 17:23,MORA DE CASTILLA-MP00016,1093.0,Carmen Lisintuña,Se reciben 36 envases de mora de castilla.,9.6,3.19,0.0,,2026-10-16 02:00:49
