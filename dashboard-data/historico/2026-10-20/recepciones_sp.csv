@@ -1,4 +1,4 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-12010.0,2026-10-20 06:36,2026-10-20 06:48,COCO-MP00005,814.0,Pedro Díaz ,Se reciben 32 envases de coco.,8.4,5.63,0.0,,2026-10-20 17:00:52
+12010.0,2026-10-20 06:36,2026-10-20 06:48,COCO-MP00005,814.0,Pedro Díaz ,Se reciben 32 envases de coco.,8.4,5.63,0.0,,2026-10-20 17:35:46
 22010.0,2026-10-20 09:26,2026-10-20 09:26,MANGO-MP00232,,Marcel Espinosa,,12.7,4.16,0.28,"Bajo brix
-Se clasifica y rechaza mangos golpeados, negros y en mal estado",2026-10-20 17:00:52
+Se clasifica y rechaza mangos golpeados, negros y en mal estado",2026-10-20 17:35:46
