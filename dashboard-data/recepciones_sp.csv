@@ -1,8 +1,8 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-12010.0,2026-10-20 06:36,2026-10-20 06:48,COCO-MP00005,814.0,Pedro Díaz ,Se reciben 32 envases de coco.,8.4,5.63,0.0,,2026-10-21 03:00:53
+12010.0,2026-10-20 06:36,2026-10-20 06:48,COCO-MP00005,814.0,Pedro Díaz ,Se reciben 32 envases de coco.,8.4,5.63,0.0,,2026-10-21 03:30:50
 22010.0,2026-10-20 09:26,2026-10-20 12:37,MANGO-MP00232,11418.0,Marcel Espinosa,Se reciben 509 envases de mango.,12.7,4.16,0.28,"Bajo brix
-Se clasifica y rechaza mangos golpeados, negros y en mal estado",2026-10-21 03:00:53
-52010.0,2026-10-20 12:49,2026-10-20 14:05,NARANJILLA-MP00019,3208.0,Marlene Chavez ,Se reciben 143 envases de naranjilla.,7.4,3.06,2.15,,2026-10-21 03:00:53
-62010.0,2026-10-20 14:27,2026-10-20 14:50,LULO ENTERO-MP00243,732.0,Malrene Chavez,Se reciben 35 envases de lulo entero.,7.3,3.01,0.0,,2026-10-21 03:00:53
-32010.0,2026-10-20 15:16,2026-10-20 15:42,TOMATE DE ÁRBOL 4CM-MP00241,1422.0,Esteban Israel Garces,Se reciben 59 envases de tomate de árbol 4cm.,9.9,3.76,0.0,,2026-10-21 03:00:53
-82010.0,2026-10-20 16:31,2026-10-20 16:32,MOTA GUANÁBANA-MP00028,256.0,Minfarms ,Se reciben 6 envases de mota guanábana.,15.5,3.74,0.92,,2026-10-21 03:00:53
+Se clasifica y rechaza mangos golpeados, negros y en mal estado",2026-10-21 03:30:50
+52010.0,2026-10-20 12:49,2026-10-20 14:05,NARANJILLA-MP00019,3208.0,Marlene Chavez ,Se reciben 143 envases de naranjilla.,7.4,3.06,2.15,,2026-10-21 03:30:50
+62010.0,2026-10-20 14:27,2026-10-20 14:50,LULO ENTERO-MP00243,732.0,Malrene Chavez,Se reciben 35 envases de lulo entero.,7.3,3.01,0.0,,2026-10-21 03:30:50
+32010.0,2026-10-20 15:16,2026-10-20 15:42,TOMATE DE ÁRBOL 4CM-MP00241,1422.0,Esteban Israel Garces,Se reciben 59 envases de tomate de árbol 4cm.,9.9,3.76,0.0,,2026-10-21 03:30:50
+82010.0,2026-10-20 16:31,2026-10-20 16:32,MOTA GUANÁBANA-MP00028,256.0,Minfarms ,Se reciben 6 envases de mota guanábana.,15.5,3.74,0.92,,2026-10-21 03:30:50
