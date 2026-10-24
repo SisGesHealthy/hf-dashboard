@@ -1,2 +1,3 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-102410.0,2026-10-24 14:13,2026-10-24 14:13,MORA CATEGORIA 1-MP00242,,Carmen  Lisintuña,,7.7,2.73,0.0,,2026-10-24 19:13:59
+102410.0,2026-10-24 14:13,2026-10-24 14:23,MORA CATEGORIA 1-MP00242,97.0,Carmen  Lisintuña,Se reciben 33 envases de mora categoria 1.,7.7,2.73,0.0,,2026-10-24 19:30:42
+72310.0,2026-10-24 14:29,2026-10-24 14:29,MORA DE CASTILLA-MP00016,,Carmen Lisintuña,,7.7,2.89,1.87,,2026-10-24 19:30:42
