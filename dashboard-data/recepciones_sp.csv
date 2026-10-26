@@ -1,9 +1,9 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
 52610.0,2026-10-26 07:02,2026-10-26 07:03,FRUTILLA-MP00007,404.0,Patricio  Caisalitin ,Se reciben 29 envases de frutilla.,8.4,3.32,0.84,"Llega fresa picada.
 Se habla con el proveedor 
-Se hace la revision y clasificación con bodega",2026-10-26 17:00:49
-32610.0,2026-10-26 07:27,2026-10-26 07:50,FRUTILLA DESPITONADA PARA TOPPING-MP00154,810.0,Laura Enriquez,Se reciben 40 envases de frutilla despitonada para topping.,8.0,3.46,0.0,,2026-10-26 17:00:49
-22610.0,2026-10-26 08:29,2026-10-26 08:32,MARACUYA-MP00014,1279.0,Campo Vivo,Se reciben 38 envases de maracuya.,15.5,2.87,2.7,,2026-10-26 17:00:49
-12610.0,2026-10-26 09:34,2026-10-26 10:14,MARACUYA-MP00014,8048.0,Yoffre Noguera ,Se reciben 248 envases de maracuya.,15.7,2.81,2.73,,2026-10-26 17:00:49
-72610.0,2026-10-26 10:30,2026-10-26 10:32,FRUTILLA-MP00007,197.0,Sergio Laguaquiza ,Se reciben 14 envases de frutilla.,10.1,3.32,0.85,,2026-10-26 17:00:49
-82610.0,2026-10-26 10:44,2026-10-26 11:38,FRUTILLA-MP00007,1625.0,Danilo Guaman,Se reciben 103 envases de frutilla.,8.7,3.46,0.75,,2026-10-26 17:00:49
+Se hace la revision y clasificación con bodega",2026-10-26 17:30:45
+32610.0,2026-10-26 07:27,2026-10-26 07:50,FRUTILLA DESPITONADA PARA TOPPING-MP00154,810.0,Laura Enriquez,Se reciben 40 envases de frutilla despitonada para topping.,8.0,3.46,0.0,,2026-10-26 17:30:45
+22610.0,2026-10-26 08:29,2026-10-26 08:32,MARACUYA-MP00014,1279.0,Campo Vivo,Se reciben 38 envases de maracuya.,15.5,2.87,2.7,,2026-10-26 17:30:45
+12610.0,2026-10-26 09:34,2026-10-26 10:14,MARACUYA-MP00014,8048.0,Yoffre Noguera ,Se reciben 248 envases de maracuya.,15.7,2.81,2.73,,2026-10-26 17:30:45
+72610.0,2026-10-26 10:30,2026-10-26 10:32,FRUTILLA-MP00007,197.0,Sergio Laguaquiza ,Se reciben 14 envases de frutilla.,10.1,3.32,0.85,,2026-10-26 17:30:45
+82610.0,2026-10-26 10:44,2026-10-26 11:38,FRUTILLA-MP00007,1625.0,Danilo Guaman,Se reciben 103 envases de frutilla.,8.7,3.46,0.75,,2026-10-26 17:30:45
