@@ -1,6 +1,0 @@
-﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-12210.0,2026-10-22 06:44,2026-10-22 07:00,COCO-MP00005,999.0,Pedro Díaz ,Se reciben 39 envases de coco.,8.5,5.77,0.0,,2026-10-23 04:30:50
-32210.0,2026-10-22 15:48,2026-10-22 15:50,MARACUYA EN PEPAS EXTERNA - MP00245,505.0,Fripa,Se reciben 10 envases de maracuya en pepas externa.,16.9,3.23,4.23,,2026-10-23 04:30:50
-22210.0,2026-10-22 15:57,2026-10-22 16:11,MOTA GUANÁBANA-MP00028,2010.0,Fripa,Se reciben 40 envases de mota guanábana.,12.2,3.79,0.72,,2026-10-23 04:30:50
-92210.0,2026-10-22 16:48,2026-10-22 16:52,MOTA GUANÁBANA-MP00028,1051.0,Pedro  Díaz,Se reciben 21 envases de mota guanábana.,17.1,3.77,0.78,Brix alto,2026-10-23 04:30:50
-52210.0,2026-10-22 18:15,2026-10-22 19:12,GUAYABA-MP00003,3502.0,Cristofer Aguilar  ,Se reciben 155 envases de guayaba.,7.4,3.88,0.34,,2026-10-23 04:30:50
