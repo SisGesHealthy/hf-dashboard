@@ -1,7 +1,7 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
 72710.0,2026-10-27 08:32,2026-10-27 08:55,MORA TIPO B-MP00036,224.0,Oscar  Jimenez ,Se reciben 8 envases de mora tipo b.,7.1,2.68,2.04,"Mora grado de madurez 1y 2
-Color rojizo, no oscuro",2026-10-27 20:31:20
-12710.0,2026-10-27 10:08,2026-10-27 13:29,MANGO-MP00232,10545.0,Marcel Espinosa,Se reciben 480 envases de mango.,13.0,4.16,0.35,Bajo brix,2026-10-27 20:31:20
-21710.0,2026-10-27 11:52,2026-10-27 11:58,TOMATE DE ÁRBOL 4CM-MP00241,1496.0,Esteban Israel Garces,Se reciben 67 envases de tomate de árbol 4cm.,10.7,3.67,0.0,,2026-10-27 20:31:20
-32710.0,2026-10-27 14:52,2026-10-27 14:52,LULO ENTERO-MP00243,,Marlene Chavez,,7.1,3.03,0.0,,2026-10-27 20:31:20
-42710.0,2026-10-27 14:56,2026-10-27 14:56,NARANJILLA-MP00019,,Marlene Chavez,,8.3,3.06,1.53,,2026-10-27 20:31:20
+Color rojizo, no oscuro",2026-10-27 21:00:39
+12710.0,2026-10-27 10:08,2026-10-27 13:29,MANGO-MP00232,10545.0,Marcel Espinosa,Se reciben 480 envases de mango.,13.0,4.16,0.35,Bajo brix,2026-10-27 21:00:39
+21710.0,2026-10-27 11:52,2026-10-27 11:58,TOMATE DE ÁRBOL 4CM-MP00241,1496.0,Esteban Israel Garces,Se reciben 67 envases de tomate de árbol 4cm.,10.7,3.67,0.0,,2026-10-27 21:00:39
+32710.0,2026-10-27 14:52,2026-10-27 14:52,LULO ENTERO-MP00243,,Marlene Chavez,,7.1,3.03,0.0,,2026-10-27 21:00:39
+42710.0,2026-10-27 14:56,2026-10-27 15:50,NARANJILLA-MP00019,1871.0,Marlene Chavez,Se reciben 95 envases de naranjilla.,8.3,3.06,1.53,,2026-10-27 21:00:39
