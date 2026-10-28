@@ -1,9 +1,9 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
 72710.0,2026-10-27 08:32,2026-10-27 08:55,MORA TIPO B-MP00036,224.0,Oscar  Jimenez ,Se reciben 8 envases de mora tipo b.,7.1,2.68,2.04,"Mora grado de madurez 1y 2
-Color rojizo, no oscuro",2026-10-27 23:30:35
-12710.0,2026-10-27 10:08,2026-10-27 13:29,MANGO-MP00232,10545.0,Marcel Espinosa,Se reciben 480 envases de mango.,13.0,4.16,0.35,Bajo brix,2026-10-27 23:30:35
-21710.0,2026-10-27 11:52,2026-10-27 11:58,TOMATE DE ÁRBOL 4CM-MP00241,1496.0,Esteban Israel Garces,Se reciben 67 envases de tomate de árbol 4cm.,10.7,3.67,0.0,,2026-10-27 23:30:35
-32710.0,2026-10-27 14:52,2026-10-27 16:15,LULO ENTERO-MP00243,728.0,Marlene Chavez,Se reciben 38 envases de lulo entero.,7.1,3.03,0.0,,2026-10-27 23:30:35
-42710.0,2026-10-27 14:56,2026-10-27 15:50,NARANJILLA-MP00019,1871.0,Marlene Chavez,Se reciben 95 envases de naranjilla.,8.3,3.06,1.53,,2026-10-27 23:30:35
-52710.0,2026-10-27 16:39,2026-10-27 16:42,MOTA GUANÁBANA-MP00028,233.0,Minfarms ,Se reciben 6 envases de mota guanábana.,17.4,3.66,1.08,,2026-10-27 23:30:35
-82710.0,2026-10-27 17:56,2026-10-27 18:06,ARANDANO-MP00034,1160.0,Santiago  Chiriboga ,Se reciben 57 envases de arandano.,11.9,3.38,0.0,,2026-10-27 23:30:35
+Color rojizo, no oscuro",2026-10-28 00:00:46
+12710.0,2026-10-27 10:08,2026-10-27 13:29,MANGO-MP00232,10545.0,Marcel Espinosa,Se reciben 480 envases de mango.,13.0,4.16,0.35,Bajo brix,2026-10-28 00:00:46
+21710.0,2026-10-27 11:52,2026-10-27 11:58,TOMATE DE ÁRBOL 4CM-MP00241,1496.0,Esteban Israel Garces,Se reciben 67 envases de tomate de árbol 4cm.,10.7,3.67,0.0,,2026-10-28 00:00:46
+32710.0,2026-10-27 14:52,2026-10-27 16:15,LULO ENTERO-MP00243,728.0,Marlene Chavez,Se reciben 38 envases de lulo entero.,7.1,3.03,0.0,,2026-10-28 00:00:46
+42710.0,2026-10-27 14:56,2026-10-27 15:50,NARANJILLA-MP00019,1871.0,Marlene Chavez,Se reciben 95 envases de naranjilla.,8.3,3.06,1.53,,2026-10-28 00:00:46
+52710.0,2026-10-27 16:39,2026-10-27 16:42,MOTA GUANÁBANA-MP00028,233.0,Minfarms ,Se reciben 6 envases de mota guanábana.,17.4,3.66,1.08,,2026-10-28 00:00:46
+82710.0,2026-10-27 17:56,2026-10-27 18:06,ARANDANO-MP00034,1160.0,Santiago  Chiriboga ,Se reciben 57 envases de arandano.,11.9,3.38,0.0,,2026-10-28 00:00:46
