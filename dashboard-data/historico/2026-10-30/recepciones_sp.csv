@@ -1,3 +1,5 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-23010.0,2026-10-30 10:53,2026-10-30 11:08,MOTA GUANÁBANA-MP00028,899.0,Pedro Diaz ,Se reciben 18 envases de mota guanábana.,12.7,3.7,0.89,,2026-10-30 21:00:39
-33010.0,2026-10-30 12:24,2026-10-30 12:25,MORA TIPO B-MP00036,514.0,Braulio Ronquillo,Se reciben 19 envases de mora tipo b.,8.0,2.86,2.05,,2026-10-30 21:00:39
+23010.0,2026-10-30 10:53,2026-10-30 11:08,MOTA GUANÁBANA-MP00028,899.0,Pedro Diaz ,Se reciben 18 envases de mota guanábana.,12.7,3.7,0.89,,2026-10-30 21:30:47
+33010.0,2026-10-30 12:24,2026-10-30 12:25,MORA TIPO B-MP00036,514.0,Braulio Ronquillo,Se reciben 19 envases de mora tipo b.,8.0,2.86,2.05,,2026-10-30 21:30:47
+53010.0,2026-10-30 16:14,2026-10-30 16:15,MARACUYA EN PEPAS EXTERNA - MP00245,202.0,Fripa,Se reciben 4 envases de maracuya en pepas externa.,13.6,2.82,4.09,,2026-10-30 21:30:47
+43010.0,2026-10-30 16:18,2026-10-30 16:27,MOTA GUANÁBANA-MP00028,1106.0,Fripa,Se reciben 22 envases de mota guanábana.,14.6,3.72,0.75,,2026-10-30 21:30:47
