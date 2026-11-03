@@ -1,5 +1,6 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-10311.0,2026-11-03 08:55,2026-11-03 11:15,MANGO-MP00232,10982.0,Marcel Espinosa,Se reciben 480 envases de mango.,17.8,3.45,0.44,,2026-11-03 21:03:56
-70311.0,2026-11-03 12:15,2026-11-03 12:16,MANGO-MP00232,,Marcel Espinosa,,10.5,3.51,0.44,Mango Kit,2026-11-03 21:03:56
-20311.0,2026-11-03 12:30,2026-11-03 12:47,NARANJILLA-MP00019,2023.0,Marlene Chavez,Se reciben 103 envases de naranjilla.,7.9,3.09,1.65,,2026-11-03 21:03:56
-30311.0,2026-11-03 12:55,2026-11-03 12:58,LULO ENTERO-MP00243,658.0,Marlene Chavez,Se reciben 34 envases de lulo entero.,7.4,3.19,0.0,,2026-11-03 21:03:56
+10311.0,2026-11-03 08:55,2026-11-03 11:15,MANGO-MP00232,10982.0,Marcel Espinosa,Se reciben 480 envases de mango.,17.8,3.45,0.44,,2026-11-03 21:36:39
+70311.0,2026-11-03 12:15,2026-11-03 12:16,MANGO-MP00232,,Marcel Espinosa,,10.5,3.51,0.44,Mango Kit,2026-11-03 21:36:39
+20311.0,2026-11-03 12:30,2026-11-03 12:47,NARANJILLA-MP00019,2023.0,Marlene Chavez,Se reciben 103 envases de naranjilla.,7.9,3.09,1.65,,2026-11-03 21:36:39
+30311.0,2026-11-03 12:55,2026-11-03 12:58,LULO ENTERO-MP00243,658.0,Marlene Chavez,Se reciben 34 envases de lulo entero.,7.4,3.19,0.0,,2026-11-03 21:36:39
+40311.0,2026-11-03 16:31,2026-11-03 16:31,MOTA GUANÁBANA-MP00028,,Fripa,,12.4,3.8,1.02,,2026-11-03 21:36:39
