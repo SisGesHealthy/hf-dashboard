@@ -1,2 +1,4 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-10311.0,2026-11-03 08:55,2026-11-03 11:15,MANGO-MP00232,10982.0,Marcel Espinosa,Se reciben 480 envases de mango.,17.8,3.45,0.44,,2026-11-03 17:01:03
+10311.0,2026-11-03 08:55,2026-11-03 11:15,MANGO-MP00232,10982.0,Marcel Espinosa,Se reciben 480 envases de mango.,17.8,3.45,0.44,,2026-11-03 17:33:44
+70311.0,2026-11-03 12:15,2026-11-03 12:16,MANGO-MP00232,,Marcel Espinosa,,10.5,3.51,0.44,Mango Kit,2026-11-03 17:33:44
+20311.0,2026-11-03 12:30,2026-11-03 12:30,NARANJILLA-MP00019,,Marlene Chavez,,7.9,3.09,1.65,,2026-11-03 17:33:44
