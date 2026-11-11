@@ -1,8 +1,8 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-11011.0,2026-11-10 06:37,2026-11-10 06:39,FRUTILLA DESPITONADA PARA PICAR-MP00221,584.0,José Miguel Lluglluna,Se reciben 26 envases de frutilla despitonada para picar.,8.8,3.67,0.0,,2026-11-11 03:30:53
-21011.0,2026-11-10 08:49,2026-11-10 08:51,MORA TIPO B-MP00036,335.0,Oscar Jimenez,Se reciben 11 envases de mora tipo b.,7.1,2.86,2.3,,2026-11-11 03:30:53
-31011.0,2026-11-10 13:41,2026-11-10 14:32,MANGO-MP00232,2467.0,Marcel Espinosa,Se reciben 111 envases de mango.,14.1,4.2,0.32,Mango atahulfo,2026-11-11 03:30:53
-81011.0,2026-11-10 15:29,2026-11-10 16:19,MANGO-MP00232,5985.0,Marcel Espinosa,Se reciben 260 envases de mango.,14.5,4.2,0.32,,2026-11-11 03:30:53
-51011.0,2026-11-10 16:31,2026-11-10 16:38,LULO ENTERO-MP00243,752.0,Marlene Chavez,Se reciben 38 envases de lulo entero.,7.4,3.13,0.0,,2026-11-11 03:30:53
-41011.0,2026-11-10 16:39,2026-11-10 17:43,NARANJILLA-MP00019,3118.0,Marlene Chavez,Se reciben 155 envases de naranjilla.,7.2,3.14,1.51,,2026-11-11 03:30:53
-61011.0,2026-11-10 18:00,2026-11-10 18:10,ARANDANO-MP00034,885.0,Santiago Chiriboga ,Se reciben 44 envases de arandano.,13.5,3.81,0.0,pH alto,2026-11-11 03:30:53
+11011.0,2026-11-10 06:37,2026-11-10 06:39,FRUTILLA DESPITONADA PARA PICAR-MP00221,584.0,José Miguel Lluglluna,Se reciben 26 envases de frutilla despitonada para picar.,8.8,3.67,0.0,,2026-11-11 04:00:55
+21011.0,2026-11-10 08:49,2026-11-10 08:51,MORA TIPO B-MP00036,335.0,Oscar Jimenez,Se reciben 11 envases de mora tipo b.,7.1,2.86,2.3,,2026-11-11 04:00:55
+31011.0,2026-11-10 13:41,2026-11-10 14:32,MANGO-MP00232,2467.0,Marcel Espinosa,Se reciben 111 envases de mango.,14.1,4.2,0.32,Mango atahulfo,2026-11-11 04:00:55
+81011.0,2026-11-10 15:29,2026-11-10 16:19,MANGO-MP00232,5985.0,Marcel Espinosa,Se reciben 260 envases de mango.,14.5,4.2,0.32,,2026-11-11 04:00:55
+51011.0,2026-11-10 16:31,2026-11-10 16:38,LULO ENTERO-MP00243,752.0,Marlene Chavez,Se reciben 38 envases de lulo entero.,7.4,3.13,0.0,,2026-11-11 04:00:55
+41011.0,2026-11-10 16:39,2026-11-10 17:43,NARANJILLA-MP00019,3118.0,Marlene Chavez,Se reciben 155 envases de naranjilla.,7.2,3.14,1.51,,2026-11-11 04:00:55
+61011.0,2026-11-10 18:00,2026-11-10 18:10,ARANDANO-MP00034,885.0,Santiago Chiriboga ,Se reciben 44 envases de arandano.,13.5,3.81,0.0,pH alto,2026-11-11 04:00:55
