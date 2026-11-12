@@ -1,3 +1,5 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-11211.0,2026-11-12 07:03,2026-11-12 07:05,FRUTILLA DESPITONADA PARA TOPPING-MP00154,155.0,Sergio Laguaquiza,Se reciben 10 envases de frutilla despitonada para topping.,9.3,3.58,0.0,,2026-11-12 16:31:25
-21211.0,2026-11-12 08:22,2026-11-12 08:28,FRUTILLA-MP00007,554.0,Laura Enriquez ,Se reciben 27 envases de frutilla.,8.4,3.6,0.8,,2026-11-12 16:31:25
+11211.0,2026-11-12 07:03,2026-11-12 07:05,FRUTILLA DESPITONADA PARA TOPPING-MP00154,155.0,Sergio Laguaquiza,Se reciben 10 envases de frutilla despitonada para topping.,9.3,3.58,0.0,,2026-11-12 17:00:55
+21211.0,2026-11-12 08:22,2026-11-12 08:28,FRUTILLA-MP00007,554.0,Laura Enriquez ,Se reciben 27 envases de frutilla.,8.4,3.6,0.8,,2026-11-12 17:00:55
+31211.0,2026-11-12 11:36,2026-11-12 11:36,MANGO-MP00232,,Marcel Espinosa,,11.6,4.19,0.21,"Mango Tommy 
+Brix y acidez bajos",2026-11-12 17:00:55
