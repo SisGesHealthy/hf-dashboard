@@ -1,6 +1,6 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-11311.0,2026-11-13 08:59,2026-11-13 09:38,NARANJILLA DE JUGO-MP00212,1623.0,Edwin Gallardo ,Se reciben 81 envases de naranjilla de jugo.,8.3,3.15,1.88,,2026-11-13 19:30:50
-21311.0,2026-11-13 10:04,2026-11-13 10:07,MOTA GUANÁBANA-MP00028,1004.0,Pedro Diaz,Se reciben 20 envases de mota guanábana.,14.8,3.68,0.87,,2026-11-13 19:30:50
-101311.0,2026-11-13 10:08,2026-11-13 10:12,TAMARINDO-MP00027,929.0,Pedro Diaz ,Se reciben 20 envases de tamarindo.,69.3,2.1,0.0,,2026-11-13 19:30:50
-31311.0,2026-11-13 12:32,2026-11-13 13:14,MOTA GUANÁBANA-MP00028,3479.0,FRIPA,Se reciben 69 envases de mota guanábana.,15.6,3.65,0.9,,2026-11-13 19:30:50
-41311.0,2026-11-13 14:05,2026-11-13 14:17,MORA TIPO B-MP00036,1411.0,Braulio Ronquillo ,Se reciben 52 envases de mora tipo b.,7.6,2.9,1.8,,2026-11-13 19:30:50
+11311.0,2026-11-13 08:59,2026-11-13 09:38,NARANJILLA DE JUGO-MP00212,1623.0,Edwin Gallardo ,Se reciben 81 envases de naranjilla de jugo.,8.3,3.15,1.88,,2026-11-13 20:00:46
+21311.0,2026-11-13 10:04,2026-11-13 10:07,MOTA GUANÁBANA-MP00028,1004.0,Pedro Diaz,Se reciben 20 envases de mota guanábana.,14.8,3.68,0.87,,2026-11-13 20:00:46
+101311.0,2026-11-13 10:08,2026-11-13 10:12,TAMARINDO-MP00027,929.0,Pedro Diaz ,Se reciben 20 envases de tamarindo.,69.3,2.1,0.0,,2026-11-13 20:00:46
+31311.0,2026-11-13 12:32,2026-11-13 13:14,MOTA GUANÁBANA-MP00028,3479.0,FRIPA,Se reciben 69 envases de mota guanábana.,15.6,3.65,0.9,,2026-11-13 20:00:46
+41311.0,2026-11-13 14:05,2026-11-13 14:17,MORA TIPO B-MP00036,1411.0,Braulio Ronquillo ,Se reciben 52 envases de mora tipo b.,7.6,2.9,1.8,,2026-11-13 20:00:46
