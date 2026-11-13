@@ -1,7 +1,7 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-11211.0,2026-11-12 07:03,2026-11-12 07:05,FRUTILLA DESPITONADA PARA TOPPING-MP00154,155.0,Sergio Laguaquiza,Se reciben 10 envases de frutilla despitonada para topping.,9.3,3.58,0.0,,2026-11-13 03:30:45
-21211.0,2026-11-12 08:22,2026-11-12 08:28,FRUTILLA-MP00007,554.0,Laura Enriquez ,Se reciben 27 envases de frutilla.,8.4,3.6,0.8,,2026-11-13 03:30:45
+11211.0,2026-11-12 07:03,2026-11-12 07:05,FRUTILLA DESPITONADA PARA TOPPING-MP00154,155.0,Sergio Laguaquiza,Se reciben 10 envases de frutilla despitonada para topping.,9.3,3.58,0.0,,2026-11-13 04:00:43
+21211.0,2026-11-12 08:22,2026-11-12 08:28,FRUTILLA-MP00007,554.0,Laura Enriquez ,Se reciben 27 envases de frutilla.,8.4,3.6,0.8,,2026-11-13 04:00:43
 31211.0,2026-11-12 11:36,2026-11-12 12:48,MANGO-MP00232,6384.0,Marcel Espinosa,Se reciben 290 envases de mango.,11.6,4.19,0.21,"Mango Tommy 
-Brix y acidez bajos",2026-11-13 03:30:45
-71211.0,2026-11-12 15:33,2026-11-12 16:02,GUAYABA-MP00003,1254.0,Cristofer Aguilar  ,Se reciben 55 envases de guayaba.,9.4,4.11,0.29,,2026-11-13 03:30:45
-81311.0,2026-11-12 17:11,2026-11-12 19:09,MANGO-MP00232,4195.0,Procecansa,Se reciben 177 envases de mango.,15.0,3.75,0.53,pH bajo,2026-11-13 03:30:45
+Brix y acidez bajos",2026-11-13 04:00:43
+71211.0,2026-11-12 15:33,2026-11-12 16:02,GUAYABA-MP00003,1254.0,Cristofer Aguilar  ,Se reciben 55 envases de guayaba.,9.4,4.11,0.29,,2026-11-13 04:00:43
+81311.0,2026-11-12 17:11,2026-11-12 19:09,MANGO-MP00232,4195.0,Procecansa,Se reciben 177 envases de mango.,15.0,3.75,0.53,pH bajo,2026-11-13 04:00:43
