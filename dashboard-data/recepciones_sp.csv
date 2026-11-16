@@ -1,5 +1,5 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-11611.0,2026-11-16 06:57,2026-11-16 07:02,FRUTILLA DESPITONADA PARA TOPPING-MP00154,979.0,José Miguel Lluglluna,Se reciben 43 envases de frutilla despitonada para topping.,10.6,3.55,0.0,,2026-11-16 20:00:59
-21611.0,2026-11-16 07:40,2026-11-16 08:22,PAPAYA-MP00020,1774.0,Carmen Izquierdo,Se reciben 120 envases de papaya.,11.0,5.6,0.12,,2026-11-16 20:00:59
-31611.0,2026-11-16 08:44,2026-11-16 09:43,MARACUYA-MP00014,7030.0,Yoffre Noguera ,Se reciben 229 envases de maracuya.,14.1,2.94,3.32,,2026-11-16 20:00:59
-41611.0,2026-11-16 13:44,2026-11-16 13:44,MOTA GUANÁBANA-MP00028,,Fripa,,15.5,3.97,0.7,pH alto,2026-11-16 20:00:59
+11611.0,2026-11-16 06:57,2026-11-16 07:02,FRUTILLA DESPITONADA PARA TOPPING-MP00154,979.0,José Miguel Lluglluna,Se reciben 43 envases de frutilla despitonada para topping.,10.6,3.55,0.0,,2026-11-16 20:30:49
+21611.0,2026-11-16 07:40,2026-11-16 08:22,PAPAYA-MP00020,1774.0,Carmen Izquierdo,Se reciben 120 envases de papaya.,11.0,5.6,0.12,,2026-11-16 20:30:49
+31611.0,2026-11-16 08:44,2026-11-16 09:43,MARACUYA-MP00014,7030.0,Yoffre Noguera ,Se reciben 229 envases de maracuya.,14.1,2.94,3.32,,2026-11-16 20:30:49
+41611.0,2026-11-16 13:44,2026-11-16 13:44,MOTA GUANÁBANA-MP00028,,Fripa,,15.5,3.97,0.7,pH alto,2026-11-16 20:30:49
