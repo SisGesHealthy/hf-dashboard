@@ -1,10 +1,10 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
 61611.0,2026-11-16 19:46,2026-11-16 22:23,MOTA GUANÁBANA-MP00028,6030.0,Guanabana Big,Se reciben 120 envases de mota guanábana.,15.0,3.62,0.89,"Primera entrega: bx:15, pH:3,62, Acidez: 0,89 
-Segunda entrega: bx:14.8, pH:3,82, Acidez: 0,91 ",2026-11-17 19:16:30
-11711.0,2026-11-17 07:11,2026-11-17 07:22,FRUTILLA-MP00007,750.0,José Miguel Lluglluna,Se reciben 32 envases de frutilla.,9.0,3.46,0.64,,2026-11-17 19:16:30
-31711.0,2026-11-17 08:04,2026-11-17 08:05,MORA TIPO B-MP00036,306.0,Oscar Jimenez,Se reciben 10 envases de mora tipo b.,7.9,2.77,1.91,,2026-11-17 19:16:30
-21711.0,2026-11-17 09:49,2026-11-17 10:04,FRUTILLA-MP00007,1030.0,Danilo Guaman,Se reciben 38 envases de frutilla.,8.1,3.41,0.66,Fresa congelada,2026-11-17 19:16:30
+Segunda entrega: bx:14.8, pH:3,82, Acidez: 0,91 ",2026-11-17 19:30:47
+11711.0,2026-11-17 07:11,2026-11-17 07:22,FRUTILLA-MP00007,750.0,José Miguel Lluglluna,Se reciben 32 envases de frutilla.,9.0,3.46,0.64,,2026-11-17 19:30:47
+31711.0,2026-11-17 08:04,2026-11-17 08:05,MORA TIPO B-MP00036,306.0,Oscar Jimenez,Se reciben 10 envases de mora tipo b.,7.9,2.77,1.91,,2026-11-17 19:30:47
+21711.0,2026-11-17 09:49,2026-11-17 10:04,FRUTILLA-MP00007,1030.0,Danilo Guaman,Se reciben 38 envases de frutilla.,8.1,3.41,0.66,Fresa congelada,2026-11-17 19:30:47
 51711.0,2026-11-17 11:32,2026-11-17 11:34,NARANJILLA-MP00019,697.0,Marlene Chavez,Se reciben 35 envases de naranjilla.,7.0,3.25,1.28,"Naranjilla tierna 
-pH bajo",2026-11-17 19:16:30
+pH bajo",2026-11-17 19:30:47
 41711.0,2026-11-17 13:56,2026-11-17 13:57,MANGO-MP00232,,Marcel Espinosa,,11.0,4.37,0.21,"Brix y acidez baja 
-Camión- mango con mal olor",2026-11-17 19:16:30
+Camión- mango con mal olor",2026-11-17 19:30:47
