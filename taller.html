@@ -500,6 +500,8 @@ function renderGantt(filas, prodIdx, esHoy) {
         if (otFin) fin = pct(otFin);
         else fin = esHoy ? pctAhoraReal : 100;
       }
+      // En la vista de hoy: nunca mostrar una barra que termina en el futuro.
+      if (esHoy && fin !== null && fin > pctAhoraReal) fin = pctAhoraReal;
       if (ini === null || fin === null || fin <= ini) return '';
       const left  = ini.toFixed(2);
       const width = Math.max(0.5, fin - ini).toFixed(2);
