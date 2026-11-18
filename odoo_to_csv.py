@@ -461,25 +461,35 @@ def extraer_taller(models, uid):
     hoy_utc = (ahora_quito.replace(hour=0, minute=0, second=0, microsecond=0) +
                timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S")
 
-    # OTs activas (ready/progress) sin filtrar por fecha
-    # + OTs terminadas hoy
-    workorders = odoo_get(models, uid, "mrp.workorder",
-        [["state", "in", ["ready", "progress", "done"]],
+    # Productividad de HOY directamente (sin depender de wo_ids).
+    # Filtra por date_start >= inicio del dia en UTC — no importa el estado de la OT.
+    productividad = odoo_get(models, uid, "mrp.workcenter.productivity",
+        [["date_start", ">=", hoy_utc],
+         ["workorder_id", "!=", False]],
+        ["id", "workorder_id", "employee_id", "workcenter_id",
+         "date_start", "date_end", "duration", "loss_id"]
+    )
+
+    # IDs de workorders que tienen actividad hoy + OTs activas (ready/progress)
+    wo_ids_prod = list({p["workorder_id"][0] for p in productividad if p.get("workorder_id")})
+    workorders_activas = odoo_get(models, uid, "mrp.workorder",
+        [["state", "in", ["ready", "progress"]],
          ["production_id.state", "not in", ["cancel", "draft"]]],
         ["id", "name", "production_id", "workcenter_id", "state",
          "qty_production", "qty_produced",
          "duration_expected", "duration", "date_start", "date_finished"]
     )
-
+    wo_ids_activas = [wo["id"] for wo in workorders_activas]
+    # Leer las OTs con actividad de productividad hoy (que no estén ya en activas)
+    wo_ids_extra = list(set(wo_ids_prod) - set(wo_ids_activas))
+    workorders_extra = odoo_get(models, uid, "mrp.workorder",
+        [["id", "in", wo_ids_extra]],
+        ["id", "name", "production_id", "workcenter_id", "state",
+         "qty_production", "qty_produced",
+         "duration_expected", "duration", "date_start", "date_finished"]
+    ) if wo_ids_extra else []
+    workorders = workorders_activas + workorders_extra
     wo_ids = [wo["id"] for wo in workorders]
-
-    # Toda la productividad de hoy (registros de tiempo con empleado)
-    productividad = odoo_get(models, uid, "mrp.workcenter.productivity",
-        [["workorder_id", "in", wo_ids],
-         ["date_start", ">=", hoy_utc]],
-        ["id", "workorder_id", "employee_id", "workcenter_id",
-         "date_start", "date_end", "duration", "loss_id"]
-    ) if wo_ids else []
 
     # Índice: workorder_id → lista de registros de productividad
     prod_por_wo = {}
