@@ -405,17 +405,16 @@ function renderGantt(filas, prodIdx, esHoy) {
   const HORA_FIN = 24;  // 00:00 (medianoche)
   const TOTAL_H  = HORA_FIN - HORA_INI;
 
-  // Hoy: solo OT activas (En progreso). Días pasados: todo registro con inicio.
   // Acepta emp_fecha_inicio (productividad) o ot_fecha_inicio (OT editada manualmente).
   const tieneInicio = f =>
     (f.emp_fecha_inicio && f.emp_fecha_inicio.trim()) ||
     (f.ot_fecha_inicio  && f.ot_fecha_inicio.trim());
 
+  // Hoy Y días pasados: todo registro de empleado con tiempo de inicio.
+  // No filtrar por estado_ot — las OTs terminadas en el día también se muestran.
   const activos = filas.filter(f => {
     if (!f.empleado || f.empleado === 'Sin registro hoy') return false;
-    if (!tieneInicio(f)) return false;
-    if (esHoy) return (f.estado_ot || '').toLowerCase().includes('progreso');
-    return true;
+    return tieneInicio(f);
   });
 
   if (!activos.length) {
