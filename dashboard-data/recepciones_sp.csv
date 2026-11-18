@@ -1,6 +1,6 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-11811.0,2026-11-18 07:00,2026-11-18 07:42,PIÑA-MP00022,2891.0,Clara  Ruiz,Se reciben 155 envases de piña.,11.9,3.61,0.44,Piñas  pintonas,2026-11-18 20:01:50
-21811.0,2026-11-18 07:52,2026-11-18 08:00,TOMATE DE ÁRBOL 4CM-MP00241,1295.0,Esteban Israel Garces,Se reciben 65 envases de tomate de árbol 4cm.,9.8,3.56,0.0,,2026-11-18 20:01:50
-31811.0,2026-11-18 09:45,2026-11-18 09:52,FRUTILLA DESPITONADA PARA PICAR-MP00221,765.0,Danilo Guaman,Se reciben 49 envases de frutilla despitonada para picar.,8.6,3.36,0.0,,2026-11-18 20:01:50
-41811.0,2026-11-18 10:55,2026-11-18 10:56,FRUTILLA DESPITONADA PARA PICAR-MP00221,819.0,José Miguel Lluglluna,Se reciben 36 envases de frutilla despitonada para picar.,8.7,3.31,0.0,,2026-11-18 20:01:50
-61811.0,2026-11-18 12:27,2026-11-18 13:28,MANGO-MP00232,3057.0,Proceconsa ,Se reciben 140 envases de mango.,12.5,3.62,0.57,Brix y pH bajo,2026-11-18 20:01:50
+11811.0,2026-11-18 07:00,2026-11-18 07:42,PIÑA-MP00022,2891.0,Clara  Ruiz,Se reciben 155 envases de piña.,11.9,3.61,0.44,Piñas  pintonas,2026-11-18 20:30:51
+21811.0,2026-11-18 07:52,2026-11-18 08:00,TOMATE DE ÁRBOL 4CM-MP00241,1295.0,Esteban Israel Garces,Se reciben 65 envases de tomate de árbol 4cm.,9.8,3.56,0.0,,2026-11-18 20:30:51
+31811.0,2026-11-18 09:45,2026-11-18 09:52,FRUTILLA DESPITONADA PARA PICAR-MP00221,765.0,Danilo Guaman,Se reciben 49 envases de frutilla despitonada para picar.,8.6,3.36,0.0,,2026-11-18 20:30:51
+41811.0,2026-11-18 10:55,2026-11-18 10:56,FRUTILLA DESPITONADA PARA PICAR-MP00221,819.0,José Miguel Lluglluna,Se reciben 36 envases de frutilla despitonada para picar.,8.7,3.31,0.0,,2026-11-18 20:30:51
+61811.0,2026-11-18 12:27,2026-11-18 13:28,MANGO-MP00232,3057.0,Proceconsa ,Se reciben 140 envases de mango.,12.5,3.62,0.57,Brix y pH bajo,2026-11-18 20:30:51
