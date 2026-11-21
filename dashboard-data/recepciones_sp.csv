@@ -1,9 +1,9 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-12011.0,2026-11-20 06:55,2026-11-20 07:02,FRUTILLA DESPITONADA PARA TOPPING-MP00154,411.0,Laura Enriquez ,Se reciben 20 envases de frutilla despitonada para topping.,8.3,3.3,0.64,,2026-11-21 03:30:55
-22011.0,2026-11-20 10:35,2026-11-20 11:53,MOTA GUANÁBANA-MP00028,5538.0,Fripa,Se reciben 110 envases de mota guanábana.,15.2,3.3,0.7,,2026-11-21 03:30:55
-72011.0,2026-11-20 12:47,2026-11-20 12:51,MORA DE CASTILLA-MP00016,606.0,Carmen Lisintuña,Se reciben 20 envases de mora de castilla.,7.0,2.62,1.8,,2026-11-21 03:30:55
-92011.0,2026-11-20 12:53,2026-11-20 12:56,MORA DE CASTILLA-MP00016,572.0,Luis Silva,Se reciben 19 envases de mora de castilla.,6.8,2.6,1.82,,2026-11-21 03:30:55
-32011.0,2026-11-20 14:17,2026-11-20 14:22,MORA TIPO B-MP00036,715.0,Braulio Ronquillo,Se reciben 25 envases de mora tipo b.,8.1,2.6,2.3,,2026-11-21 03:30:55
-42011.0,2026-11-20 16:23,2026-11-20 16:26,MORA DE CASTILLA-MP00016,230.0,Jaime  Lisintuña ,Se reciben 8 envases de mora de castilla.,8.6,2.93,2.04,,2026-11-21 03:30:55
-52011.0,2026-11-20 16:27,2026-11-20 16:29,MORA DE CASTILLA-MP00016,302.0,Cesar  Lisintuña ,Se reciben 10 envases de mora de castilla.,8.1,2.82,2.8,,2026-11-21 03:30:55
-52011.0,2026-11-20 16:48,2026-11-20 16:48,MORA DE CASTILLA-MP00016,,Cesar  Lisintuña ,,8.1,2.82,2.8,,2026-11-21 03:30:55
+12011.0,2026-11-20 06:55,2026-11-20 07:02,FRUTILLA DESPITONADA PARA TOPPING-MP00154,411.0,Laura Enriquez ,Se reciben 20 envases de frutilla despitonada para topping.,8.3,3.3,0.64,,2026-11-21 03:48:04
+22011.0,2026-11-20 10:35,2026-11-20 11:53,MOTA GUANÁBANA-MP00028,5538.0,Fripa,Se reciben 110 envases de mota guanábana.,15.2,3.3,0.7,,2026-11-21 03:48:04
+72011.0,2026-11-20 12:47,2026-11-20 12:51,MORA DE CASTILLA-MP00016,606.0,Carmen Lisintuña,Se reciben 20 envases de mora de castilla.,7.0,2.62,1.8,,2026-11-21 03:48:04
+92011.0,2026-11-20 12:53,2026-11-20 12:56,MORA DE CASTILLA-MP00016,572.0,Luis Silva,Se reciben 19 envases de mora de castilla.,6.8,2.6,1.82,,2026-11-21 03:48:04
+32011.0,2026-11-20 14:17,2026-11-20 14:22,MORA TIPO B-MP00036,715.0,Braulio Ronquillo,Se reciben 25 envases de mora tipo b.,8.1,2.6,2.3,,2026-11-21 03:48:04
+42011.0,2026-11-20 16:23,2026-11-20 16:26,MORA DE CASTILLA-MP00016,230.0,Jaime  Lisintuña ,Se reciben 8 envases de mora de castilla.,8.6,2.93,2.04,,2026-11-21 03:48:04
+52011.0,2026-11-20 16:27,2026-11-20 16:29,MORA DE CASTILLA-MP00016,302.0,Cesar  Lisintuña ,Se reciben 10 envases de mora de castilla.,8.1,2.82,2.8,,2026-11-21 03:48:04
+52011.0,2026-11-20 16:48,2026-11-20 16:48,MORA DE CASTILLA-MP00016,,Cesar  Lisintuña ,,8.1,2.82,2.8,,2026-11-21 03:48:04
