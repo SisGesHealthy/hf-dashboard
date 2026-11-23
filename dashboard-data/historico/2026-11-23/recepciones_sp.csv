@@ -1,7 +1,7 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-12311.0,2026-11-23 07:51,2026-11-23 08:08,TOMATE DE ÁRBOL 4CM-MP00241,1610.0,Esteban Israel Garces,Se reciben 85 envases de tomate de árbol 4cm.,9.7,3.97,0.0,,2026-11-23 22:30:54
-22311.0,2026-11-23 08:27,2026-11-23 08:53,TOMATE DE ARBOL-MP00012,1714.0,Esteban Israel Garces,Se reciben 80 envases de tomate de arbol.,9.5,4.01,0.0,Recorrido 0.3,2026-11-23 22:30:54
-32311.0,2026-11-23 09:03,2026-11-23 10:50,MARACUYA-MP00014,11921.0,Yoffre Noguera ,Se reciben 382 envases de maracuya.,14.0,2.78,3.32,pH ligeramente bajo,2026-11-23 22:30:54
-52311.0,2026-11-23 11:52,2026-11-23 11:53,MARACUYA EN PEPAS EXTERNA - MP00245,552.0,Fripa,Se reciben 11 envases de maracuya en pepas externa.,12.4,3.07,3.03,,2026-11-23 22:30:54
-42311.0,2026-11-23 12:01,2026-11-23 12:38,MOTA GUANÁBANA-MP00028,4524.0,Fripa,Se reciben 90 envases de mota guanábana.,15.7,3.47,0.88,,2026-11-23 22:30:54
-72311.0,2026-11-23 16:52,2026-11-23 16:52,MOTA GUANÁBANA-MP00028,,Guanabana Big ,,16.0,3.8,0.71,,2026-11-23 22:30:54
+12311.0,2026-11-23 07:51,2026-11-23 08:08,TOMATE DE ÁRBOL 4CM-MP00241,1610.0,Esteban Israel Garces,Se reciben 85 envases de tomate de árbol 4cm.,9.7,3.97,0.0,,2026-11-23 23:00:56
+22311.0,2026-11-23 08:27,2026-11-23 08:53,TOMATE DE ARBOL-MP00012,1714.0,Esteban Israel Garces,Se reciben 80 envases de tomate de arbol.,9.5,4.01,0.0,Recorrido 0.3,2026-11-23 23:00:56
+32311.0,2026-11-23 09:03,2026-11-23 10:50,MARACUYA-MP00014,11921.0,Yoffre Noguera ,Se reciben 382 envases de maracuya.,14.0,2.78,3.32,pH ligeramente bajo,2026-11-23 23:00:56
+52311.0,2026-11-23 11:52,2026-11-23 11:53,MARACUYA EN PEPAS EXTERNA - MP00245,552.0,Fripa,Se reciben 11 envases de maracuya en pepas externa.,12.4,3.07,3.03,,2026-11-23 23:00:56
+42311.0,2026-11-23 12:01,2026-11-23 12:38,MOTA GUANÁBANA-MP00028,4524.0,Fripa,Se reciben 90 envases de mota guanábana.,15.7,3.47,0.88,,2026-11-23 23:00:56
+72311.0,2026-11-23 16:52,2026-11-23 16:52,MOTA GUANÁBANA-MP00028,,Guanabana Big ,,16.0,3.8,0.71,,2026-11-23 23:00:56
