@@ -1,3 +1,4 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-12411.0,2026-11-24 07:27,2026-11-24 07:34,FRUTILLA-MP00007,307.0,Sergio Laguaquiza,Se reciben 20 envases de frutilla.,7.6,3.46,0.66,,2026-11-24 17:01:18
-32411.0,2026-11-24 08:31,2026-11-24 08:35,MORA TIPO B-MP00036,305.0,Oscar Jimenez,Se reciben 10 envases de mora tipo b.,6.8,2.7,1.85,Mora baja madurez y color rojizo,2026-11-24 17:01:18
+12411.0,2026-11-24 07:27,2026-11-24 07:34,FRUTILLA-MP00007,307.0,Sergio Laguaquiza,Se reciben 20 envases de frutilla.,7.6,3.46,0.66,,2026-11-24 17:31:04
+32411.0,2026-11-24 08:31,2026-11-24 08:35,MORA TIPO B-MP00036,305.0,Oscar Jimenez,Se reciben 10 envases de mora tipo b.,6.8,2.7,1.85,Mora baja madurez y color rojizo,2026-11-24 17:31:04
+62411.0,2026-11-24 12:19,2026-11-24 12:19,MANGO-MP00232,,Marcel Espinosa ,,16.7,3.93,0.32,,2026-11-24 17:31:04
