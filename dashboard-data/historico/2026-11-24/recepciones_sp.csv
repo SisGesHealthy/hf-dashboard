@@ -1,6 +1,6 @@
 ﻿id_recepcion,hora_llegada,hora_cierre,fruta,total_neto_kg,proveedor,observaciones,brix,ph,acidez,obs_calidad,actualizado
-12411.0,2026-11-24 07:27,2026-11-24 07:34,FRUTILLA-MP00007,307.0,Sergio Laguaquiza,Se reciben 20 envases de frutilla.,7.6,3.46,0.66,,2026-11-24 23:30:54
-32411.0,2026-11-24 08:31,2026-11-24 08:35,MORA TIPO B-MP00036,305.0,Oscar Jimenez,Se reciben 10 envases de mora tipo b.,6.8,2.7,1.85,Mora baja madurez y color rojizo,2026-11-24 23:30:54
-62411.0,2026-11-24 12:19,2026-11-24 15:13,MANGO-MP00232,10173.0,Marcel Espinosa ,Se reciben 457 envases de mango.,16.7,3.93,0.32,,2026-11-24 23:30:54
-42411.0,2026-11-24 12:54,2026-11-24 13:11,FRUTILLA DESPITONADA PARA PICAR-MP00221,1712.0,Danilo Guaman,Se reciben 102 envases de frutilla despitonada para picar.,9.0,3.32,0.0,,2026-11-24 23:30:54
-72411.0,2026-11-24 15:51,2026-11-24 16:05,ARANDANO-MP00034,792.0,Santiago  Chiriboga ,Se reciben 39 envases de arandano.,11.2,3.5,0.0,,2026-11-24 23:30:54
+12411.0,2026-11-24 07:27,2026-11-24 07:34,FRUTILLA-MP00007,307.0,Sergio Laguaquiza,Se reciben 20 envases de frutilla.,7.6,3.46,0.66,,2026-11-25 00:00:53
+32411.0,2026-11-24 08:31,2026-11-24 08:35,MORA TIPO B-MP00036,305.0,Oscar Jimenez,Se reciben 10 envases de mora tipo b.,6.8,2.7,1.85,Mora baja madurez y color rojizo,2026-11-25 00:00:53
+62411.0,2026-11-24 12:19,2026-11-24 15:13,MANGO-MP00232,10173.0,Marcel Espinosa ,Se reciben 457 envases de mango.,16.7,3.93,0.32,,2026-11-25 00:00:53
+42411.0,2026-11-24 12:54,2026-11-24 13:11,FRUTILLA DESPITONADA PARA PICAR-MP00221,1712.0,Danilo Guaman,Se reciben 102 envases de frutilla despitonada para picar.,9.0,3.32,0.0,,2026-11-25 00:00:53
+72411.0,2026-11-24 15:51,2026-11-24 16:05,ARANDANO-MP00034,792.0,Santiago  Chiriboga ,Se reciben 39 envases de arandano.,11.2,3.5,0.0,,2026-11-25 00:00:53
