@@ -1,9 +1,9 @@
 ﻿lote,producto,num_parada,brix,ph,acidez,recorrido,viscosidad,pct_fruta,ratio,responsable,repeticion,observaciones,fecha_produccion,actualizado
-L2962615,,1.0,7.3,4.3,,,,,,Producción: Karen Heredia,False,Es la 3 era parada,2026-11-27,2026-11-27 21:00:52
-L2962615,,1.0,6.7,4.05,,,,,,Samantha Fajardo,True,Es la parada 1,2026-11-27,2026-11-27 21:00:52
-L2962615,,2.0,6.6,3.9,,,,,,Paula Granja,False,Parada 4,2026-11-27,2026-11-27 21:00:52
-L3312615,,1.0,6.2,4.32,,,,,,Paula Granja,False,,2026-11-27,2026-11-27 21:00:52
-L3312615,,2.0,6.7,4.03,,,,,,Paula Granja,False,,2026-11-27,2026-11-27 21:00:52
-L3312615,,3.0,5.4,4.11,,,,,,Paula Granja,False,,2026-11-27,2026-11-27 21:00:52
-L3312615,,3.0,6.4,4.17,,,,,,Paula Granja,True,,2026-11-27,2026-11-27 21:00:52
-L3312615,,4.0,6.9,3.92,,,,,,Samantha Fajardo,False,Parada 2,2026-11-27,2026-11-27 21:00:52
+L2962615,,1.0,7.3,4.3,,,,,,Producción: Karen Heredia,False,Es la 3 era parada,2026-11-27,2026-11-27 21:30:59
+L2962615,,1.0,6.7,4.05,,,,,,Samantha Fajardo,True,Es la parada 1,2026-11-27,2026-11-27 21:30:59
+L2962615,,2.0,6.6,3.9,,,,,,Paula Granja,False,Parada 4,2026-11-27,2026-11-27 21:30:59
+L3312615,,1.0,6.2,4.32,,,,,,Paula Granja,False,,2026-11-27,2026-11-27 21:30:59
+L3312615,,2.0,6.7,4.03,,,,,,Paula Granja,False,,2026-11-27,2026-11-27 21:30:59
+L3312615,,3.0,5.4,4.11,,,,,,Paula Granja,False,,2026-11-27,2026-11-27 21:30:59
+L3312615,,3.0,6.4,4.17,,,,,,Paula Granja,True,,2026-11-27,2026-11-27 21:30:59
+L3312615,,4.0,6.9,3.92,,,,,,Samantha Fajardo,False,Parada 2,2026-11-27,2026-11-27 21:30:59
