@@ -1,11 +1,11 @@
 ﻿lote,producto,num_parada,brix,ph,acidez,recorrido,viscosidad,pct_fruta,ratio,responsable,repeticion,observaciones,fecha_produccion,actualizado
-L2962615,,1.0,7.3,4.3,,,,,,Producción: Karen Heredia,False,Es la 3 era parada,2026-11-27,2026-11-28 03:30:55
-L2962615,,1.0,6.7,4.05,,,,,,Samantha Fajardo,True,Es la parada 1,2026-11-27,2026-11-28 03:30:55
-L2962615,,2.0,6.6,3.9,,,,,,Paula Granja,False,Parada 4,2026-11-27,2026-11-28 03:30:55
-L3312604,DULCAFE S.A.  - SALSA DE CHOCOLATE 1 KG - DULCAFE S.A.,1.0,57.0,6.53,,17.0,,,,Paula Granja,False,,2026-11-27,2026-11-28 03:30:55
-L3312604,DULCAFE S.A.  - SALSA DE CHOCOLATE 1 KG - DULCAFE S.A.,2.0,57.1,6.71,,,,,,Edwin Tulcán,False,Recorrido de 16.5,2026-11-27,2026-11-28 03:30:55
-L3312615,,1.0,6.2,4.32,,,,,,Paula Granja,False,,2026-11-27,2026-11-28 03:30:55
-L3312615,,2.0,6.7,4.03,,,,,,Paula Granja,False,,2026-11-27,2026-11-28 03:30:55
-L3312615,,3.0,5.4,4.11,,,,,,Paula Granja,False,,2026-11-27,2026-11-28 03:30:55
-L3312615,,3.0,6.4,4.17,,,,,,Paula Granja,True,,2026-11-27,2026-11-28 03:30:55
-L3312615,,4.0,6.9,3.92,,,,,,Samantha Fajardo,False,Parada 2,2026-11-27,2026-11-28 03:30:55
+L2962615,,1.0,7.3,4.3,,,,,,Producción: Karen Heredia,False,Es la 3 era parada,2026-11-27,2026-11-28 04:01:01
+L2962615,,1.0,6.7,4.05,,,,,,Samantha Fajardo,True,Es la parada 1,2026-11-27,2026-11-28 04:01:01
+L2962615,,2.0,6.6,3.9,,,,,,Paula Granja,False,Parada 4,2026-11-27,2026-11-28 04:01:01
+L3312604,DULCAFE S.A.  - SALSA DE CHOCOLATE 1 KG - DULCAFE S.A.,1.0,57.0,6.53,,17.0,,,,Paula Granja,False,,2026-11-27,2026-11-28 04:01:01
+L3312604,DULCAFE S.A.  - SALSA DE CHOCOLATE 1 KG - DULCAFE S.A.,2.0,57.1,6.71,,,,,,Edwin Tulcán,False,Recorrido de 16.5,2026-11-27,2026-11-28 04:01:01
+L3312615,,1.0,6.2,4.32,,,,,,Paula Granja,False,,2026-11-27,2026-11-28 04:01:01
+L3312615,,2.0,6.7,4.03,,,,,,Paula Granja,False,,2026-11-27,2026-11-28 04:01:01
+L3312615,,3.0,5.4,4.11,,,,,,Paula Granja,False,,2026-11-27,2026-11-28 04:01:01
+L3312615,,3.0,6.4,4.17,,,,,,Paula Granja,True,,2026-11-27,2026-11-28 04:01:01
+L3312615,,4.0,6.9,3.92,,,,,,Samantha Fajardo,False,Parada 2,2026-11-27,2026-11-28 04:01:01
